@@ -1,35 +1,39 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { HashRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { CVProvider } from './context/CVContext';
 import { CVBuilder } from './pages/CVBuilder'; 
 import { CVPreview } from './pages/CVPreview';
-import { Admin } from './pages/Admin'; // Admin පේජ් එක
+import { Admin } from './pages/Admin';
 
-// Named Export එකක් විදිහට App එක දෙනවා
-export function App() {
-  const [view, setView] = useState<'editor' | 'preview' | 'admin'>('editor');
-
-  // URL එකේ /admin කියලා තිබ්බොත් admin පෙන්වන්න සරල logic එකක්
-  React.useEffect(() => {
-    if (window.location.pathname.includes('/admin')) {
-      setView('admin');
-    }
-  }, []);
+// Navigation පාලනය කරන්න වෙනම Component එකක්
+function AppContent() {
+  const navigate = useNavigate();
 
   return (
-    <CVProvider>
-      <div className="min-h-screen bg-gray-50">
-        {view === 'editor' && (
-          <CVBuilder onPreview={() => setView('preview')} />
-        )}
-        
-        {view === 'preview' && (
-          <CVPreview onBack={() => setView('editor')} />
-        )}
+    <Routes>
+      {/* Main Editor Page */}
+      <Route path="/" element={<CVBuilder onPreview={() => navigate('/preview')} />} />
+      
+      {/* Preview Page */}
+      <Route path="/preview" element={<CVPreview onBack={() => navigate('/')} />} />
+      
+      {/* Admin Page */}
+      <Route path="/admin" element={<Admin />} />
+      
+      {/* වැරදි URL එකක් ගැහුවොත් ආයෙත් මුලට යවන්න */}
+      <Route path="*" element={<CVBuilder onPreview={() => navigate('/preview')} />} />
+    </Routes>
+  );
+}
 
-        {view === 'admin' && (
-          <Admin />
-        )}
-      </div>
+export function App() {
+  return (
+    <CVProvider>
+      <Router>
+        <div className="min-h-screen bg-gray-50">
+          <AppContent />
+        </div>
+      </Router>
     </CVProvider>
   );
 }
