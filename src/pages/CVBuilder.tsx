@@ -125,7 +125,7 @@ export function CVBuilder({ onBack, onNext }: CVBuilderProps) {
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 sm:gap-4">
               <img
-                src="/logo.png"
+                src={${import.meta.env.BASE_URL}logo.png}
                 alt="FCBS Digi Kuppiya"
                 className="h-10 sm:h-14 w-auto" />
               
