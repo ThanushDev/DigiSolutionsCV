@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { TemplateRenderer } from '../components/CVTemplates/TemplateRenderer';
-import { DownloadIcon, ShieldCheckIcon, Loader2, SearchIcon } from 'lucide-react';
+import { DownloadIcon, ShieldCheckIcon, Loader2 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
@@ -12,132 +12,52 @@ export function Admin() {
 
   const handleVerify = () => {
     try {
-      // WhatsApp එකෙන් එන මැසේජ් එකේ "Ref:" කොටස විතරක් වෙන් කරලා ගන්නවා
       let raw = inputCode.includes('Ref:') ? inputCode.split('Ref:')[1].trim() : inputCode.trim();
-      
-      // Base64 decode කරලා JSON බවට පත් කිරීම
       const json = JSON.parse(decodeURIComponent(escape(atob(raw))));
-      
-      // කෙටි කරපු Keys ආපහු මුල් තිබ්බ විදිහට පත් කිරීම (CV එක පේන්න නම් මේක ඕනේ)
       const formatted = {
         selectedTemplate: json.t,
         personalInfo: { 
-          name: json.pi.n, 
-          fullName: json.pi.fn, 
-          description: json.pi.d, 
-          dateOfBirth: json.pi.db, 
-          nicNumber: json.pi.ni, 
-          religion: json.pi.r, 
-          civilStatus: json.pi.c, 
-          gender: json.pi.g, 
-          nationality: json.pi.nt, 
-          photo: json.pi.ph || '', 
-          photoFormat: json.pi.pf || 'circular' 
+          name: json.pi.n, fullName: json.pi.fn, description: json.pi.d, dateOfBirth: json.pi.db, 
+          nicNumber: json.pi.ni, religion: json.pi.r, civilStatus: json.pi.c, gender: json.pi.g, 
+          nationality: json.pi.nt, photo: json.pi.ph || '', photoFormat: json.pi.pf || 'circular' 
         },
-        contact: { 
-          phone1: json.co.p1, 
-          phone2: json.co.p2, 
-          email: json.co.e, 
-          address: json.co.a 
-        },
-        skills: json.sk, 
-        languages: json.la, 
-        workExperience: json.ex, 
-        education: json.ed, 
-        professionalQualifications: json.pq, 
-        references: json.re
+        contact: { phone1: json.co.p1, phone2: json.co.p2, email: json.co.e, address: json.co.a },
+        skills: json.sk, languages: json.la, workExperience: json.ex, education: json.ed, 
+        professionalQualifications: json.pq, references: json.re
       };
-      
       setDecodedData(formatted);
-    } catch (e) { 
-      console.error(e);
-      alert("Invalid Reference Code! Please check the code again."); 
-    }
+    } catch (e) { alert("Invalid Reference Code!"); }
   };
 
   const downloadPDF = async () => {
-    if (!cvRef.current || !decodedData) return;
-    
+    if (!cvRef.current) return;
     setIsDownloading(true);
     try {
-      const canvas = await html2canvas(cvRef.current, { 
-        scale: 2, 
-        useCORS: true, // ImgBB එකේ තියෙන ෆොටෝ එක PDF එකට ගන්න මේක අනිවාර්යයි
-        allowTaint: false,
-        logging: false,
-        backgroundColor: '#ffffff'
-      });
-      
+      const canvas = await html2canvas(cvRef.current, { scale: 2, useCORS: true });
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgWidth = 210;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      
-      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-      pdf.save(`CV_${decodedData.personalInfo.name.replace(/\s+/g, '_')}.pdf`);
-    } catch (err) {
-      console.error(err);
-      alert("Error generating PDF. Please try again.");
-    } finally {
-      setIsDownloading(false);
-    }
+      pdf.addImage(imgData, 'PNG', 0, 0, 210, (canvas.height * 210) / canvas.width);
+      pdf.save(`CV_Order.pdf`);
+    } catch (err) { alert("PDF Error"); }
+    finally { setIsDownloading(false); }
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 p-4 md:p-10 font-sans">
-      <div className="max-w-5xl mx-auto">
-        {/* Admin Header */}
-        <div className="bg-zinc-900 text-white p-6 rounded-[2rem] mb-8 flex flex-col md:flex-row justify-between items-center gap-4 shadow-xl">
-          <div className="flex items-center gap-3">
-            <div className="bg-blue-600 p-2 rounded-xl">
-              <ShieldCheckIcon size={24}/>
-            </div>
-            <div>
-              <h1 className="font-black uppercase tracking-tighter leading-none">Admin Panel</h1>
-              <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">CV Verification System</p>
-            </div>
-          </div>
-          
+    <div className="min-h-screen bg-zinc-100 p-6">
+      <div className="max-w-5xl mx-auto text-center">
+        <div className="bg-zinc-900 text-white p-6 rounded-3xl mb-8 flex justify-between items-center shadow-xl">
+          <h1 className="flex items-center gap-2 font-black uppercase tracking-tighter"><ShieldCheckIcon className="text-blue-500"/> Admin Panel</h1>
           {decodedData && (
-            <button 
-              onClick={downloadPDF} 
-              disabled={isDownloading}
-              className="w-full md:w-auto bg-white text-black px-8 py-3 rounded-2xl font-black text-sm flex items-center justify-center gap-2 hover:bg-zinc-200 transition-all disabled:opacity-50"
-            >
-              {isDownloading ? <Loader2 className="animate-spin" size={18}/> : <DownloadIcon size={18}/>}
-              GENERATE PDF
+            <button onClick={downloadPDF} className="bg-white text-black px-6 py-2 rounded-xl flex items-center gap-2 font-bold">
+              {isDownloading ? <Loader2 className="animate-spin"/> : <DownloadIcon size={18}/>} DOWNLOAD PDF
             </button>
           )}
         </div>
-
-        {/* Input Area */}
-        <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-zinc-100 mb-10">
-          <div className="flex items-center gap-2 mb-4 text-zinc-400">
-            <SearchIcon size={16}/>
-            <span className="text-[10px] font-black uppercase tracking-widest">Paste Reference Code Below</span>
-          </div>
-          <textarea 
-            className="w-full h-40 p-5 rounded-3xl bg-zinc-50 border-2 border-zinc-100 focus:border-blue-500 focus:bg-white outline-none transition-all resize-none font-mono text-xs text-zinc-600 mb-6" 
-            placeholder="Paste the message received from WhatsApp here..." 
-            value={inputCode} 
-            onChange={(e) => setInputCode(e.target.value)} 
-          />
-          <button 
-            onClick={handleVerify} 
-            className="w-full bg-blue-600 text-white py-5 rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-sm hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-100 transition-all"
-          >
-            Verify & Load Candidate Data
-          </button>
-        </div>
-
-        {/* Preview Area */}
+        <textarea className="w-full h-32 p-4 rounded-2xl mb-4 border-2 outline-none focus:border-blue-500" placeholder="Paste Reference Code Here..." value={inputCode} onChange={(e) => setInputCode(e.target.value)} />
+        <button onClick={handleVerify} className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-700 transition-all">Verify & Load CV</button>
         {decodedData && (
-          <div className="bg-white p-4 md:p-12 rounded-[3rem] shadow-inner border border-zinc-100 overflow-x-auto">
-             <div className="flex justify-center">
-                <div ref={cvRef} className="bg-white shadow-sm">
-                  <TemplateRenderer cvData={decodedData} scale={1} />
-                </div>
-             </div>
+          <div className="mt-10 flex justify-center bg-white p-10 rounded-3xl shadow-inner overflow-auto">
+            <div ref={cvRef}><TemplateRenderer cvData={decodedData} scale={1} /></div>
           </div>
         )}
       </div>
