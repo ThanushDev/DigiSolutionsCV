@@ -1,52 +1,58 @@
 import React from 'react';
-
-// ⚠️ වැදගත්: ඔයාගේ src/components/CVTemplates/ folder එක ඇතුළේ 
-// තියෙන ඇත්තම templates වල නම් මෙතන හරියටම දාන්න.
-// දැනට මම මේවා comment කරලා තියෙන්නේ build error එක නොවෙන්න.
-// import { Template1 } from './Template1'; 
-// import { Template2 } from './Template2';
+import { CVTemplateBase } from './CVTemplateBase';
+import { templateThemes } from '../../types/cv';
 
 interface TemplateRendererProps {
-  cvData: any;
-  data?: any;
+  cvData: any; // Admin එකෙන් එන decoded JSON එක
   scale?: number;
 }
 
-export const TemplateRenderer: React.FC<TemplateRendererProps> = ({ cvData, data, scale = 1 }) => {
-  const finalData = cvData || data;
-
-  if (!finalData) return null;
-
-  const renderSelectedTemplate = () => {
-    const templateId = finalData.templateId || 'template-1';
-
-    // ⚠️ මෙතන switch case එකේ 'Template1' වගේ ඒවා error දෙනවා නම් 
-    // ඒ කියන්නේ ඒ Component එක import වෙලා නැහැ කියන එක.
-    switch (templateId) {
-      case 'template-1':
-        // return <Template1 data={finalData} />;
-      case 'template-2':
-        // return <Template2 data={finalData} />;
-      default:
-        // Default එක විදිහට පෙන්නන්න දෙයක්:
-        return (
-          <div className="bg-white p-10 shadow-xl min-h-[297mm] text-black">
-             <h1 className="text-3xl font-bold uppercase">{finalData.personalInfo?.fullName}</h1>
-             <p className="text-zinc-500 mb-4">{finalData.personalInfo?.jobTitle}</p>
-             <div className="text-sm border-t pt-4">
-                <p>Email: {finalData.personalInfo?.email}</p>
-                <p>Phone: {finalData.personalInfo?.phone1}</p>
-                <p>Address: {finalData.personalInfo?.address}</p>
-             </div>
-             {/* Experience, Education loop ටික ඔයාගේ Template file එකේ ඇති */}
-          </div>
-        );
-    }
+export function TemplateRenderer({ cvData, scale = 1 }: TemplateRendererProps) {
+  // 1. Admin එකෙන් එන කෙටි අකුරු (n, e, p) ටික ඔයාගේ original CVData structure එකට හරවනවා
+  const mappedData = {
+    selectedTemplate: cvData.t || 'template-1',
+    personalInfo: {
+      name: cvData.n || '',
+      fullName: cvData.n || '',
+      description: cvData.j || '', // Job title එක description එකට දැම්මා
+      photo: '', // දැනට හිස්ව තියමු
+      photoFormat: 'circular',
+      dateOfBirth: '',
+      nicNumber: '',
+      gender: '',
+      nationality: '',
+      religion: '',
+      civilStatus: ''
+    },
+    contact: {
+      phone1: cvData.p || '',
+      phone2: cvData.p2 || '',
+      email: cvData.e || '',
+      address: cvData.a || ''
+    },
+    skills: cvData.s || [],
+    languages: [],
+    professionalQualifications: [],
+    education: {
+      oLevel: { year: '', indexNumber: '', subjects: [] },
+      aLevel: { year: '', indexNumber: '', subjects: [] }
+    },
+    workExperience: (cvData.ex || []).map((ex: any, i: number) => ({
+      id: i.toString(),
+      title: ex.role || '',
+      company: ex.company || '',
+      duration: ex.duration || '',
+      description: ex.description || ''
+    })),
+    references: [
+      { name: '', designation: '', organization: '', phone: '' },
+      { name: '', designation: '', organization: '', phone: '' }
+    ]
   };
 
-  return (
-    <div style={{ transform: `scale(${scale})`, transformOrigin: 'top center', width: '100%' }}>
-      {renderSelectedTemplate()}
-    </div>
-  );
-};
+  // 2. Theme එක හොයාගන්නවා
+  const theme = templateThemes.find((t) => t.id === mappedData.selectedTemplate) || templateThemes[0];
+
+  // 3. ඔයාගේ Original Component එකටම දත්ත දෙනවා
+  return <CVTemplateBase cvData={mappedData as any} theme={theme} scale={scale} />;
+}
