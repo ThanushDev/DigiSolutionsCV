@@ -1,29 +1,35 @@
-import React from 'react';
-import { CVProvider } from './context/CVContext'; // පාර නිවැරදිද බලන්න
-import { CVBuilder } from './pages/CVBuilder';    // ඔයාගේ main page එක
-import { CVPreview } from './pages/CVPreview';    // Preview page එක
+import React, { useState } from 'react';
+import { CVProvider } from './context/CVContext';
+import { CVBuilder } from './pages/CVBuilder'; 
+import { CVPreview } from './pages/CVPreview';
+import { Admin } from './pages/Admin'; // Admin පේජ් එක
 
-function AppContent() {
-  // මෙතන තමයි ඔයාගේ navigation logic එක තියෙන්නේ
-  // උදාහරණයක් විදිහට:
-  const [showPreview, setShowPreview] = React.useState(false);
+// Named Export එකක් විදිහට App එක දෙනවා
+export function App() {
+  const [view, setView] = useState<'editor' | 'preview' | 'admin'>('editor');
+
+  // URL එකේ /admin කියලා තිබ්බොත් admin පෙන්වන්න සරල logic එකක්
+  React.useEffect(() => {
+    if (window.location.pathname.includes('/admin')) {
+      setView('admin');
+    }
+  }, []);
 
   return (
-    <>
-      {showPreview ? (
-        <CVPreview onBack={() => setShowPreview(false)} />
-      ) : (
-        <CVBuilder onPreview={() => setShowPreview(true)} />
-      )}
-    </>
-  );
-}
-
-function App() {
-  return (
-    // මුළු App එකම මේ CVProvider එක ඇතුළේ තිබිය යුතුමයි!
     <CVProvider>
-      <AppContent />
+      <div className="min-h-screen bg-gray-50">
+        {view === 'editor' && (
+          <CVBuilder onPreview={() => setView('preview')} />
+        )}
+        
+        {view === 'preview' && (
+          <CVPreview onBack={() => setView('editor')} />
+        )}
+
+        {view === 'admin' && (
+          <Admin />
+        )}
+      </div>
     </CVProvider>
   );
 }
