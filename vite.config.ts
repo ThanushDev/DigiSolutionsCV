@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  base: '/DigiSolutionsCV/',
   // GitHub Pages වලදී path ප්‍රශ්න ඇති නොවීමට මෙම base කොටස අනිවාර්ය වේ.
   // මෙමගින් වෙබ් අඩවිය ඕනෑම sub-directory එකක වුවද නිවැරදිව රන් වීමට මග පාදයි.
   base: './',
