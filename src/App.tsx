@@ -10,7 +10,7 @@ function AppContent() {
 
   return (
     <Routes>
-      {/* Home (Editor) */}
+      {/* Editor Page */}
       <Route path="/" element={<CVBuilder onPreview={() => navigate('/preview')} />} />
       
       {/* Preview Page */}
@@ -19,7 +19,7 @@ function AppContent() {
       {/* Admin Page */}
       <Route path="/admin" element={<Admin />} />
       
-      {/* වැරදි URL එකක් ගැහුවොත් මුලට */}
+      {/* වෙනත් ඕනෑම එකක් Editor එකට හරවන්න */}
       <Route path="*" element={<CVBuilder onPreview={() => navigate('/preview')} />} />
     </Routes>
   );
