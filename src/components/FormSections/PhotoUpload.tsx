@@ -11,25 +11,40 @@ export function PhotoUpload() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // 32MB ට වඩා වැඩිද බලනවා (ImgBB limit)
+    if (file.size > 32 * 1024 * 1024) {
+      alert("File is too large!");
+      return;
+    }
+
     setIsUploading(true);
+    
     const formData = new FormData();
     formData.append('image', file);
 
     try {
-      const apiKey = 'YOUR_IMGBB_API_KEY'; // මෙතනට ඔයාගේ key එක දාන්න
-      const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+      // මෙතනට ඔයාගේ API Key එක දාන්න
+      const apiKey = 'YOUR_IMGBB_API_KEY'; 
+      
+      // ලින්ක් එකේ අගට expiration=64800 (පැය 18) එකතු කළා
+      const response = await fetch(`https://api.imgbb.com/1/upload?expiration=64800&key=${apiKey}`, {
         method: 'POST',
         body: formData,
       });
 
       const result = await response.json();
-      if (result.success) {
+
+      // JSON එකේ success: true ද බලනවා
+      if (result.success && result.data && result.data.url) {
+        // ඔයා එවල තියෙන JSON එකේ හැටියට result.data.url තමයි image link එක
         updatePersonalInfo({ photo: result.data.url });
       } else {
-        alert("Upload failed: " + (result.error?.message || "Unknown error"));
+        // API එකෙන් එවන ඇත්තම error එක පෙන්වන්න
+        const errorMsg = result.error ? result.error.message : "Unknown error";
+        alert("Upload Error: " + errorMsg);
       }
     } catch (error) {
-      alert("Network error. Please try again.");
+      alert("Network Error: Please check your connection.");
     } finally {
       setIsUploading(false);
     }
@@ -42,40 +57,43 @@ export function PhotoUpload() {
 
   return (
     <div className="space-y-4">
-      <label className="block text-sm font-medium text-gray-700">Profile Photo</label>
-      <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
-        <div className="relative mx-auto sm:mx-0">
-          <div className={`w-28 h-28 sm:w-32 sm:h-32 bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden ${cvData.personalInfo.photoFormat === 'circular' ? 'rounded-full' : 'rounded-2xl'}`}>
+      <label className="block text-sm font-medium text-gray-700 font-bold uppercase tracking-tight">Profile Photo</label>
+      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+        <div className="relative">
+          <div className={`w-32 h-32 bg-zinc-100 border-2 border-dashed border-zinc-300 flex items-center justify-center overflow-hidden shadow-inner ${cvData.personalInfo.photoFormat === 'circular' ? 'rounded-full' : 'rounded-2xl'}`}>
             {isUploading ? (
-              <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+              <div className="flex flex-col items-center gap-1">
+                <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+                <span className="text-[10px] font-bold text-blue-600 uppercase">Wait...</span>
+              </div>
             ) : cvData.personalInfo.photo ? (
               <img src={cvData.personalInfo.photo} alt="Profile" className="w-full h-full object-cover" />
             ) : (
-              <CameraIcon className="w-8 h-8 text-gray-400" />
+              <CameraIcon className="w-8 h-8 text-zinc-400" />
             )}
           </div>
           {cvData.personalInfo.photo && !isUploading && (
-            <button onClick={handleRemovePhoto} className="absolute -top-2 -right-2 p-1.5 bg-red-500 text-white rounded-full shadow-lg hover:bg-red-600 transition-colors">
+            <button onClick={handleRemovePhoto} className="absolute -top-2 -right-2 p-1.5 bg-red-600 text-white rounded-full shadow-lg hover:bg-red-700 transition-all">
               <XIcon className="w-4 h-4" />
             </button>
           )}
         </div>
 
-        <div className="flex-1 space-y-4 w-full">
+        <div className="flex-1 space-y-4">
           <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" id="photo-upload" />
-          <label htmlFor="photo-upload" className={`inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none cursor-pointer ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
-            {cvData.personalInfo.photo ? 'Change Photo' : 'Upload Photo'}
+          <label htmlFor="photo-upload" className={`inline-flex items-center px-6 py-3 bg-zinc-900 text-white text-xs font-black uppercase tracking-widest rounded-xl cursor-pointer hover:bg-black transition-all shadow-lg ${isUploading ? 'opacity-50' : ''}`}>
+            {cvData.personalInfo.photo ? 'Change Photo' : 'Choose Photo'}
           </label>
-          <div className="flex gap-4">
+          <div className="flex gap-4 bg-white p-2 rounded-xl border border-zinc-100 w-fit">
             {['circular', 'square'].map((format) => (
-              <label key={format} className="flex items-center gap-2 cursor-pointer">
+              <label key={format} className="flex items-center gap-2 cursor-pointer px-3 py-1 rounded-lg hover:bg-zinc-50 transition-all">
                 <input
                   type="radio"
                   checked={cvData.personalInfo.photoFormat === format}
                   onChange={() => updatePersonalInfo({ photoFormat: format as 'circular' | 'square' })}
-                  className="w-4 h-4 text-blue-600"
+                  className="w-4 h-4 text-blue-600 accent-blue-600"
                 />
-                <span className="text-sm text-gray-700 capitalize">{format}</span>
+                <span className="text-[11px] font-bold text-zinc-600 uppercase tracking-tighter capitalize">{format}</span>
               </label>
             ))}
           </div>
