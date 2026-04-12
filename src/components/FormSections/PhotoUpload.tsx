@@ -11,8 +11,8 @@ export function PhotoUpload() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // 32MB ට වඩා වැඩිද බලනවා (ImgBB limit)
-    if (file.size > 32 * 1024 * 1024) {
+    // 2MB ට වඩා වැඩිද බලනවා (ImgBB limit)
+    if (file.size > 2 * 1024 * 1024) {
       alert("File is too large!");
       return;
     }
@@ -24,7 +24,7 @@ export function PhotoUpload() {
 
     try {
       // මෙතනට ඔයාගේ API Key එක දාන්න
-      const apiKey = 'YOUR_IMGBB_API_KEY'; 
+      const apiKey = '43b8bf4b90a4c63f2f931edfc646c148'; 
       
       // ලින්ක් එකේ අගට expiration=64800 (පැය 18) එකතු කළා
       const response = await fetch(`https://api.imgbb.com/1/upload?expiration=64800&key=${apiKey}`, {
