@@ -5,13 +5,12 @@ import { CVBuilder } from './pages/CVBuilder';
 import { CVPreview } from './pages/CVPreview';
 import { Admin } from './pages/Admin';
 
-// Navigation පාලනය කරන්න වෙනම Component එකක්
 function AppContent() {
   const navigate = useNavigate();
 
   return (
     <Routes>
-      {/* Main Editor Page */}
+      {/* Home (Editor) */}
       <Route path="/" element={<CVBuilder onPreview={() => navigate('/preview')} />} />
       
       {/* Preview Page */}
@@ -20,7 +19,7 @@ function AppContent() {
       {/* Admin Page */}
       <Route path="/admin" element={<Admin />} />
       
-      {/* වැරදි URL එකක් ගැහුවොත් ආයෙත් මුලට යවන්න */}
+      {/* වැරදි URL එකක් ගැහුවොත් මුලට */}
       <Route path="*" element={<CVBuilder onPreview={() => navigate('/preview')} />} />
     </Routes>
   );
