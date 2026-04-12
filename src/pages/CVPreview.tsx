@@ -34,7 +34,7 @@ export function CVPreview({ onBack }: CVPreviewProps) {
 
   const currentTheme = templateThemes.find((t) => t.id === cvData.selectedTemplate);
 
-  // පෑන්මන්ට් ස්ලිප් එක අප්ලෝඩ් කරන ෆන්ක්ෂන් එක
+  // Slip Upload Function
   const handleSlipUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -46,18 +46,37 @@ export function CVPreview({ onBack }: CVPreviewProps) {
     }
   };
 
-  // WhatsApp හරහා විස්තර යවන ෆන්ක්ෂන් එක
+  // --- මෙතන තමයි වැදගත්ම වෙනස තියෙන්නේ ---
   const sendToWhatsApp = () => {
-    // CV එකේ දත්ත ටික ආරක්ෂිතව Encode කිරීම (බේස්64 පාවිච්චි කර ඇත)
+    // 1. සියලුම දත්ත structure එකක් සාදා ගැනීම (Short Keys භාවිතයෙන්)
     const essentialData = {
       n: cvData.personalInfo.name,
+      fn: cvData.personalInfo.fullName,
+      j: cvData.personalInfo.description,
       t: cvData.selectedTemplate,
+      p: cvData.contact.phone1,
+      e: cvData.contact.email,
+      a: cvData.contact.address,
+      
+      // Arrays & Objects
+      s: cvData.skills,
+      l: cvData.languages,
+      ex: cvData.workExperience,
+      ed: cvData.education,
+      pq: cvData.professionalQualifications,
+      ref: cvData.references,
+      
+      // Meta Data
       id: Math.random().toString(36).substring(7),
       date: new Date().toLocaleDateString()
     };
-    const encodedRef = btoa(JSON.stringify(essentialData));
 
-    const whatsappNumber = "94764781212"; // මෙතනට ඔයාගේ WhatsApp අංකය දාන්න (උදා: 94771234567)
+    // 2. දත්ත ටික JSON කරලා ආරක්ෂිතව Base64 වලට හරවමු
+    // unescape(encodeURIComponent()) පාවිච්චි කරන්නේ සිංහල අකුරු වලදී Error එන එක නවත්තන්නයි
+    const jsonString = JSON.stringify(essentialData);
+    const encodedRef = btoa(unescape(encodeURIComponent(jsonString)));
+
+    const whatsappNumber = "94764781212"; 
     const message = `*--- NEW CV ORDER ---*%0A%0A` +
       `*Name:* ${cvData.personalInfo.name}%0A` +
       `*Amount:* Rs. 100.00%0A` +
@@ -135,7 +154,7 @@ export function CVPreview({ onBack }: CVPreviewProps) {
               <RefreshCwIcon className="w-5 h-5" />
             </button>
             <button
-              onClick={() => setShowPaymentModal(true)} // පෑන්මන්ට් එක පෙන්වීමට
+              onClick={() => setShowPaymentModal(true)}
               disabled={isExporting}
               className={`flex items-center gap-2 px-6 py-2.5 rounded-full font-bold transition-all shadow-md ${
                 exportSuccess
@@ -238,7 +257,7 @@ export function CVPreview({ onBack }: CVPreviewProps) {
         </div>
       )}
 
-      {/* Theme Selection Modal (Already Exists in your code) */}
+      {/* Theme Selection Modal */}
       {showThemeSelector && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="bg-white rounded-xl max-w-2xl w-full p-6 max-h-[80vh] overflow-y-auto">
