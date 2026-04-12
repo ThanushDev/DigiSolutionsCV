@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useCV } from '../../context/CVContext';
-import { CameraIcon, XIcon, Loader2 } from 'lucide-react';
+import { CameraIcon, XIcon, Loader2, CheckCircle2 } from 'lucide-react';
 
 export function PhotoUpload() {
   const { cvData, updatePersonalInfo } = useCV();
@@ -30,7 +30,6 @@ export function PhotoUpload() {
       const result = await response.json();
 
       if (result.success && result.data && result.data.url) {
-        // ඉතා වැදගත්: මෙතනදී සේව් වෙන්නේ පින්තූරයේ ලින්ක් එක විතරයි.
         updatePersonalInfo({ photo: result.data.url });
       } else {
         alert("Upload Error: " + (result.error ? result.error.message : "Failed"));
@@ -48,37 +47,71 @@ export function PhotoUpload() {
   };
 
   return (
-    <div className="space-y-4">
-      <label className="block text-sm font-bold text-gray-700 uppercase">Profile Photo</label>
-      <div className="flex flex-col sm:flex-row items-center gap-6">
+    <div className="space-y-6 animate-in fade-in duration-500">
+      <label className="block text-[11px] font-black uppercase tracking-widest text-gray-500 ml-1">
+        Profile Photo
+      </label>
+
+      <div className="flex flex-col items-center sm:flex-row gap-6 bg-gray-50/50 p-6 rounded-3xl border border-dashed border-gray-200">
+        {/* Photo Display Area */}
         <div className="relative">
-          <div className={`w-32 h-32 bg-zinc-100 border-2 border-dashed border-zinc-300 flex items-center justify-center overflow-hidden shadow-inner ${cvData.personalInfo.photoFormat === 'circular' ? 'rounded-full' : 'rounded-2xl'}`}>
+          <div className={`w-36 h-36 bg-white border-4 border-white flex items-center justify-center overflow-hidden shadow-xl transition-all duration-500 ${
+            cvData.personalInfo.photoFormat === 'circular' ? 'rounded-full' : 'rounded-3xl'
+          }`}>
             {isUploading ? (
-              <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+              <div className="flex flex-col items-center gap-2">
+                <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+                <span className="text-[10px] font-bold text-blue-600 uppercase">Uploading...</span>
+              </div>
             ) : cvData.personalInfo.photo ? (
               <img src={cvData.personalInfo.photo} alt="Profile" className="w-full h-full object-cover" />
             ) : (
-              <CameraIcon className="w-8 h-8 text-zinc-400" />
+              <div className="flex flex-col items-center gap-2 text-zinc-300">
+                <CameraIcon className="w-10 h-10" />
+                <span className="text-[10px] font-bold uppercase">No Image</span>
+              </div>
             )}
           </div>
+
+          {/* Remove Button */}
           {cvData.personalInfo.photo && !isUploading && (
-            <button onClick={handleRemovePhoto} className="absolute -top-2 -right-2 p-1 bg-red-600 text-white rounded-full shadow-lg">
+            <button 
+              onClick={handleRemovePhoto} 
+              className="absolute -top-1 -right-1 p-2 bg-red-500 text-white rounded-full shadow-lg active:scale-90 transition-all"
+            >
               <XIcon className="w-4 h-4" />
             </button>
           )}
         </div>
 
-        <div className="flex-1">
-          <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" id="photo-upload" />
-          <label htmlFor="photo-upload" className="inline-flex items-center px-6 py-3 bg-zinc-900 text-white text-xs font-black uppercase rounded-xl cursor-pointer shadow-lg">
-            {cvData.personalInfo.photo ? 'Change Photo' : 'Choose Photo'}
-          </label>
-          <div className="flex gap-4 mt-3">
+        {/* Controls Area */}
+        <div className="flex-1 w-full space-y-5 text-center sm:text-left">
+          <div>
+            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" id="photo-upload" />
+            <label 
+              htmlFor="photo-upload" 
+              className="inline-flex items-center justify-center px-8 py-4 bg-zinc-900 text-white text-[11px] font-black uppercase tracking-widest rounded-2xl cursor-pointer shadow-xl hover:bg-zinc-800 active:scale-95 transition-all w-full sm:w-auto"
+            >
+              {cvData.personalInfo.photo ? 'Change Photo' : 'Upload Photo'}
+            </label>
+            <p className="text-[10px] text-gray-400 mt-2">Max size: 2MB (JPG, PNG)</p>
+          </div>
+
+          {/* Format Selector */}
+          <div className="flex items-center justify-center sm:justify-start gap-4 p-1 bg-gray-100 rounded-xl w-fit mx-auto sm:mx-0">
             {['circular', 'square'].map((format) => (
-              <label key={format} className="flex items-center gap-2 cursor-pointer">
-                <input type="radio" checked={cvData.personalInfo.photoFormat === format} onChange={() => updatePersonalInfo({ photoFormat: format as 'circular' | 'square' })} className="w-4 h-4" />
-                <span className="text-[11px] font-bold text-zinc-600 uppercase">{format}</span>
-              </label>
+              <button
+                key={format}
+                onClick={() => updatePersonalInfo({ photoFormat: format as 'circular' | 'square' })}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                  cvData.personalInfo.photoFormat === format 
+                    ? 'bg-white text-blue-600 shadow-sm' 
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                <div className={`w-3 h-3 border-2 ${format === 'circular' ? 'rounded-full' : 'rounded-sm'} ${cvData.personalInfo.photoFormat === format ? 'border-blue-600' : 'border-gray-400'}`} />
+                <span className="text-[10px] font-black uppercase tracking-tighter">{format}</span>
+              </button>
             ))}
           </div>
         </div>
