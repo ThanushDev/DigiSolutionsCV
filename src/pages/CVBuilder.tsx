@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCV } from '../context/CVContext';
-// Import paths tika danata thiyena file names walata update kala
+
+// Folder structure ekata anuwa paths fix kala
 import { PersonalInfo } from '../components/PersonalInfo';
 import { ContactDetails } from '../components/ContactDetails';
 import { Skills } from '../components/Skills';
@@ -52,7 +53,7 @@ export function CVBuilder({ onPreview }: CVBuilderProps) {
 
   return (
     <div className="max-w-4xl mx-auto py-12 px-4">
-      {/* Progress Bar */}
+      {/* Progress Steps UI */}
       <div className="mb-12 overflow-x-auto pb-4">
         <div className="flex justify-between min-w-[600px] px-2">
           {steps.map((step, index) => (
