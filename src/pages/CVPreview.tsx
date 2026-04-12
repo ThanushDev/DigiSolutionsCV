@@ -27,7 +27,7 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
 
     try {
       // මෙතන YOUR_IMGBB_API_KEY වෙනුවට ඔයාගේ Key එක දාන්න
-      const apiKey = 'YOUR_IMGBB_API_KEY'; 
+      const apiKey = '43b8bf4b90a4c63f2f931edfc646c148'; 
       const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
         method: 'POST',
         body: formData,
