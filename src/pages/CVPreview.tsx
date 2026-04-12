@@ -199,7 +199,7 @@ export function CVPreview({ onBack }: CVPreviewProps) {
               <p className="text-blue-900 font-bold text-sm mb-3 uppercase tracking-wide">Bank Account Details</p>
               <div className="space-y-1 text-blue-800">
                 <p><span className="font-semibold opacity-70 text-xs">BANK:</span> Bank of Ceylon (BOC)</p>
-                <p><span className="font-semibold opacity-70 text-xs">ACC NO:</span> 123456789</p>
+                <p><span className="font-semibold opacity-70 text-xs">ACC NO:</span> 91691764</p>
                 <p><span className="font-semibold opacity-70 text-xs">NAME:</span> P.T.N. Pathiranage</p>
                 <p className="mt-4 text-2xl font-black text-center text-blue-900">Rs. 100.00</p>
               </div>
