@@ -16,7 +16,7 @@ export function PhotoUpload() {
     formData.append('image', file);
 
     try {
-      const apiKey = 'YOUR_IMGBB_API_KEY'; 
+      const apiKey = 'YOUR_IMGBB_API_KEY'; // මෙතනට ඔයාගේ key එක දාන්න
       const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
         method: 'POST',
         body: formData,
@@ -26,10 +26,10 @@ export function PhotoUpload() {
       if (result.success) {
         updatePersonalInfo({ photo: result.data.url });
       } else {
-        alert("Upload failed: " + result.error.message);
+        alert("Upload failed: " + (result.error?.message || "Unknown error"));
       }
     } catch (error) {
-      alert("Error uploading photo. Please check internet.");
+      alert("Network error. Please try again.");
     } finally {
       setIsUploading(false);
     }
