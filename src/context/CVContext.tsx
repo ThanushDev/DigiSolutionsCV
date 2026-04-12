@@ -38,9 +38,7 @@ export function CVProvider({ children }: { children: React.ReactNode }) {
     if (savedData) {
       try {
         const parsed = JSON.parse(savedData);
-        if (parsed && typeof parsed === 'object') {
-          setCVData(parsed);
-        }
+        if (parsed && typeof parsed === 'object') setCVData(parsed);
       } catch (e) {
         localStorage.removeItem(STORAGE_KEY);
       }
