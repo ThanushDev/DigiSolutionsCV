@@ -1,18 +1,22 @@
 import React from 'react';
 import { CVData } from '../../types/cv';
 
-interface Props { d: CVData; sidebarBg: string; accentColor: string; textColor: string }
+interface Props { d: CVData; sidebarBg: string; accentColor: string; textColor: string; isDefault?: boolean }
 
-const SidebarSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
+const SidebarSection = ({ title, isDefault, children }: { title: string; isDefault?: boolean; children: React.ReactNode }) => (
   <div className="mb-8 text-left">
-    <h3 className="text-[12px] font-black uppercase tracking-widest border-b border-white/20 pb-1 mb-3">{title}</h3>
+    <h3 className={`text-[12px] font-black uppercase tracking-widest border-b pb-1 mb-3 ${isDefault ? 'border-gray-300 text-gray-800' : 'border-white/20 text-white'}`}>
+      {title}
+    </h3>
     {children}
   </div>
 );
 
 const MainSection = ({ title, color, children }: { title: string; color: string; children: React.ReactNode }) => (
   <div className="mb-8 text-left">
-    <h3 className={`text-[13px] font-black uppercase tracking-[0.15em] border-b-2 ${color} pb-1 mb-4`}>{title}</h3>
+    <h3 className={`text-[13px] font-black uppercase tracking-[0.15em] border-b-2 ${color} pb-1 mb-4`}>
+      {title}
+    </h3>
     {children}
   </div>
 );
@@ -32,18 +36,20 @@ const EducationDisplay = ({ title, level }: { title: string; level: any }) => (
   </div>
 );
 
-const ProfessionalLayout = ({ d, sidebarBg, accentColor, textColor }: Props) => (
+const ProfessionalLayout = ({ d, sidebarBg, accentColor, textColor, isDefault }: Props) => (
   <div className="w-[210mm] min-h-[297mm] bg-white flex text-left shadow-2xl">
     {/* Left Sidebar */}
-    <div className={`w-[75mm] ${sidebarBg} text-white p-8 flex flex-col`}>
+    <div className={`w-[75mm] ${sidebarBg} ${isDefault ? 'text-gray-700 border-r border-gray-100' : 'text-white'} p-8 flex flex-col`}>
       <div className="flex justify-center mb-10">
-        <img 
-          src={d.personalInfo.photo || 'https://via.placeholder.com/150'} 
-          className={`w-36 h-36 object-cover border-4 border-white/20 shadow-lg ${d.personalInfo.photoFormat === 'circular' ? 'rounded-full' : 'rounded-2xl'}`} 
-        />
+        <div className={`p-1 rounded-full border-4 ${isDefault ? 'border-blue-500' : 'border-white/20'}`}>
+          <img 
+            src={d.personalInfo.photo || 'https://via.placeholder.com/150'} 
+            className="w-32 h-32 object-cover rounded-full shadow-md" 
+          />
+        </div>
       </div>
 
-      <SidebarSection title="Contact">
+      <SidebarSection title="Contact" isDefault={isDefault}>
         <div className="space-y-3 text-[11px]">
           <div className="flex items-start gap-2"><span>📞</span> <p>{d.contact.phone1} {d.contact.phone2 && <><br/>{d.contact.phone2}</>}</p></div>
           <div className="flex items-start gap-2"><span>✉️</span> <p className="break-all">{d.contact.email}</p></div>
@@ -51,26 +57,26 @@ const ProfessionalLayout = ({ d, sidebarBg, accentColor, textColor }: Props) => 
         </div>
       </SidebarSection>
 
-      <SidebarSection title="Personal Details">
+      <SidebarSection title="Personal Details" isDefault={isDefault}>
         <div className="space-y-2 text-[10px]">
-          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1"><span>Full Name</span><span>:</span><span className="font-bold">{d.personalInfo.fullName}</span></div>
-          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1"><span>Date of Birth</span><span>:</span><span className="font-bold">{d.personalInfo.dateOfBirth}</span></div>
-          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1"><span>NIC Number</span><span>:</span><span className="font-bold">{d.personalInfo.nicNumber}</span></div>
-          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1"><span>Gender</span><span>:</span><span className="font-bold">{d.personalInfo.gender}</span></div>
-          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1"><span>Nationality</span><span>:</span><span className="font-bold">{d.personalInfo.nationality}</span></div>
-          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1"><span>Religion</span><span>:</span><span className="font-bold">{d.personalInfo.religion}</span></div>
-          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1"><span>Civil Status</span><span>:</span><span className="font-bold">{d.personalInfo.civilStatus}</span></div>
+          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1 italic"><span>Full Name</span><span>:</span><span className="font-bold">{d.personalInfo.fullName}</span></div>
+          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1 italic"><span>Date of Birth</span><span>:</span><span className="font-bold">{d.personalInfo.dateOfBirth}</span></div>
+          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1 italic"><span>NIC Number</span><span>:</span><span className="font-bold">{d.personalInfo.nicNumber}</span></div>
+          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1 italic"><span>Gender</span><span>:</span><span className="font-bold">{d.personalInfo.gender}</span></div>
+          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1 italic"><span>Nationality</span><span>:</span><span className="font-bold">{d.personalInfo.nationality}</span></div>
+          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1 italic"><span>Religion</span><span>:</span><span className="font-bold">{d.personalInfo.religion}</span></div>
+          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1 italic"><span>Civil Status</span><span>:</span><span className="font-bold">{d.personalInfo.civilStatus}</span></div>
         </div>
       </SidebarSection>
 
-      <SidebarSection title="Skills">
-        <ul className="text-[11px] space-y-1 list-disc list-inside opacity-90">
+      <SidebarSection title="Skills" isDefault={isDefault}>
+        <ul className="text-[11px] space-y-1 list-disc list-inside">
           {d.skills.map((s, i) => <li key={i}>{s}</li>)}
         </ul>
       </SidebarSection>
 
-      <SidebarSection title="Language">
-        <ul className="text-[11px] space-y-1 list-disc list-inside opacity-90">
+      <SidebarSection title="Language" isDefault={isDefault}>
+        <ul className="text-[11px] space-y-1 list-disc list-inside">
           {d.languages.map((l, i) => <li key={i}>{l}</li>)}
         </ul>
       </SidebarSection>
@@ -78,47 +84,47 @@ const ProfessionalLayout = ({ d, sidebarBg, accentColor, textColor }: Props) => 
 
     {/* Right Main Content */}
     <div className="flex-1 p-12 py-10">
-      <header className="mb-10 text-left">
-        <h1 className={`text-4xl font-black uppercase tracking-tight ${textColor} mb-2 leading-none`}>
+      <header className="mb-10 text-center">
+        <h1 className={`text-3xl font-black uppercase tracking-tight ${isDefault ? 'text-blue-600' : textColor} mb-2 leading-tight`}>
           {d.personalInfo.name}
         </h1>
-        <div className={`h-1 w-20 ${accentColor} mb-6`}></div>
-        <p className="text-[11px] text-gray-600 leading-relaxed italic">{d.personalInfo.description}</p>
+        <p className="text-[12px] text-gray-600 font-medium mb-4">{d.personalInfo.description}</p>
+        <div className={`h-0.5 w-full ${isDefault ? 'bg-blue-600' : accentColor.replace('border', 'bg')} opacity-30`}></div>
       </header>
 
-      <MainSection title="Professional Qualifications" color={accentColor}>
+      <MainSection title="Professional Qualifications" color={isDefault ? 'border-blue-600 text-blue-600' : accentColor + ' ' + textColor}>
         <ul className="space-y-2 ml-1">
           {d.professionalQualifications.map((q, i) => (
-            <li key={i} className="text-[11px] text-gray-700 font-medium flex items-start gap-2">
-              <span className={textColor}>•</span> {q}
+            <li key={i} className="text-[11px] text-gray-700 font-medium flex items-start gap-2 italic">
+              <span className={isDefault ? 'text-blue-600' : textColor}>•</span> {q}
             </li>
           ))}
         </ul>
       </MainSection>
 
-      <MainSection title="Education Qualifications" color={accentColor}>
-        <EducationDisplay title="G.C.E. Advanced Level Examination" level={d.education.aLevel} />
-        <EducationDisplay title="G.C.E. Ordinary Level Examination" level={d.education.oLevel} />
+      <MainSection title="Education Qualifications" color={isDefault ? 'border-blue-600 text-blue-600' : accentColor + ' ' + textColor}>
+        <EducationDisplay title="Advanced Level Examination" level={d.education.aLevel} />
+        <EducationDisplay title="Ordinary Level Examination" level={d.education.oLevel} />
       </MainSection>
 
-      <MainSection title="Work Experience" color={accentColor}>
+      <MainSection title="Work Experience" color={isDefault ? 'border-blue-600 text-blue-600' : accentColor + ' ' + textColor}>
         {d.workExperience.map((ex, i) => (
           <div key={i} className="mb-4">
             <p className="font-bold text-[11px] text-gray-800">{ex.title}</p>
-            <p className="text-[10px] text-gray-500 font-bold uppercase mb-1">{ex.company} ({ex.duration})</p>
-            <p className="text-[11px] text-gray-600 leading-tight">{ex.description}</p>
+            <p className="text-[10px] text-gray-500 font-bold uppercase mb-1">{ex.company}</p>
+            <p className="text-[11px] text-gray-600 leading-tight italic">{ex.description}</p>
           </div>
         ))}
       </MainSection>
 
-      <MainSection title="References" color={accentColor}>
+      <MainSection title="References" color={isDefault ? 'border-blue-600 text-blue-600' : accentColor + ' ' + textColor}>
         <div className="grid grid-cols-2 gap-8 mt-2 text-left">
           {d.references.map((r, i) => (
             <div key={i} className="text-left">
-              <p className="font-bold text-[11px] text-gray-800">{r.name}</p>
-              <p className="text-[10px] text-gray-500">{r.designation}</p>
+              <p className="font-bold text-[11px] text-gray-800 uppercase">{r.name}</p>
+              <p className="text-[10px] text-gray-500 font-medium">{r.designation}</p>
               <p className="text-[10px] text-gray-500">{r.organization}</p>
-              <p className={`text-[10px] font-bold mt-1 ${textColor}`}>Phone: {r.phone}</p>
+              <p className={`text-[10px] font-bold mt-1 ${isDefault ? 'text-blue-500' : textColor}`}>Phone: {r.phone}</p>
             </div>
           ))}
         </div>
@@ -129,7 +135,7 @@ const ProfessionalLayout = ({ d, sidebarBg, accentColor, textColor }: Props) => 
 
 export function TemplateRenderer({ cvData, scale = 1 }: { cvData: CVData; scale?: number }) {
   const configs: Record<number, any> = {
-    1: { sidebar: "bg-[#2c3e50]", accent: "border-gray-300", text: "text-[#2c3e50]" },
+    1: { sidebar: "bg-gray-50", accent: "border-blue-600", text: "text-blue-600", isDefault: true },
     2: { sidebar: "bg-[#1e3a8a]", accent: "border-blue-200", text: "text-blue-900" },
     3: { sidebar: "bg-[#334155]", accent: "border-slate-200", text: "text-slate-800" },
     4: { sidebar: "bg-[#064e3b]", accent: "border-emerald-200", text: "text-emerald-900" },
@@ -150,7 +156,8 @@ export function TemplateRenderer({ cvData, scale = 1 }: { cvData: CVData; scale?
           d={cvData} 
           sidebarBg={theme.sidebar} 
           accentColor={theme.accent} 
-          textColor={theme.text} 
+          textColor={theme.text}
+          isDefault={theme.isDefault}
         />
       </div>
     </div>
