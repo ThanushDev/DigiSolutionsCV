@@ -2,18 +2,52 @@ import React, { useState } from 'react';
 import { useCV } from '../context/CVContext';
 import { TemplateRenderer } from '../components/CVTemplates/TemplateRenderer';
 import { templateThemes } from '../types/cv';
-import { ChevronLeftIcon, PaletteIcon, XIcon, SendIcon, CheckCircle2Icon, UploadIcon } from 'lucide-react';
+import { ChevronLeftIcon, PaletteIcon, XIcon, SendIcon, CheckCircle2Icon, UploadIcon, Loader2 } from 'lucide-react';
 
 export function CVPreview({ onBack }: { onBack: () => void }) {
   const { cvData, setSelectedTemplate } = useCV();
   const [showThemes, setShowThemes] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
-  const [slipUploaded, setSlipUploaded] = useState(false);
+  
+  // පියවරවල් පාලනය කිරීමට අලුත් States
+  const [isUploading, setIsUploading] = useState(false);
+  const [slipUrl, setSlipUrl] = useState(''); 
 
   if (!cvData) return null;
 
+  // ImgBB එකට පින්තූරය Upload කරන Function එක
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      // මෙතන YOUR_IMGBB_API_KEY වෙනුවට ඔයාගේ Key එක දාන්න
+      const apiKey = 'YOUR_IMGBB_API_KEY'; 
+      const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        setSlipUrl(result.data.url); // පින්තූරයේ ලින්ක් එක Save කරගන්නවා
+      } else {
+        alert("Upload failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error uploading:", error);
+      alert("Error uploading image.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const handleWhatsApp = () => {
-    // Userge serama details base64 encode kirima (Reference code eka sadaha)
     const rawData = {
       t: cvData.selectedTemplate,
       n: cvData.personalInfo.name,
@@ -39,13 +73,22 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
 
     const data = btoa(unescape(encodeURIComponent(JSON.stringify(rawData))));
     const adminNumber = "94764781212";
-    window.open(`https://wa.me/${adminNumber}?text=Hi, I have completed my CV. Please process it.%0A%0ASystem Ref: ${data}`, '_blank');
+    
+    // පණිවිඩයට පේමන්ට් ස්ලිප් ලින්ක් එකත් එකතු කරනවා
+    const message = `Hi, I have completed my CV. Please process it.
+    
+Payment Slip: ${slipUrl}
+
+System Ref: ${data}`;
+
+    window.open(`https://wa.me/${adminNumber}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Navigation Bar */}
       <div className="bg-white border-b p-4 sticky top-0 z-20">
-        <div className="max-w-5xl mx-auto flex justify-between">
+        <div className="max-w-5xl auto flex justify-between">
           <button onClick={onBack} className="flex items-center font-bold text-gray-600">
             <ChevronLeftIcon className="mr-1"/> EDIT
           </button>
@@ -82,8 +125,13 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
 
             <div className="mb-6">
               <p className="text-sm text-gray-600 mb-3 text-center">Please upload a screenshot of your payment slip.</p>
-              <label className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-2xl cursor-pointer transition-all ${slipUploaded ? 'bg-green-50 border-green-300' : 'bg-gray-50 hover:bg-gray-100 border-gray-300'}`}>
-                {slipUploaded ? (
+              <label className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-2xl cursor-pointer transition-all ${slipUrl ? 'bg-green-50 border-green-300' : 'bg-gray-50 hover:bg-gray-100 border-gray-300'}`}>
+                {isUploading ? (
+                  <div className="flex flex-col items-center text-blue-600">
+                    <Loader2 className="mb-2 animate-spin" />
+                    <span className="text-sm font-bold uppercase">Uploading...</span>
+                  </div>
+                ) : slipUrl ? (
                   <div className="flex flex-col items-center text-green-600">
                     <CheckCircle2Icon className="mb-2" />
                     <span className="text-sm font-bold uppercase">Slip Uploaded!</span>
@@ -94,14 +142,14 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
                     <span className="text-sm font-bold uppercase">Upload Slip</span>
                   </div>
                 )}
-                <input type="file" className="hidden" onChange={() => setSlipUploaded(true)} />
+                <input type="file" className="hidden" accept="image/*" onChange={handleFileUpload} disabled={isUploading} />
               </label>
             </div>
 
             <button 
               onClick={handleWhatsApp}
-              disabled={!slipUploaded}
-              className={`w-full py-4 rounded-2xl font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all ${slipUploaded ? 'bg-green-600 text-white shadow-lg shadow-green-200' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
+              disabled={!slipUrl || isUploading}
+              className={`w-full py-4 rounded-2xl font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all ${slipUrl ? 'bg-green-600 text-white shadow-lg shadow-green-200' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
             >
               Confirm & Send to WhatsApp
             </button>
@@ -109,7 +157,7 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
         </div>
       )}
 
-      {/* Theme Selector (Keep existing) */}
+      {/* Theme Selector UI */}
       {showThemes && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl p-6 max-w-md w-full">
