@@ -1,64 +1,52 @@
 import React from 'react';
-// ඔයාගේ templates ටික මෙතන import වෙලා ඇතිනේ, ඒ ටික තියාගන්න.
-// උදා: import { Template1 } from './Template1';
+// ඔයාගේ Templates ටික මෙතන import කරගන්න
+import { Template1 } from './Template1';
+import { Template2 } from './Template2';
+import { Template3 } from './Template3';
 
 interface TemplateRendererProps {
   cvData: any;
-  data?: any; // සමහර තැන්වල 'data' ලෙස pass කරන නිසා
+  data?: any; // Admin එකෙන් 'data' විදිහටත් pass කරන නිසා safety එකට
   scale?: number;
 }
 
 export const TemplateRenderer: React.FC<TemplateRendererProps> = ({ cvData, data, scale = 1 }) => {
-  // කොහෙන් දත්ත ආවත් (cvData හෝ data) එකම තැනකට ගන්නවා
-  const rawData = cvData || data;
+  // කොහෙන් දත්ත ආවත් (cvData හෝ data) එකම තැනකට අරගන්නවා
+  const finalData = cvData || data;
 
-  if (!rawData) {
-    return <div className="p-10 text-center text-zinc-400">No data available to preview.</div>;
+  // දත්ත නැත්නම් මුකුත් පෙන්වන්නේ නැහැ
+  if (!finalData) {
+    return null;
   }
 
-  // දත්ත missing වුණත් crash නොවී පේන්න මෙන්න මේ 'safeData' එක හදනවා
-  const safeData = {
-    ...rawData,
-    personalInfo: rawData.personalInfo || {
-      fullName: rawData.fullName || 'N/A',
-      email: rawData.email || '',
-      phone1: rawData.phone1 || '',
-      phone: rawData.phone1 || '',
-      address: rawData.address || '',
-      jobTitle: rawData.jobTitle || '',
-      linkedin: rawData.linkedin || '',
-      website: rawData.website || ''
-    },
-    experience: Array.isArray(rawData.experience) ? rawData.experience : [],
-    education: Array.isArray(rawData.education) ? rawData.education : [],
-    skills: Array.isArray(rawData.skills) ? rawData.skills : []
-  };
-
-  // මෙතන තමයි වැදගත්ම දේ: ඔයාගේ templates වලට දත්ත යවද්දී 'data' prop එක විදිහට මේ safeData එකම යවන්න.
-  const renderTemplate = () => {
-    const templateId = safeData.templateId || 'template-1';
+  // මෙතන තමයි වැදගත්ම දේ: 
+  // User generate කරපු CV එකේ තියෙන templateId එක අනුව අදාළ Template එක තෝරනවා.
+  const renderSelectedTemplate = () => {
+    const templateId = finalData.templateId || 'template-1';
 
     switch (templateId) {
       case 'template-1':
-        // return <Template1 data={safeData} />; // මෙහෙම තියෙන්න ඕනේ
+        return <Template1 data={finalData} />;
       case 'template-2':
-        // return <Template2 data={safeData} />;
+        return <Template2 data={finalData} />;
+      case 'template-3':
+        return <Template3 data={finalData} />;
+      // තව templates තියෙනවා නම් මෙතනට add කරගන්න
       default:
-        // return <Template1 data={safeData} />;
-        return <div className="p-20 bg-white shadow-xl">
-          <h1 className="text-4xl font-bold">{safeData.personalInfo.fullName}</h1>
-          <p className="text-zinc-500">{safeData.personalInfo.jobTitle}</p>
-          <hr className="my-4" />
-          <p>Email: {safeData.personalInfo.email}</p>
-          <p>Phone: {safeData.personalInfo.phone1}</p>
-          {/* මේක නිකන් placeholder එකක්, ඔයාගේ switch logic එක මෙතනට දාන්න */}
-        </div>;
+        return <Template1 data={finalData} />;
     }
   };
 
   return (
-    <div style={{ transform: `scale(${scale})`, transformOrigin: 'top center' }}>
-      {renderTemplate()}
+    <div 
+      className="template-renderer-container"
+      style={{ 
+        transform: `scale(${scale})`, 
+        transformOrigin: 'top center',
+        width: '100%' 
+      }}
+    >
+      {renderSelectedTemplate()}
     </div>
   );
 };
