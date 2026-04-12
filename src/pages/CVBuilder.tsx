@@ -36,57 +36,36 @@ export function CVBuilder({ onPreview }: CVBuilderProps) {
     }
   };
 
-  const handleNext = () => {
-    if (currentStep === 8) {
-      onPreview();
-    } else {
-      setCurrentStep(currentStep + 1);
-    }
-  };
-
-  const steps = [
-    'Personal', 'Contact', 'Skills', 'Languages', 
-    'Experience', 'Education', 'Qualifications', 'References'
-  ];
+  const steps = ['Personal', 'Contact', 'Skills', 'Languages', 'Experience', 'Education', 'Qualifications', 'References'];
 
   return (
-    <div className="max-w-4xl mx-auto py-12 px-4">
-      <div className="mb-12 overflow-x-auto pb-4">
-        <div className="flex justify-between min-w-[600px] px-2">
-          {steps.map((step, index) => (
-            <div 
-              key={index}
-              className={`flex flex-col items-center min-w-[80px] ${
-                index + 1 === currentStep ? 'text-blue-600' : 'text-gray-400'
-              }`}
-            >
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 font-bold ${
-                index + 1 === currentStep ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
-              }`}>
-                {index + 1}
-              </div>
-              <span className="text-[10px] font-bold uppercase tracking-wider whitespace-nowrap">{step}</span>
+    <div className="max-w-4xl mx-auto py-10 px-4">
+      <div className="flex justify-between mb-8 overflow-x-auto pb-4 gap-4">
+        {steps.map((step, idx) => (
+          <div key={idx} className={`text-center min-w-[80px] ${idx + 1 === currentStep ? 'text-blue-600 font-bold' : 'text-gray-400'}`}>
+            <div className={`w-8 h-8 rounded-full mx-auto flex items-center justify-center mb-1 ${idx + 1 === currentStep ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}>
+              {idx + 1}
             </div>
-          ))}
-        </div>
+            <span className="text-[10px] uppercase">{step}</span>
+          </div>
+        ))}
       </div>
 
-      <div className="bg-white rounded-3xl shadow-xl p-8 border border-gray-100">
+      <div className="bg-white rounded-2xl shadow-lg p-6 md:p-10 border border-gray-100">
         {renderStep()}
-        
-        <div className="mt-12 flex justify-between items-center pt-8 border-t border-gray-100">
-          <button
+        <div className="mt-10 flex justify-between pt-6 border-t">
+          <button 
+            disabled={currentStep === 1} 
             onClick={() => setCurrentStep(currentStep - 1)}
-            disabled={currentStep === 1}
-            className="px-8 py-3 text-gray-500 font-bold hover:text-black disabled:opacity-30 transition-all uppercase tracking-widest text-sm"
+            className="px-6 py-2 text-gray-500 disabled:opacity-30"
           >
             Back
           </button>
-          <button
-            onClick={handleNext}
-            className="px-10 py-4 bg-blue-600 text-white rounded-2xl font-black shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all uppercase tracking-widest text-sm"
+          <button 
+            onClick={() => currentStep === 8 ? onPreview() : setCurrentStep(currentStep + 1)}
+            className="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold"
           >
-            {currentStep === 8 ? 'PREVIEW CV' : 'NEXT STEP'}
+            {currentStep === 8 ? 'Preview CV' : 'Next Step'}
           </button>
         </div>
       </div>
