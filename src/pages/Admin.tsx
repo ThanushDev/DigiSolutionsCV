@@ -21,33 +21,34 @@ export function Admin() {
       const jsonString = atob(cleanCode);
       const data = JSON.parse(jsonString);
 
-      // ඉතාමත් වැදගත්: Template එක crash නොවී තිබීමට අවශ්‍ය කරන 
-      // සියලුම "Key Names" මෙතනදී අපි සකස් කරනවා.
+      // මෙතනදී අපි දත්ත structure දෙකකටම හදනවා. 
+      // සමහර templates කෙලින්ම data එක ඉල්ලනවා, සමහර ඒවා object එකක් ඇතුළේ ඉල්ලනවා.
       const mappedData = {
+        // Structure 1: Nested (පැරණි විදිහ)
         personalInfo: {
           fullName: data.n || '',
           email: data.e || '',
-          // Template එක phone1 ඉල්ලන නිසා අපි මේ Keys දෙකම දාමු
-          phone1: data.p || '', 
-          phone2: data.p2 || '',
-          phone: data.p || '', 
+          phone1: data.p || '',
+          phone: data.p || '',
           address: data.a || '',
           jobTitle: data.j || '',
-          linkedin: data.l || '',
-          website: data.w || '',
         },
+        // Structure 2: Flat (Template එක කෙලින්ම cvData.phone1 හෙව්වොත් මේක වැඩ කරයි)
+        fullName: data.n || '',
+        email: data.e || '',
+        phone1: data.p || '',
+        phone: data.p || '',
         experience: data.ex || [],
         education: data.ed || [],
         skills: data.s || [],
-        // Template ID එක අංකයක් ද අකුරක් ද කියලා චෙක් කරනවා
         templateId: data.t ? (data.t.toString().includes('template') ? data.t : `template-${data.t}`) : 'template-1'
       };
 
-      console.log("Verified & Mapped Data:", mappedData);
+      console.log("Final Safety Mapped Data:", mappedData);
       setDecodedData(mappedData);
     } catch (error) {
-      console.error("Critical Decode Error:", error);
-      alert("Invalid Code! Please make sure you copied the entire system reference.");
+      console.error("Decode Error:", error);
+      alert("Invalid Code!");
     }
   };
 
@@ -59,71 +60,68 @@ export function Admin() {
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
       pdf.addImage(imgData, 'PNG', 0, 0, 210, (canvas.height * 210) / canvas.width);
-      pdf.save(`Verified_CV_${decodedData?.personalInfo?.fullName || 'User'}.pdf`);
+      pdf.save(`DigiSolutions_Verified_${decodedData?.fullName || 'CV'}.pdf`);
     } catch (e) {
-      alert("PDF generation failed.");
+      alert("PDF Error!");
     } finally {
       setIsExporting(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 p-4 font-sans">
-      <div className="max-w-4xl mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden border border-slate-200">
-        <div className="bg-slate-900 p-6 text-white flex justify-between items-center shadow-md">
+    <div className="min-h-screen bg-zinc-50 p-4 font-sans text-zinc-900">
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-zinc-900 rounded-3xl p-6 mb-6 text-white flex items-center justify-between shadow-2xl border border-zinc-800">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-500 rounded-lg">
-              <ShieldCheckIcon size={24} className="text-white" />
-            </div>
-            <h1 className="font-black text-lg tracking-tight uppercase">Digi Solutions Admin</h1>
+            <ShieldCheckIcon className="text-blue-400" />
+            <h1 className="font-black tracking-tighter text-xl italic">DIGI SOLUTIONS ADMIN</h1>
           </div>
           {decodedData && (
             <button 
               onClick={handleExportPDF}
               disabled={isExporting}
-              className="bg-blue-600 hover:bg-blue-700 px-6 py-2.5 rounded-xl flex items-center gap-2 text-sm font-bold shadow-lg shadow-blue-500/30 transition-all active:scale-95"
+              className="bg-white text-black px-6 py-2 rounded-xl font-bold text-sm hover:bg-blue-400 transition-all flex items-center gap-2"
             >
-              {isExporting ? <Loader2Icon className="animate-spin" size={18} /> : <DownloadIcon size={18} />}
-              {isExporting ? 'EXPORTING...' : 'DOWNLOAD PDF'}
+              {isExporting ? <Loader2Icon className="animate-spin" size={16} /> : <DownloadIcon size={16} />}
+              SAVE PDF
             </button>
           )}
         </div>
 
-        <div className="p-6">
-          <div className="mb-6">
-            <label className="text-xs font-black text-slate-500 uppercase tracking-widest mb-2 block">WhatsApp System Reference</label>
-            <textarea 
-              className="w-full h-32 p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl font-mono text-xs focus:border-blue-500 focus:bg-white outline-none transition-all"
-              placeholder="Paste code here..."
-              value={inputCode}
-              onChange={(e) => setInputCode(e.target.value)}
-            />
-            <button 
-              onClick={handleVerify}
-              className="mt-3 w-full bg-slate-900 text-white py-4 rounded-2xl font-black tracking-widest hover:bg-black transition-all shadow-xl active:scale-[0.98]"
-            >
-              VERIFY & PREVIEW CV
-            </button>
-          </div>
+        <div className="bg-white rounded-3xl p-6 shadow-xl border border-zinc-100">
+          <textarea 
+            className="w-full h-32 p-4 bg-zinc-50 border-2 border-zinc-100 rounded-2xl mb-4 font-mono text-[10px] focus:border-blue-500 outline-none"
+            placeholder="Paste code here..."
+            value={inputCode}
+            onChange={(e) => setInputCode(e.target.value)}
+          />
+          <button 
+            onClick={handleVerify}
+            className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg"
+          >
+            DECODE & VERIFY
+          </button>
 
-          {decodedData ? (
-            <div className="mt-8 space-y-6">
-              <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 flex items-center gap-3">
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-                <span className="text-blue-900 font-bold text-sm">Now Rendering: {decodedData.personalInfo.fullName}</span>
+          {decodedData && (
+            <div className="mt-8 animate-in fade-in zoom-in duration-500">
+              <div className="bg-zinc-100 p-4 rounded-2xl mb-6 border border-zinc-200">
+                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Active Session</p>
+                <p className="font-bold text-zinc-800">{decodedData.fullName}</p>
               </div>
 
-              {/* CV Rendering Area */}
-              <div className="bg-slate-200 rounded-3xl p-4 sm:p-10 flex justify-center overflow-hidden min-h-[600px] border-4 border-white shadow-inner">
-                <div ref={cvRef} className="bg-white shadow-2xl origin-top scale-[0.55] sm:scale-100 transition-transform duration-500">
+              {/* CV Preview Container */}
+              <div className="bg-zinc-200 rounded-[2rem] p-4 sm:p-10 flex justify-center border-4 border-white shadow-inner overflow-hidden">
+                <div ref={cvRef} className="bg-white shadow-2xl origin-top scale-[0.5] sm:scale-100 min-h-[1123px] w-[794px]">
                   <TemplateRenderer cvData={decodedData} scale={1} />
                 </div>
               </div>
             </div>
-          ) : (
-            <div className="py-24 text-center border-2 border-dashed border-slate-200 rounded-3xl">
-              <AlertTriangleIcon className="mx-auto mb-4 text-slate-200" size={64} />
-              <p className="text-slate-400 font-medium">Please enter a valid reference code to begin verification.</p>
+          )}
+
+          {!decodedData && (
+            <div className="py-20 text-center opacity-20">
+              <AlertTriangleIcon className="mx-auto mb-2" size={48} />
+              <p className="font-bold uppercase tracking-widest text-xs">Awaiting Reference Code</p>
             </div>
           )}
         </div>
