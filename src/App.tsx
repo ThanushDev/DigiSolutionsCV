@@ -1,24 +1,31 @@
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { TemplateSelection } from './pages/TemplateSelection';
-import { CVBuilder } from './pages/CVBuilder';
-import { CVPreview } from './pages/CVPreview';
-import { Admin } from './pages/Admin';
+import React from 'react';
+import { CVProvider } from './context/CVContext'; // පාර නිවැරදිද බලන්න
+import { CVBuilder } from './pages/CVBuilder';    // ඔයාගේ main page එක
+import { CVPreview } from './pages/CVPreview';    // Preview page එක
 
-export function App() {
+function AppContent() {
+  // මෙතන තමයි ඔයාගේ navigation logic එක තියෙන්නේ
+  // උදාහරණයක් විදිහට:
+  const [showPreview, setShowPreview] = React.useState(false);
+
   return (
-    <Router>
-      <Routes>
-        {/* Admin පේජ් එක මුලින්ම පරීක්ෂා කෙරේ */}
-        <Route path="/admin" element={<Admin />} />
-        
-        {/* ප්‍රධාන routes */}
-        <Route path="/" element={<TemplateSelection />} />
-        <Route path="/builder" element={<CVBuilder />} />
-        <Route path="/preview" element={<CVPreview />} />
-        
-        {/* වෙනත් ඕනෑම path එකක් ආවොත් main page එකට redirect කරයි */}
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
-    </Router>
+    <>
+      {showPreview ? (
+        <CVPreview onBack={() => setShowPreview(false)} />
+      ) : (
+        <CVBuilder onPreview={() => setShowPreview(true)} />
+      )}
+    </>
   );
 }
+
+function App() {
+  return (
+    // මුළු App එකම මේ CVProvider එක ඇතුළේ තිබිය යුතුමයි!
+    <CVProvider>
+      <AppContent />
+    </CVProvider>
+  );
+}
+
+export default App;
