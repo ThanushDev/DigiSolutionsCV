@@ -2,21 +2,44 @@ import React, { useState } from 'react';
 import { useCV } from '../context/CVContext';
 import { TemplateRenderer } from '../components/CVTemplates/TemplateRenderer';
 import { templateThemes } from '../types/cv';
-import { ChevronLeftIcon, PaletteIcon, XIcon, SendIcon } from 'lucide-react';
+import { ChevronLeftIcon, PaletteIcon, XIcon, SendIcon, CheckCircle2Icon, UploadIcon } from 'lucide-react';
 
 export function CVPreview({ onBack }: { onBack: () => void }) {
   const { cvData, setSelectedTemplate } = useCV();
   const [showThemes, setShowThemes] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
+  const [slipUploaded, setSlipUploaded] = useState(false);
 
   if (!cvData) return null;
 
   const handleWhatsApp = () => {
-    const data = btoa(unescape(encodeURIComponent(JSON.stringify({
-      n: cvData.personalInfo.name,
+    // Userge serama details base64 encode kirima (Reference code eka sadaha)
+    const rawData = {
       t: cvData.selectedTemplate,
-      e: cvData.contact.email
-    }))));
-    window.open(`https://wa.me/94700000000?text=System%20Ref:%20${data}`, '_blank');
+      n: cvData.personalInfo.name,
+      fn: cvData.personalInfo.fullName,
+      j: cvData.personalInfo.description,
+      db: cvData.personalInfo.dateOfBirth,
+      ni: cvData.personalInfo.nicNumber,
+      rl: cvData.personalInfo.religion,
+      cs: cvData.personalInfo.civilStatus,
+      gn: cvData.personalInfo.gender,
+      nt: cvData.personalInfo.nationality,
+      p1: cvData.contact.phone1,
+      p2: cvData.contact.phone2,
+      e: cvData.contact.email,
+      a: cvData.contact.address,
+      s: cvData.skills,
+      l: cvData.languages,
+      ex: cvData.workExperience,
+      ed: cvData.education,
+      pq: cvData.professionalQualifications,
+      r: cvData.references
+    };
+
+    const data = btoa(unescape(encodeURIComponent(JSON.stringify(rawData))));
+    const adminNumber = "94764781212";
+    window.open(`https://wa.me/${adminNumber}?text=Hi, I have completed my CV. Please process it.%0A%0ASystem Ref: ${data}`, '_blank');
   };
 
   return (
@@ -28,7 +51,7 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
           </button>
           <div className="flex gap-2">
             <button onClick={() => setShowThemes(true)} className="p-2 bg-gray-100 rounded-lg"><PaletteIcon/></button>
-            <button onClick={handleWhatsApp} className="bg-green-600 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2">
+            <button onClick={() => setShowPayment(true)} className="bg-green-600 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2">
               <SendIcon size={18}/> SEND
             </button>
           </div>
@@ -39,11 +62,59 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
         <TemplateRenderer cvData={cvData} scale={0.7} />
       </div>
 
+      {/* Payment Modal */}
+      {showPayment && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl">
+            <div className="flex justify-between items-start mb-6">
+              <h3 className="text-2xl font-black italic uppercase tracking-tight">Payment Details</h3>
+              <button onClick={() => setShowPayment(false)} className="p-1 hover:bg-gray-100 rounded-full"><XIcon/></button>
+            </div>
+            
+            <div className="bg-zinc-50 border-2 border-dashed border-zinc-200 rounded-2xl p-5 mb-6">
+              <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3">Bank Transfer Info</p>
+              <div className="space-y-2">
+                <div className="flex justify-between"><span className="text-gray-500">Bank:</span><span className="font-bold">BOC</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">Account No:</span><span className="font-bold">87654321</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">Name:</span><span className="font-bold">Digi Solutions</span></div>
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <p className="text-sm text-gray-600 mb-3 text-center">Please upload a screenshot of your payment slip.</p>
+              <label className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-2xl cursor-pointer transition-all ${slipUploaded ? 'bg-green-50 border-green-300' : 'bg-gray-50 hover:bg-gray-100 border-gray-300'}`}>
+                {slipUploaded ? (
+                  <div className="flex flex-col items-center text-green-600">
+                    <CheckCircle2Icon className="mb-2" />
+                    <span className="text-sm font-bold uppercase">Slip Uploaded!</span>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center text-gray-400">
+                    <UploadIcon className="mb-2" />
+                    <span className="text-sm font-bold uppercase">Upload Slip</span>
+                  </div>
+                )}
+                <input type="file" className="hidden" onChange={() => setSlipUploaded(true)} />
+              </label>
+            </div>
+
+            <button 
+              onClick={handleWhatsApp}
+              disabled={!slipUploaded}
+              className={`w-full py-4 rounded-2xl font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all ${slipUploaded ? 'bg-green-600 text-white shadow-lg shadow-green-200' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
+            >
+              Confirm & Send to WhatsApp
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Theme Selector (Keep existing) */}
       {showThemes && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl p-6 max-w-md w-full">
-            <div className="flex justify-between mb-4">
-              <h3 className="font-bold">Select Template</h3>
+            <div className="flex justify-between mb-4 text-sm font-bold uppercase">
+              <h3>Select Template</h3>
               <button onClick={() => setShowThemes(false)}><XIcon/></button>
             </div>
             <div className="grid grid-cols-1 gap-3">
@@ -51,9 +122,9 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
                 <button 
                   key={t.id} 
                   onClick={() => { setSelectedTemplate(t.id); setShowThemes(false); }}
-                  className={`p-4 border-2 rounded-xl text-left ${cvData.selectedTemplate === t.id ? 'border-blue-600 bg-blue-50' : 'border-gray-100'}`}
+                  className={`p-4 border-2 rounded-xl text-left transition-all ${cvData.selectedTemplate === t.id ? 'border-blue-600 bg-blue-50' : 'border-gray-100 hover:border-gray-300'}`}
                 >
-                  {t.name}
+                  <span className="font-bold uppercase tracking-wider">{t.name}</span>
                 </button>
               ))}
             </div>
