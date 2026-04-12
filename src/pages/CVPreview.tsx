@@ -44,42 +44,36 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
   };
 
   const handleWhatsApp = () => {
-    const rawData = {
+    // URL එක දිග වැඩි වීම වැලැක්වීමට keys කෙටි කරන ලදී
+    const shortData = {
       t: cvData.selectedTemplate,
-      n: cvData.personalInfo.name,
-      fn: cvData.personalInfo.fullName,
-      j: cvData.personalInfo.description,
-      db: cvData.personalInfo.dateOfBirth,
-      ni: cvData.personalInfo.nicNumber,
-      rl: cvData.personalInfo.religion,
-      cs: cvData.personalInfo.civilStatus,
-      gn: cvData.personalInfo.gender,
-      nt: cvData.personalInfo.nationality,
-
-      // මේ ටික මම අලුතින් එකතු කළා - Profile Photo එක PDF එකට ගන්න මේක ඕනේ
-      ph: cvData.personalInfo.photo, 
-      pf: cvData.personalInfo.photoFormat,
-
-      p1: cvData.contact.phone1,
-      p2: cvData.contact.phone2,
-      e: cvData.contact.email,
-      a: cvData.contact.address,
-      s: cvData.skills,
-      l: cvData.languages,
+      pi: { 
+        n: cvData.personalInfo.name,
+        fn: cvData.personalInfo.fullName,
+        d: cvData.personalInfo.description,
+        db: cvData.personalInfo.dateOfBirth,
+        ni: cvData.personalInfo.nicNumber,
+        r: cvData.personalInfo.religion,
+        c: cvData.personalInfo.civilStatus,
+        g: cvData.personalInfo.gender,
+        nt: cvData.personalInfo.nationality,
+        ph: cvData.personalInfo.photo, 
+        pf: cvData.personalInfo.photoFormat,
+      },
+      co: { p1: cvData.contact.phone1, p2: cvData.contact.phone2, e: cvData.contact.email, a: cvData.contact.address },
+      sk: cvData.skills,
+      la: cvData.languages,
       ex: cvData.workExperience,
       ed: cvData.education,
       pq: cvData.professionalQualifications,
-      r: cvData.references
+      re: cvData.references
     };
 
-    const data = btoa(unescape(encodeURIComponent(JSON.stringify(rawData))));
+    const data = btoa(unescape(encodeURIComponent(JSON.stringify(shortData))));
     const adminNumber = "94764781212";
     
-    const message = `Hi, I have completed my CV. Please process it.
-    
-Payment Slip: ${slipUrl}
-
-System Ref: ${data}`;
+    // WhatsApp URL length එක ඉතිරි කර ගැනීමට පණිවිඩය සරල කරන ලදී
+    const message = `Hi, I have completed my CV.\n\nSlip: ${slipUrl}\n\nRef: ${data}`;
 
     window.open(`https://wa.me/${adminNumber}?text=${encodeURIComponent(message)}`, '_blank');
   };
