@@ -83,7 +83,7 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
           <div className="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-bold italic">PAYMENT DETAILS</h3>
+              <h3 className="text-xl font-bold italic text-gray-800">PAYMENT DETAILS</h3>
               <button onClick={() => setShowPaymentModal(false)} className="text-gray-400 hover:text-black">
                 <XIcon className="w-6 h-6" />
               </button>
@@ -95,7 +95,7 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
             </div>
             <label className="block p-8 border-2 border-dashed border-gray-200 rounded-2xl text-center cursor-pointer mb-6 hover:bg-zinc-50 transition-all">
               {slipImage ? (
-                <img src={slipImage} className="h-40 mx-auto rounded-lg" alt="Slip" />
+                <img src={slipImage} className="h-40 mx-auto rounded-lg shadow-md" alt="Slip" />
               ) : (
                 <div className="text-gray-400 font-bold flex flex-col items-center gap-2">
                   <CameraIcon size={30} />
@@ -107,7 +107,7 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
             <button 
               disabled={!slipImage} 
               onClick={sendToWhatsApp} 
-              className="w-full py-5 bg-[#25D366] text-white rounded-2xl font-black shadow-xl flex items-center justify-center gap-2 hover:bg-[#20ba59] active:scale-95 disabled:bg-gray-200"
+              className="w-full py-5 bg-[#25D366] text-white rounded-2xl font-black shadow-xl flex items-center justify-center gap-2 hover:bg-[#20ba59] active:scale-95 disabled:bg-gray-300 transition-all"
             >
               <SendIcon className="w-5 h-5" /> SEND TO WHATSAPP
             </button>
