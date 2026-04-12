@@ -6,69 +6,54 @@ import { ChevronLeftIcon, PaletteIcon, XIcon, SendIcon } from 'lucide-react';
 
 export function CVPreview({ onBack }: { onBack: () => void }) {
   const { cvData, setSelectedTemplate } = useCV();
-  const [showThemeSelector, setShowThemeSelector] = useState(false);
+  const [showThemes, setShowThemes] = useState(false);
 
   if (!cvData) return null;
 
-  const sendToWhatsApp = () => {
-    const essentialData = {
+  const handleWhatsApp = () => {
+    const data = btoa(unescape(encodeURIComponent(JSON.stringify({
       n: cvData.personalInfo.name,
       t: cvData.selectedTemplate,
-      p: cvData.contact.phone1,
-      e: cvData.contact.email,
-      // ... anith data tika encode karanna
-    };
-    const jsonStr = JSON.stringify(essentialData);
-    const base64 = btoa(unescape(encodeURIComponent(jsonStr)));
-    const message = `System Ref: ${base64}`;
-    window.open(`https://wa.me/94701234567?text=${encodeURIComponent(message)}`, '_blank');
+      e: cvData.contact.email
+    }))));
+    window.open(`https://wa.me/94700000000?text=System%20Ref:%20${data}`, '_blank');
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 pb-20">
-      <div className="bg-white border-b sticky top-0 z-30 px-4 py-4">
-        <div className="max-w-5xl mx-auto flex justify-between items-center">
-          <button onClick={onBack} className="flex items-center gap-2 text-gray-600 font-bold">
-            <ChevronLeftIcon size={20}/> EDIT
+    <div className="min-h-screen bg-gray-50">
+      <div className="bg-white border-b p-4 sticky top-0 z-20">
+        <div className="max-w-5xl mx-auto flex justify-between">
+          <button onClick={onBack} className="flex items-center font-bold text-gray-600">
+            <ChevronLeftIcon className="mr-1"/> EDIT
           </button>
-          <div className="flex gap-3">
-            <button 
-              onClick={() => setShowThemeSelector(true)}
-              className="bg-gray-100 p-3 rounded-xl hover:bg-gray-200 transition-all"
-            >
-              <PaletteIcon size={20}/>
-            </button>
-            <button 
-              onClick={sendToWhatsApp}
-              className="bg-green-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg"
-            >
+          <div className="flex gap-2">
+            <button onClick={() => setShowThemes(true)} className="p-2 bg-gray-100 rounded-lg"><PaletteIcon/></button>
+            <button onClick={handleWhatsApp} className="bg-green-600 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2">
               <SendIcon size={18}/> SEND
             </button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto p-4 flex justify-center mt-8">
-        <div className="bg-white shadow-2xl p-4 md:p-8 rounded-lg overflow-x-auto w-full flex justify-center">
-           <TemplateRenderer cvData={cvData} scale={0.8} />
-        </div>
+      <div className="py-10">
+        <TemplateRenderer cvData={cvData} scale={0.7} />
       </div>
 
-      {showThemeSelector && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="bg-white rounded-3xl max-w-2xl w-full p-8">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold">SELECT STYLE</h2>
-              <button onClick={() => setShowThemeSelector(false)}><XIcon/></button>
+      {showThemes && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full">
+            <div className="flex justify-between mb-4">
+              <h3 className="font-bold">Select Template</h3>
+              <button onClick={() => setShowThemes(false)}><XIcon/></button>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              {templateThemes.map((theme) => (
+            <div className="grid grid-cols-1 gap-3">
+              {templateThemes.map(t => (
                 <button 
-                  key={theme.id}
-                  onClick={() => { setSelectedTemplate(theme.id); setShowThemeSelector(false); }}
-                  className={`p-4 rounded-xl border-2 ${cvData.selectedTemplate === theme.id ? 'border-blue-500' : 'border-gray-100'}`}
+                  key={t.id} 
+                  onClick={() => { setSelectedTemplate(t.id); setShowThemes(false); }}
+                  className={`p-4 border-2 rounded-xl text-left ${cvData.selectedTemplate === t.id ? 'border-blue-600 bg-blue-50' : 'border-gray-100'}`}
                 >
-                  {theme.name}
+                  {t.name}
                 </button>
               ))}
             </div>
