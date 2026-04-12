@@ -114,6 +114,7 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
                 <div className="flex justify-between"><span className="text-gray-500">Bank:</span><span className="font-bold">Bank of Ceylon</span></div>
                 <div className="flex justify-between"><span className="text-gray-500">Account No:</span><span className="font-bold">91691764</span></div>
                 <div className="flex justify-between"><span className="text-gray-500">Name:</span><span className="font-bold">PTN Pathiranage</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">Price:</span><span className="font-bold">Rs.100/=</span></div>
               </div>
             </div>
 
