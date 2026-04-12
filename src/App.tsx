@@ -1,34 +1,27 @@
-import React, { useState } from 'react';
-import { CVProvider } from './context/CVContext';
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { TemplateSelection } from './pages/TemplateSelection';
 import { CVBuilder } from './pages/CVBuilder';
 import { CVPreview } from './pages/CVPreview';
-type Page = 'templates' | 'builder' | 'preview';
-function CVApp() {
-  const [currentPage, setCurrentPage] = useState<Page>('templates');
-  const renderPage = () => {
-    switch (currentPage) {
-      case 'templates':
-        return <TemplateSelection onNext={() => setCurrentPage('builder')} />;
-      case 'builder':
-        return (
-          <CVBuilder
-            onBack={() => setCurrentPage('templates')}
-            onNext={() => setCurrentPage('preview')} />);
+import { Admin } from './pages/Admin'; // Admin import එක තියෙනවා නේද බලන්න
 
-
-      case 'preview':
-        return <CVPreview onBack={() => setCurrentPage('builder')} />;
-      default:
-        return null;
-    }
-  };
-  return <div className="min-h-screen bg-gray-100">{renderPage()}</div>;
-}
-export function App() {
+function App() {
   return (
-    <CVProvider>
-      <CVApp />
-    </CVProvider>);
-
+    // basename එක GitHub Repo නමට සමාන විය යුතුයි
+    <Router>
+      <Routes>
+        {/* Admin route එක හැමවිටම ඉහළින් තියන්න */}
+        <Route path="/admin" element={<Admin />} />
+        
+        {/* අනෙක් routes */}
+        <Route path="/" element={<TemplateSelection />} />
+        <Route path="/builder" element={<CVBuilder />} />
+        <Route path="/preview" element={<CVPreview />} />
+        
+        {/* වැරදි path එකක් ආවොත් main page එකට යවන්න */}
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </Router>
+  );
 }
+
+export default App;
