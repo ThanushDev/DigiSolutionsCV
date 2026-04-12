@@ -52,7 +52,7 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
           <div className="flex gap-2">
             <button onClick={() => setShowThemes(true)} className="p-2 bg-gray-100 rounded-lg"><PaletteIcon/></button>
             <button onClick={() => setShowPayment(true)} className="bg-green-600 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2">
-              <SendIcon size={18}/> SEND
+              <SendIcon size={18}/> Download Your CV
             </button>
           </div>
         </div>
@@ -74,9 +74,9 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
             <div className="bg-zinc-50 border-2 border-dashed border-zinc-200 rounded-2xl p-5 mb-6">
               <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3">Bank Transfer Info</p>
               <div className="space-y-2">
-                <div className="flex justify-between"><span className="text-gray-500">Bank:</span><span className="font-bold">BOC</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Account No:</span><span className="font-bold">87654321</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Name:</span><span className="font-bold">Digi Solutions</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">Bank:</span><span className="font-bold">Bank of Ceylon</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">Account No:</span><span className="font-bold">91691764</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">Name:</span><span className="font-bold">PTN Pathiranage</span></div>
               </div>
             </div>
 
