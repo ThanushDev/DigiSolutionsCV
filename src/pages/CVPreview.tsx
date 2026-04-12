@@ -9,24 +9,20 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
   const [showThemes, setShowThemes] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
   
-  // පියවරවල් පාලනය කිරීමට අලුත් States
   const [isUploading, setIsUploading] = useState(false);
   const [slipUrl, setSlipUrl] = useState(''); 
 
   if (!cvData) return null;
 
-  // ImgBB එකට පින්තූරය Upload කරන Function එක
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setIsUploading(true);
-
     const formData = new FormData();
     formData.append('image', file);
 
     try {
-      // මෙතන YOUR_IMGBB_API_KEY වෙනුවට ඔයාගේ Key එක දාන්න
       const apiKey = '43b8bf4b90a4c63f2f931edfc646c148'; 
       const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
         method: 'POST',
@@ -35,7 +31,7 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
 
       const result = await response.json();
       if (result.success) {
-        setSlipUrl(result.data.url); // පින්තූරයේ ලින්ක් එක Save කරගන්නවා
+        setSlipUrl(result.data.url);
       } else {
         alert("Upload failed. Please try again.");
       }
@@ -59,6 +55,11 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
       cs: cvData.personalInfo.civilStatus,
       gn: cvData.personalInfo.gender,
       nt: cvData.personalInfo.nationality,
+
+      // මේ ටික මම අලුතින් එකතු කළා - Profile Photo එක PDF එකට ගන්න මේක ඕනේ
+      ph: cvData.personalInfo.photo, 
+      pf: cvData.personalInfo.photoFormat,
+
       p1: cvData.contact.phone1,
       p2: cvData.contact.phone2,
       e: cvData.contact.email,
@@ -74,7 +75,6 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
     const data = btoa(unescape(encodeURIComponent(JSON.stringify(rawData))));
     const adminNumber = "94764781212";
     
-    // පණිවිඩයට පේමන්ට් ස්ලිප් ලින්ක් එකත් එකතු කරනවා
     const message = `Hi, I have completed my CV. Please process it.
     
 Payment Slip: ${slipUrl}
@@ -86,9 +86,8 @@ System Ref: ${data}`;
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Navigation Bar */}
       <div className="bg-white border-b p-4 sticky top-0 z-20">
-        <div className="max-w-5xl auto flex justify-between">
+        <div className="max-w-5xl mx-auto flex justify-between">
           <button onClick={onBack} className="flex items-center font-bold text-gray-600">
             <ChevronLeftIcon className="mr-1"/> EDIT
           </button>
@@ -105,7 +104,6 @@ System Ref: ${data}`;
         <TemplateRenderer cvData={cvData} scale={0.7} />
       </div>
 
-      {/* Payment Modal */}
       {showPayment && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl">
@@ -157,7 +155,6 @@ System Ref: ${data}`;
         </div>
       )}
 
-      {/* Theme Selector UI */}
       {showThemes && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl p-6 max-w-md w-full">
