@@ -21,23 +21,24 @@ export function Admin() {
       const jsonString = atob(cleanCode);
       const data = JSON.parse(jsonString);
 
-      // මෙතනදී අපි දත්ත structure දෙකකටම හදනවා. 
-      // සමහර templates කෙලින්ම data එක ඉල්ලනවා, සමහර ඒවා object එකක් ඇතුළේ ඉල්ලනවා.
-      const mappedData = {
-        // Structure 1: Nested (පැරණි විදිහ)
-        personalInfo: {
-          fullName: data.n || '',
-          email: data.e || '',
-          phone1: data.p || '',
-          phone: data.p || '',
-          address: data.a || '',
-          jobTitle: data.j || '',
-        },
-        // Structure 2: Flat (Template එක කෙලින්ම cvData.phone1 හෙව්වොත් මේක වැඩ කරයි)
+      // CRITICAL FIX: Template එක ඇතුළේ undefined error එක නවත්තන්න 
+      // අපි "Safe Object" එකක් හදමු.
+      const safePersonalInfo = {
         fullName: data.n || '',
         email: data.e || '',
         phone1: data.p || '',
+        phone2: data.p2 || '',
         phone: data.p || '',
+        address: data.a || '',
+        jobTitle: data.j || '',
+        linkedin: data.l || '',
+        website: data.w || ''
+      };
+
+      const mappedData = {
+        // මේ structure දෙකම දාන්නේ template එක කොහොම ඉල්ලුවත් crash නොවෙන්න
+        personalInfo: safePersonalInfo,
+        ...safePersonalInfo, 
         experience: data.ex || [],
         education: data.ed || [],
         skills: data.s || [],
@@ -48,7 +49,7 @@ export function Admin() {
       setDecodedData(mappedData);
     } catch (error) {
       console.error("Decode Error:", error);
-      alert("Invalid Code!");
+      alert("Invalid Reference Code!");
     }
   };
 
@@ -60,7 +61,7 @@ export function Admin() {
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
       pdf.addImage(imgData, 'PNG', 0, 0, 210, (canvas.height * 210) / canvas.width);
-      pdf.save(`DigiSolutions_Verified_${decodedData?.fullName || 'CV'}.pdf`);
+      pdf.save(`CV_Export.pdf`);
     } catch (e) {
       alert("PDF Error!");
     } finally {
@@ -69,49 +70,51 @@ export function Admin() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 p-4 font-sans text-zinc-900">
+    <div className="min-h-screen bg-zinc-50 p-4">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-zinc-900 rounded-3xl p-6 mb-6 text-white flex items-center justify-between shadow-2xl border border-zinc-800">
+        <div className="bg-zinc-900 rounded-2xl p-5 mb-6 text-white flex items-center justify-between shadow-xl">
           <div className="flex items-center gap-3">
-            <ShieldCheckIcon className="text-blue-400" />
-            <h1 className="font-black tracking-tighter text-xl italic">DIGI SOLUTIONS ADMIN</h1>
+            <ShieldCheckIcon className="text-emerald-400" size={28} />
+            <h1 className="font-bold text-lg tracking-tight">DIGI SOLUTIONS ADMIN</h1>
           </div>
           {decodedData && (
             <button 
               onClick={handleExportPDF}
               disabled={isExporting}
-              className="bg-white text-black px-6 py-2 rounded-xl font-bold text-sm hover:bg-blue-400 transition-all flex items-center gap-2"
+              className="bg-emerald-500 hover:bg-emerald-600 px-5 py-2 rounded-xl font-bold text-sm flex items-center gap-2 transition-all active:scale-95"
             >
               {isExporting ? <Loader2Icon className="animate-spin" size={16} /> : <DownloadIcon size={16} />}
-              SAVE PDF
+              DOWNLOAD CV
             </button>
           )}
         </div>
 
         <div className="bg-white rounded-3xl p-6 shadow-xl border border-zinc-100">
           <textarea 
-            className="w-full h-32 p-4 bg-zinc-50 border-2 border-zinc-100 rounded-2xl mb-4 font-mono text-[10px] focus:border-blue-500 outline-none"
+            className="w-full h-32 p-4 bg-zinc-50 border-2 border-zinc-100 rounded-2xl mb-4 font-mono text-[10px] focus:border-emerald-500 outline-none transition-all"
             placeholder="Paste code here..."
             value={inputCode}
             onChange={(e) => setInputCode(e.target.value)}
           />
           <button 
             onClick={handleVerify}
-            className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg"
+            className="w-full bg-zinc-900 text-white py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-black transition-all shadow-lg active:scale-[0.99]"
           >
-            DECODE & VERIFY
+            VERIFY REFERENCE
           </button>
 
           {decodedData && (
-            <div className="mt-8 animate-in fade-in zoom-in duration-500">
-              <div className="bg-zinc-100 p-4 rounded-2xl mb-6 border border-zinc-200">
-                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Active Session</p>
-                <p className="font-bold text-zinc-800">{decodedData.fullName}</p>
+            <div className="mt-10 animate-in fade-in zoom-in duration-300">
+              <div className="bg-emerald-50 p-4 rounded-2xl mb-6 border border-emerald-100 flex items-center gap-3">
+                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-ping" />
+                <span className="text-emerald-900 font-bold text-sm underline decoration-emerald-200 decoration-2">
+                   Live Preview: {decodedData.fullName}
+                </span>
               </div>
 
-              {/* CV Preview Container */}
-              <div className="bg-zinc-200 rounded-[2rem] p-4 sm:p-10 flex justify-center border-4 border-white shadow-inner overflow-hidden">
-                <div ref={cvRef} className="bg-white shadow-2xl origin-top scale-[0.5] sm:scale-100 min-h-[1123px] w-[794px]">
+              <div className="bg-zinc-200 rounded-[2.5rem] p-4 sm:p-8 flex justify-center border-4 border-white shadow-inner overflow-hidden min-h-[500px]">
+                {/* CV Render Area */}
+                <div ref={cvRef} className="bg-white shadow-2xl origin-top scale-[0.5] sm:scale-100 w-[794px]">
                   <TemplateRenderer cvData={decodedData} scale={1} />
                 </div>
               </div>
@@ -119,9 +122,9 @@ export function Admin() {
           )}
 
           {!decodedData && (
-            <div className="py-20 text-center opacity-20">
-              <AlertTriangleIcon className="mx-auto mb-2" size={48} />
-              <p className="font-bold uppercase tracking-widest text-xs">Awaiting Reference Code</p>
+            <div className="py-20 text-center opacity-10">
+              <AlertTriangleIcon className="mx-auto mb-2" size={64} />
+              <p className="font-black text-xs uppercase tracking-tighter">Waiting for Data...</p>
             </div>
           )}
         </div>
