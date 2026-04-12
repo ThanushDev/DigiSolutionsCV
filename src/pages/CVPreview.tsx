@@ -45,6 +45,7 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
 
   const handleWhatsApp = () => {
     // URL එක දිග වැඩි වීම වැලැක්වීමට keys කෙටි කරන ලදී
+    // වැදගත්: ph: (photo) එක දැන් ImgBB link එකක් නිසා URL එක දිග වෙන්නේ නැහැ
     const shortData = {
       t: cvData.selectedTemplate,
       pi: { 
@@ -69,10 +70,11 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
       re: cvData.references
     };
 
+    // JSON string එක base64 වලට convert කිරීම
     const data = btoa(unescape(encodeURIComponent(JSON.stringify(shortData))));
     const adminNumber = "94764781212";
     
-    // WhatsApp URL length එක ඉතිරි කර ගැනීමට පණිවිඩය සරල කරන ලදී
+    // WhatsApp URL එක හැදීම (පැහැදිලිව පේළි වෙන් කර ඇත)
     const message = `Hi, I have completed my CV.\n\nSlip: ${slipUrl}\n\nRef: ${data}`;
 
     window.open(`https://wa.me/${adminNumber}?text=${encodeURIComponent(message)}`, '_blank');
@@ -94,7 +96,7 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
         </div>
       </div>
 
-      <div className="py-10">
+      <div className="py-10 flex justify-center overflow-x-auto">
         <TemplateRenderer cvData={cvData} scale={0.7} />
       </div>
 
