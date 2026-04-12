@@ -1,16 +1,14 @@
 import React from 'react';
 import { useCV } from '../context/CVContext';
-
-// Okkoma files src/pages/ folder eke thiyena nisa path eka mehema wenna ona:
-import { PersonalInfo } from './PersonalInfo';
-import { ContactDetails } from './ContactDetails';
-import { Skills } from './Skills';
-import { WorkExperience } from './WorkExperience';
-import { Education } from './Education';
-import { ProfessionalQualifications } from './ProfessionalQualifications';
-import { References } from './References';
-import { Languages } from './Languages';
-import { PhotoUpload } from './PhotoUpload';
+import { PersonalInfo } from '../components/FormSections/PersonalInfo';
+import { ContactDetails } from '../components/FormSections/ContactDetails';
+import { Skills } from '../components/FormSections/Skills';
+import { WorkExperience } from '../components/FormSections/WorkExperience';
+import { Education } from '../components/FormSections/Education';
+import { ProfessionalQualifications } from '../components/FormSections/ProfessionalQualifications';
+import { References } from '../components/FormSections/References';
+import { Languages } from '../components/FormSections/Languages';
+import { PhotoUpload } from '../components/FormSections/PhotoUpload';
 
 interface CVBuilderProps {
   onPreview: () => void;
@@ -53,7 +51,6 @@ export function CVBuilder({ onPreview }: CVBuilderProps) {
 
   return (
     <div className="max-w-4xl mx-auto py-12 px-4">
-      {/* Progress Bar */}
       <div className="mb-12 overflow-x-auto pb-4">
         <div className="flex justify-between min-w-[600px] px-2">
           {steps.map((step, index) => (
