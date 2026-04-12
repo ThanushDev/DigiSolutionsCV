@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useCV } from '../context/CVContext';
 import { TemplateRenderer } from '../components/CVTemplates/TemplateRenderer';
 import { templateThemes } from '../types/cv';
-import { ChevronLeftIcon, PaletteIcon, XIcon, SendIcon, CheckCircle2Icon, UploadIcon, Loader2 } from 'lucide-react';
+import { ChevronLeftIcon, PaletteIcon, XIcon, SendIcon, CheckCircle2Icon, UploadIcon, Loader2, Landmark, Copy } from 'lucide-react';
 
 export function CVPreview({ onBack }: { onBack: () => void }) {
   const { cvData, setSelectedTemplate } = useCV();
@@ -44,8 +44,6 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
   };
 
   const handleWhatsApp = () => {
-    // URL එක දිග වැඩි වීම වැලැක්වීමට keys කෙටි කරන ලදී
-    // වැදගත්: ph: (photo) එක දැන් ImgBB link එකක් නිසා URL එක දිග වෙන්නේ නැහැ
     const shortData = {
       t: cvData.selectedTemplate,
       pi: { 
@@ -70,71 +68,104 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
       re: cvData.references
     };
 
-    // JSON string එක base64 වලට convert කිරීම
     const data = btoa(unescape(encodeURIComponent(JSON.stringify(shortData))));
     const adminNumber = "94764781212";
-    
-    // WhatsApp URL එක හැදීම (පැහැදිලිව පේළි වෙන් කර ඇත)
     const message = `Hi, I have completed my CV.\n\nSlip: ${slipUrl}\n\nRef: ${data}`;
 
     window.open(`https://wa.me/${adminNumber}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b p-4 sticky top-0 z-20">
-        <div className="max-w-5xl mx-auto flex justify-between">
-          <button onClick={onBack} className="flex items-center font-bold text-gray-600">
-            <ChevronLeftIcon className="mr-1"/> EDIT
+    <div className="min-h-screen bg-zinc-100 flex flex-col">
+      {/* Top Navbar */}
+      <div className="bg-white/80 backdrop-blur-md border-b sticky top-0 z-30 p-4">
+        <div className="max-w-5xl mx-auto flex items-center justify-between">
+          <button onClick={onBack} className="flex items-center text-xs font-black text-zinc-500 uppercase tracking-widest hover:text-zinc-900 transition-colors">
+            <ChevronLeftIcon className="mr-1 w-4 h-4"/> Back
           </button>
+          
           <div className="flex gap-2">
-            <button onClick={() => setShowThemes(true)} className="p-2 bg-gray-100 rounded-lg"><PaletteIcon/></button>
-            <button onClick={() => setShowPayment(true)} className="bg-green-600 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2">
-              <SendIcon size={18}/> Download Your CV
+            <button 
+              onClick={() => setShowThemes(true)} 
+              className="p-3 bg-zinc-100 text-zinc-600 rounded-2xl hover:bg-zinc-200 transition-all active:scale-90"
+            >
+              <PaletteIcon size={20}/>
+            </button>
+            <button 
+              onClick={() => setShowPayment(true)} 
+              className="bg-blue-600 text-white px-6 py-3 rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all"
+            >
+              <SendIcon size={16}/> Download
             </button>
           </div>
         </div>
       </div>
 
-      <div className="py-10 flex justify-center overflow-x-auto">
-        <TemplateRenderer cvData={cvData} scale={0.7} />
+      {/* CV Preview Area */}
+      <div className="flex-1 py-8 px-4 flex justify-center items-start overflow-x-auto">
+        <div className="shadow-2xl shadow-zinc-300 origin-top transform scale-[0.6] sm:scale-[0.8] md:scale-100 transition-transform">
+          <TemplateRenderer cvData={cvData} scale={1} />
+        </div>
       </div>
 
+      {/* Payment Modal */}
       {showPayment && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl">
-            <div className="flex justify-between items-start mb-6">
-              <h3 className="text-2xl font-black italic uppercase tracking-tight">Payment Details</h3>
-              <button onClick={() => setShowPayment(false)} className="p-1 hover:bg-gray-100 rounded-full"><XIcon/></button>
+        <div className="fixed inset-0 bg-zinc-900/60 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white rounded-t-[2.5rem] sm:rounded-[2.5rem] p-8 max-w-md w-full shadow-2xl animate-in slide-in-from-bottom-10 duration-500">
+            <div className="flex justify-between items-center mb-8">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-50 rounded-xl">
+                  <Landmark className="text-blue-600 w-5 h-5" />
+                </div>
+                <h3 className="text-xl font-black uppercase tracking-tighter text-zinc-800">Payment</h3>
+              </div>
+              <button onClick={() => setShowPayment(false)} className="p-2 bg-zinc-100 rounded-full hover:bg-zinc-200 transition-colors">
+                <XIcon size={20}/>
+              </button>
             </div>
             
-            <div className="bg-zinc-50 border-2 border-dashed border-zinc-200 rounded-2xl p-5 mb-6">
-              <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3">Bank Transfer Info</p>
-              <div className="space-y-2">
-                <div className="flex justify-between"><span className="text-gray-500">Bank:</span><span className="font-bold">Bank of Ceylon</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Account No:</span><span className="font-bold">91691764</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Name:</span><span className="font-bold">PTN Pathiranage</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Price:</span><span className="font-bold">Rs.500/=</span></div>
+            <div className="bg-zinc-50 rounded-[2rem] p-6 border border-zinc-100 mb-8 space-y-4">
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-zinc-400 font-bold uppercase text-[10px] tracking-widest">Bank</span>
+                  <span className="font-bold text-zinc-800">Bank of Ceylon</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-zinc-400 font-bold uppercase text-[10px] tracking-widest">Account</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-zinc-800">91691764</span>
+                    <Copy size={14} className="text-zinc-300 cursor-pointer"/>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-zinc-400 font-bold uppercase text-[10px] tracking-widest">Name</span>
+                  <span className="font-bold text-zinc-800">PTN Pathiranage</span>
+                </div>
+                <div className="pt-3 border-t border-zinc-200 flex justify-between items-center">
+                  <span className="text-zinc-800 font-black uppercase text-[12px]">Amount</span>
+                  <span className="font-black text-xl text-blue-600">Rs.500/=</span>
+                </div>
               </div>
             </div>
 
-            <div className="mb-6">
-              <p className="text-sm text-gray-600 mb-3 text-center">Please upload a screenshot of your payment slip.</p>
-              <label className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-2xl cursor-pointer transition-all ${slipUrl ? 'bg-green-50 border-green-300' : 'bg-gray-50 hover:bg-gray-100 border-gray-300'}`}>
+            <div className="mb-8">
+              <label className={`group flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-[2rem] cursor-pointer transition-all duration-300 ${slipUrl ? 'bg-green-50/50 border-green-200' : 'bg-zinc-50 hover:bg-zinc-100 border-zinc-200'}`}>
                 {isUploading ? (
                   <div className="flex flex-col items-center text-blue-600">
-                    <Loader2 className="mb-2 animate-spin" />
-                    <span className="text-sm font-bold uppercase">Uploading...</span>
+                    <Loader2 className="mb-2 animate-spin w-8 h-8" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">Uploading...</span>
                   </div>
                 ) : slipUrl ? (
                   <div className="flex flex-col items-center text-green-600">
-                    <CheckCircle2Icon className="mb-2" />
-                    <span className="text-sm font-bold uppercase">Slip Uploaded!</span>
+                    <CheckCircle2Icon className="mb-2 w-8 h-8" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">Slip Attached</span>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center text-gray-400">
-                    <UploadIcon className="mb-2" />
-                    <span className="text-sm font-bold uppercase">Upload Slip</span>
+                  <div className="flex flex-col items-center text-zinc-400 group-hover:text-zinc-600">
+                    <div className="p-3 bg-white rounded-2xl shadow-sm mb-3">
+                      <UploadIcon size={24} />
+                    </div>
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">Upload Payment Slip</span>
                   </div>
                 )}
                 <input type="file" className="hidden" accept="image/*" onChange={handleFileUpload} disabled={isUploading} />
@@ -144,29 +175,42 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
             <button 
               onClick={handleWhatsApp}
               disabled={!slipUrl || isUploading}
-              className={`w-full py-4 rounded-2xl font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all ${slipUrl ? 'bg-green-600 text-white shadow-lg shadow-green-200' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
+              className={`w-full py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-3 transition-all ${
+                slipUrl 
+                ? 'bg-zinc-900 text-white shadow-xl shadow-zinc-200 active:scale-[0.98]' 
+                : 'bg-zinc-100 text-zinc-400 cursor-not-allowed'
+              }`}
             >
-              Confirm & Send to WhatsApp
+              Confirm Order
+              <SendIcon size={16}/>
             </button>
           </div>
         </div>
       )}
 
+      {/* Themes Modal */}
       {showThemes && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full">
-            <div className="flex justify-between mb-4 text-sm font-bold uppercase">
-              <h3>Select Template</h3>
-              <button onClick={() => setShowThemes(false)}><XIcon/></button>
+        <div className="fixed inset-0 bg-zinc-900/60 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white rounded-t-[2.5rem] sm:rounded-[2.5rem] p-8 max-w-md w-full animate-in slide-in-from-bottom-10 duration-500">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-black uppercase tracking-tighter text-zinc-800 ml-1">Select Template</h3>
+              <button onClick={() => setShowThemes(false)} className="p-2 bg-zinc-100 rounded-full"><XIcon size={20}/></button>
             </div>
             <div className="grid grid-cols-1 gap-3">
               {templateThemes.map(t => (
                 <button 
                   key={t.id} 
                   onClick={() => { setSelectedTemplate(t.id); setShowThemes(false); }}
-                  className={`p-4 border-2 rounded-xl text-left transition-all ${cvData.selectedTemplate === t.id ? 'border-blue-600 bg-blue-50' : 'border-gray-100 hover:border-gray-300'}`}
+                  className={`p-5 border-2 rounded-2xl text-left transition-all flex items-center justify-between ${
+                    cvData.selectedTemplate === t.id 
+                    ? 'border-blue-600 bg-blue-50/50' 
+                    : 'border-zinc-100 hover:border-zinc-300 bg-zinc-50/50'
+                  }`}
                 >
-                  <span className="font-bold uppercase tracking-wider">{t.name}</span>
+                  <span className={`font-black uppercase text-xs tracking-widest ${cvData.selectedTemplate === t.id ? 'text-blue-600' : 'text-zinc-600'}`}>
+                    {t.name}
+                  </span>
+                  {cvData.selectedTemplate === t.id && <CheckCircle2Icon size={18} className="text-blue-600" />}
                 </button>
               ))}
             </div>
