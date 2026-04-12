@@ -119,9 +119,10 @@ export function TemplateSelection({ onNext }: TemplateSelectionProps) {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-center gap-3">
               <img
-                src={${import.meta.env.BASE_URL}logo.png}
+                src={`${import.meta.env.BASE_URL}logo.png`}
                 alt="FCBS Digi Kuppiya"
-                className="h-12 sm:h-16 w-auto" />
+                className="h-12 sm:h-16 w-auto" 
+              />
               
               <div>
                 <h1 className="text-lg sm:text-2xl font-bold text-gray-900">
