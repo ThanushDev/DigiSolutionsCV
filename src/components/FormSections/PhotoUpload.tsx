@@ -16,8 +16,7 @@ export function PhotoUpload() {
     formData.append('image', file);
 
     try {
-      // මෙතනට ඔයාගේ ImgBB API Key එක දාන්න
-      const apiKey = '1b5c606199da18b5de25fd667bab38ea';
+      const apiKey = 'YOUR_IMGBB_API_KEY'; 
       const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
         method: 'POST',
         body: formData,
@@ -25,15 +24,12 @@ export function PhotoUpload() {
 
       const result = await response.json();
       if (result.success) {
-        updatePersonalInfo({
-          photo: result.data.url // ImgBB URL එක save කරනවා
-        });
+        updatePersonalInfo({ photo: result.data.url });
       } else {
-        alert("Photo upload failed!");
+        alert("Upload failed: " + result.error.message);
       }
     } catch (error) {
-      console.error("Error:", error);
-      alert("Error uploading photo.");
+      alert("Error uploading photo. Please check internet.");
     } finally {
       setIsUploading(false);
     }
@@ -47,7 +43,6 @@ export function PhotoUpload() {
   return (
     <div className="space-y-4">
       <label className="block text-sm font-medium text-gray-700">Profile Photo</label>
-
       <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
         <div className="relative mx-auto sm:mx-0">
           <div className={`w-28 h-28 sm:w-32 sm:h-32 bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden ${cvData.personalInfo.photoFormat === 'circular' ? 'rounded-full' : 'rounded-2xl'}`}>
@@ -71,22 +66,18 @@ export function PhotoUpload() {
           <label htmlFor="photo-upload" className={`inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none cursor-pointer ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
             {cvData.personalInfo.photo ? 'Change Photo' : 'Upload Photo'}
           </label>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-600">Photo Format</label>
-            <div className="flex gap-4">
-              {['circular', 'square'].map((format) => (
-                <label key={format} className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    checked={cvData.personalInfo.photoFormat === format}
-                    onChange={() => updatePersonalInfo({ photoFormat: format as 'circular' | 'square' })}
-                    className="w-4 h-4 text-blue-600"
-                  />
-                  <span className="text-sm text-gray-700 capitalize">{format}</span>
-                </label>
-              ))}
-            </div>
+          <div className="flex gap-4">
+            {['circular', 'square'].map((format) => (
+              <label key={format} className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  checked={cvData.personalInfo.photoFormat === format}
+                  onChange={() => updatePersonalInfo({ photoFormat: format as 'circular' | 'square' })}
+                  className="w-4 h-4 text-blue-600"
+                />
+                <span className="text-sm text-gray-700 capitalize">{format}</span>
+              </label>
+            ))}
           </div>
         </div>
       </div>
