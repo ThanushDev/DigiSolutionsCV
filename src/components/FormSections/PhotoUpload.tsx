@@ -11,35 +11,29 @@ export function PhotoUpload() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // 2MB ට වඩා වැඩිද බලනවා (ImgBB limit)
     if (file.size > 2 * 1024 * 1024) {
       alert("File is too large!");
       return;
     }
 
     setIsUploading(true);
-    
     const formData = new FormData();
     formData.append('image', file);
 
     try {
-      // මෙතනට ඔයාගේ API Key එක දාන්න
       const apiKey = '43b8bf4b90a4c63f2f931edfc646c148'; 
       
-      // ලින්ක් එකේ අගට expiration=64800 (පැය 18) එකතු කළා
-      const response = await fetch(`https://api.imgbb.com/1/upload?expiration=64800&key=${apiKey}`, {
+      // expiration අයින් කළා (සැමදා පවතින්න), එවිට ඇඩ්මින්ට ඕනෑම වෙලාවක PDF එක හැදිය හැක.
+      const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
         method: 'POST',
         body: formData,
       });
 
       const result = await response.json();
 
-      // JSON එකේ success: true ද බලනවා
       if (result.success && result.data && result.data.url) {
-        // ඔයා එවල තියෙන JSON එකේ හැටියට result.data.url තමයි image link එක
         updatePersonalInfo({ photo: result.data.url });
       } else {
-        // API එකෙන් එවන ඇත්තම error එක පෙන්වන්න
         const errorMsg = result.error ? result.error.message : "Unknown error";
         alert("Upload Error: " + errorMsg);
       }
