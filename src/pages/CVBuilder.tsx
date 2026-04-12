@@ -1,17 +1,16 @@
 import React from 'react';
 import { useCV } from '../context/CVContext';
 
-// Folder structure ekata anuwa paths fix kala. 
-// Oyaage components thiyenne kelinma src/ folder eke nisa mehemai wenna ona:
-import { PersonalInfo } from '../PersonalInfo';
-import { ContactDetails } from '../ContactDetails';
-import { Skills } from '../Skills';
-import { WorkExperience } from '../WorkExperience';
-import { Education } from '../Education';
-import { ProfessionalQualifications } from '../ProfessionalQualifications';
-import { References } from '../References';
-import { Languages } from '../Languages';
-import { PhotoUpload } from '../PhotoUpload';
+// Okkoma files src/pages/ folder eke thiyena nisa path eka mehema wenna ona:
+import { PersonalInfo } from './PersonalInfo';
+import { ContactDetails } from './ContactDetails';
+import { Skills } from './Skills';
+import { WorkExperience } from './WorkExperience';
+import { Education } from './Education';
+import { ProfessionalQualifications } from './ProfessionalQualifications';
+import { References } from './References';
+import { Languages } from './Languages';
+import { PhotoUpload } from './PhotoUpload';
 
 interface CVBuilderProps {
   onPreview: () => void;
@@ -54,7 +53,7 @@ export function CVBuilder({ onPreview }: CVBuilderProps) {
 
   return (
     <div className="max-w-4xl mx-auto py-12 px-4">
-      {/* Progress Steps UI */}
+      {/* Progress Bar */}
       <div className="mb-12 overflow-x-auto pb-4">
         <div className="flex justify-between min-w-[600px] px-2">
           {steps.map((step, index) => (
