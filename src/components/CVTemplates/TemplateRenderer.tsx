@@ -3,17 +3,15 @@ import { CVData } from '../../types/cv';
 
 interface Props { d: CVData; sidebarBg: string; accentColor: string; textColor: string }
 
-// --- Sub-components for structure ---
-
 const SidebarSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
-  <div className="mb-8">
+  <div className="mb-8 text-left">
     <h3 className="text-[12px] font-black uppercase tracking-widest border-b border-white/20 pb-1 mb-3">{title}</h3>
     {children}
   </div>
 );
 
 const MainSection = ({ title, color, children }: { title: string; color: string; children: React.ReactNode }) => (
-  <div className="mb-8">
+  <div className="mb-8 text-left">
     <h3 className={`text-[13px] font-black uppercase tracking-[0.15em] border-b-2 ${color} pb-1 mb-4`}>{title}</h3>
     {children}
   </div>
@@ -33,8 +31,6 @@ const EducationDisplay = ({ title, level }: { title: string; level: any }) => (
     </div>
   </div>
 );
-
-// --- The Core Layout Engine ---
 
 const ProfessionalLayout = ({ d, sidebarBg, accentColor, textColor }: Props) => (
   <div className="w-[210mm] min-h-[297mm] bg-white flex text-left shadow-2xl">
@@ -57,13 +53,13 @@ const ProfessionalLayout = ({ d, sidebarBg, accentColor, textColor }: Props) => 
 
       <SidebarSection title="Personal Details">
         <div className="space-y-2 text-[10px]">
-          <div className="grid grid-cols-2"><span>Full Name</span><span className="font-bold">: {d.personalInfo.name}</span></div>
-          <div className="grid grid-cols-2"><span>Date of Birth</span><span className="font-bold">: {d.personalInfo.dateOfBirth}</span></div>
-          <div className="grid grid-cols-2"><span>NIC Number</span><span className="font-bold">: {d.personalInfo.nicNumber}</span></div>
-          <div className="grid grid-cols-2"><span>Gender</span><span className="font-bold">: {d.personalInfo.gender}</span></div>
-          <div className="grid grid-cols-2"><span>Nationality</span><span className="font-bold">: {d.personalInfo.nationality}</span></div>
-          <div className="grid grid-cols-2"><span>Religion</span><span className="font-bold">: {d.personalInfo.religion}</span></div>
-          <div className="grid grid-cols-2"><span>Civil Status</span><span className="font-bold">: {d.personalInfo.civilStatus}</span></div>
+          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1"><span>Full Name</span><span>:</span><span className="font-bold">{d.personalInfo.fullName}</span></div>
+          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1"><span>Date of Birth</span><span>:</span><span className="font-bold">{d.personalInfo.dateOfBirth}</span></div>
+          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1"><span>NIC Number</span><span>:</span><span className="font-bold">{d.personalInfo.nicNumber}</span></div>
+          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1"><span>Gender</span><span>:</span><span className="font-bold">{d.personalInfo.gender}</span></div>
+          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1"><span>Nationality</span><span>:</span><span className="font-bold">{d.personalInfo.nationality}</span></div>
+          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1"><span>Religion</span><span>:</span><span className="font-bold">{d.personalInfo.religion}</span></div>
+          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1"><span>Civil Status</span><span>:</span><span className="font-bold">{d.personalInfo.civilStatus}</span></div>
         </div>
       </SidebarSection>
 
@@ -82,9 +78,9 @@ const ProfessionalLayout = ({ d, sidebarBg, accentColor, textColor }: Props) => 
 
     {/* Right Main Content */}
     <div className="flex-1 p-12 py-10">
-      <header className="mb-10">
+      <header className="mb-10 text-left">
         <h1 className={`text-4xl font-black uppercase tracking-tight ${textColor} mb-2 leading-none`}>
-          {d.personalInfo.fullName || d.personalInfo.name}
+          {d.personalInfo.name}
         </h1>
         <div className={`h-1 w-20 ${accentColor} mb-6`}></div>
         <p className="text-[11px] text-gray-600 leading-relaxed italic">{d.personalInfo.description}</p>
@@ -116,9 +112,9 @@ const ProfessionalLayout = ({ d, sidebarBg, accentColor, textColor }: Props) => 
       </MainSection>
 
       <MainSection title="References" color={accentColor}>
-        <div className="grid grid-cols-2 gap-8 mt-2">
+        <div className="grid grid-cols-2 gap-8 mt-2 text-left">
           {d.references.map((r, i) => (
-            <div key={i} className="text-center">
+            <div key={i} className="text-left">
               <p className="font-bold text-[11px] text-gray-800">{r.name}</p>
               <p className="text-[10px] text-gray-500">{r.designation}</p>
               <p className="text-[10px] text-gray-500">{r.organization}</p>
@@ -132,9 +128,8 @@ const ProfessionalLayout = ({ d, sidebarBg, accentColor, textColor }: Props) => 
 );
 
 export function TemplateRenderer({ cvData, scale = 1 }: { cvData: CVData; scale?: number }) {
-  // Configs for 10 Professional Themes based on your screenshot structure
   const configs: Record<number, any> = {
-    1: { sidebar: "bg-[#2c3e50]", accent: "border-gray-300", text: "text-[#2c3e50]" }, // Default Like Screenshot
+    1: { sidebar: "bg-[#2c3e50]", accent: "border-gray-300", text: "text-[#2c3e50]" },
     2: { sidebar: "bg-[#1e3a8a]", accent: "border-blue-200", text: "text-blue-900" },
     3: { sidebar: "bg-[#334155]", accent: "border-slate-200", text: "text-slate-800" },
     4: { sidebar: "bg-[#064e3b]", accent: "border-emerald-200", text: "text-emerald-900" },
