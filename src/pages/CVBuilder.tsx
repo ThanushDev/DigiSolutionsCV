@@ -1,16 +1,17 @@
 import React from 'react';
 import { useCV } from '../context/CVContext';
 
-// Folder structure ekata anuwa paths fix kala
-import { PersonalInfo } from '../components/PersonalInfo';
-import { ContactDetails } from '../components/ContactDetails';
-import { Skills } from '../components/Skills';
-import { WorkExperience } from '../components/WorkExperience';
-import { Education } from '../components/Education';
-import { ProfessionalQualifications } from '../components/ProfessionalQualifications';
-import { References } from '../components/References';
-import { Languages } from '../components/Languages';
-import { PhotoUpload } from '../components/PhotoUpload';
+// Folder structure ekata anuwa paths fix kala. 
+// Oyaage components thiyenne kelinma src/ folder eke nisa mehemai wenna ona:
+import { PersonalInfo } from '../PersonalInfo';
+import { ContactDetails } from '../ContactDetails';
+import { Skills } from '../Skills';
+import { WorkExperience } from '../WorkExperience';
+import { Education } from '../Education';
+import { ProfessionalQualifications } from '../ProfessionalQualifications';
+import { References } from '../References';
+import { Languages } from '../Languages';
+import { PhotoUpload } from '../PhotoUpload';
 
 interface CVBuilderProps {
   onPreview: () => void;
