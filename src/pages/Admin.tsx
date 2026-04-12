@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { TemplateRenderer } from '../components/CVTemplates/TemplateRenderer';
 import { DownloadIcon, ShieldCheckIcon, Loader2 } from 'lucide-react';
 import html2canvas from 'html2canvas';
-import jsPDF from 'jsPDF';
+import jsPDF from 'jspdf'; // මෙතන 'jsPDF' නොව 'jspdf' ලෙස කුඩා අකුරින් තිබිය යුතුයි
 
 export function Admin() {
   const [inputCode, setInputCode] = useState('');
@@ -39,8 +39,7 @@ export function Admin() {
       const canvas = await html2canvas(cvRef.current, { 
         scale: 2, 
         useCORS: true, 
-        allowTaint: false,
-        logging: false 
+        allowTaint: false
       });
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
@@ -56,7 +55,7 @@ export function Admin() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-100 p-6 md:p-10 font-sans">
+    <div className="min-h-screen bg-zinc-100 p-6 md:p-10">
       <div className="max-w-5xl mx-auto">
         <div className="bg-zinc-900 text-white p-6 rounded-3xl mb-8 flex justify-between items-center shadow-2xl">
           <div className="flex items-center gap-3 font-black tracking-tighter text-xl">
@@ -81,7 +80,7 @@ export function Admin() {
             value={inputCode} 
             onChange={(e) => setInputCode(e.target.value)} 
           />
-          <button onClick={handleVerify} className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">
+          <button onClick={handleVerify} className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-700 transition-all">
             Verify & Load Data
           </button>
         </div>
