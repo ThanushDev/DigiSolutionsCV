@@ -4,7 +4,7 @@ import { CVData } from '../../types/cv';
 interface Props { d: CVData; sidebarBg: string; accentColor: string; textColor: string; isDefault?: boolean }
 
 const SidebarSection = ({ title, isDefault, children }: { title: string; isDefault?: boolean; children: React.ReactNode }) => (
-  <div className="mb-8 text-left">
+  <div className="mb-6 md:mb-8 text-left">
     <h3 className={`text-[12px] font-black uppercase tracking-widest border-b pb-1 mb-3 ${isDefault ? 'border-gray-300 text-gray-800' : 'border-white/20 text-white'}`}>
       {title}
     </h3>
@@ -13,7 +13,7 @@ const SidebarSection = ({ title, isDefault, children }: { title: string; isDefau
 );
 
 const MainSection = ({ title, color, children }: { title: string; color: string; children: React.ReactNode }) => (
-  <div className="mb-8 text-left">
+  <div className="mb-6 md:mb-8 text-left">
     <h3 className={`text-[13px] font-black uppercase tracking-[0.15em] border-b-2 ${color} pb-1 mb-4`}>
       {title}
     </h3>
@@ -25,7 +25,7 @@ const EducationDisplay = ({ title, level }: { title: string; level: any }) => (
   <div className="mb-5">
     <p className="font-bold text-[11px] text-gray-800 uppercase tracking-tight">• Passed {title} - {level.year}</p>
     <p className="text-[10px] text-gray-500 ml-3 mb-2 font-medium">Index Number - {level.indexNumber}</p>
-    <div className="grid grid-cols-2 gap-x-10 gap-y-1 ml-3">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-1 ml-3">
       {level.subjects.map((s: any, i: number) => (
         <div key={i} className="flex justify-between text-[11px] border-b border-gray-100 py-0.5">
           <span className="text-gray-600">{s.name}</span>
@@ -37,58 +37,61 @@ const EducationDisplay = ({ title, level }: { title: string; level: any }) => (
 );
 
 const ProfessionalLayout = ({ d, sidebarBg, accentColor, textColor, isDefault }: Props) => (
-  <div className="w-[210mm] min-h-[297mm] bg-white flex text-left shadow-2xl">
-    {/* Left Sidebar */}
-    <div className={`w-[75mm] ${sidebarBg} ${isDefault ? 'text-gray-700 border-r border-gray-100' : 'text-white'} p-8 flex flex-col`}>
-      <div className="flex justify-center mb-10">
+  <div className="w-full max-w-[210mm] min-h-screen md:min-h-[297mm] bg-white flex flex-col md:flex-row text-left shadow-2xl mx-auto overflow-hidden">
+    
+    {/* Sidebar - Mobile: Top, Desktop: Left */}
+    <div className={`w-full md:w-[75mm] ${sidebarBg} ${isDefault ? 'text-gray-700 border-b md:border-b-0 md:border-r border-gray-100' : 'text-white'} p-6 md:p-8 flex flex-col`}>
+      <div className="flex justify-center mb-6 md:mb-10">
         <div className={`p-1 rounded-full border-4 ${isDefault ? 'border-blue-500' : 'border-white/20'}`}>
           <img 
             src={d.personalInfo.photo || 'https://via.placeholder.com/150'} 
-            className="w-32 h-32 object-cover rounded-full shadow-md" 
+            className="w-24 h-24 md:w-32 md:h-32 object-cover rounded-full shadow-md" 
+            alt="Profile"
           />
         </div>
       </div>
 
-      <SidebarSection title="Contact" isDefault={isDefault}>
-        <div className="space-y-3 text-[11px]">
-          <div className="flex items-start gap-2"><span>📞</span> <p>{d.contact.phone1} {d.contact.phone2 && <><br/>{d.contact.phone2}</>}</p></div>
-          <div className="flex items-start gap-2"><span>✉️</span> <p className="break-all">{d.contact.email}</p></div>
-          <div className="flex items-start gap-2"><span>📍</span> <p>{d.contact.address}</p></div>
-        </div>
-      </SidebarSection>
+      {/* Grid for mobile to save space if needed, otherwise standard stacked */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-x-6">
+        <SidebarSection title="Contact" isDefault={isDefault}>
+          <div className="space-y-3 text-[11px]">
+            <div className="flex items-start gap-2"><span>📞</span> <p>{d.contact.phone1} {d.contact.phone2 && <><br/>{d.contact.phone2}</>}</p></div>
+            <div className="flex items-start gap-2"><span>✉️</span> <p className="break-all">{d.contact.email}</p></div>
+            <div className="flex items-start gap-2"><span>📍</span> <p>{d.contact.address}</p></div>
+          </div>
+        </SidebarSection>
 
-      <SidebarSection title="Personal Details" isDefault={isDefault}>
-        <div className="space-y-2 text-[10px]">
-          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1 italic"><span>Full Name</span><span>:</span><span className="font-bold">{d.personalInfo.fullName}</span></div>
-          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1 italic"><span>Date of Birth</span><span>:</span><span className="font-bold">{d.personalInfo.dateOfBirth}</span></div>
-          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1 italic"><span>NIC Number</span><span>:</span><span className="font-bold">{d.personalInfo.nicNumber}</span></div>
-          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1 italic"><span>Gender</span><span>:</span><span className="font-bold">{d.personalInfo.gender}</span></div>
-          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1 italic"><span>Nationality</span><span>:</span><span className="font-bold">{d.personalInfo.nationality}</span></div>
-          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1 italic"><span>Religion</span><span>:</span><span className="font-bold">{d.personalInfo.religion}</span></div>
-          <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1 italic"><span>Civil Status</span><span>:</span><span className="font-bold">{d.personalInfo.civilStatus}</span></div>
-        </div>
-      </SidebarSection>
+        <SidebarSection title="Personal Details" isDefault={isDefault}>
+          <div className="space-y-2 text-[10px]">
+            <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1 italic"><span>Full Name</span><span>:</span><span className="font-bold">{d.personalInfo.fullName}</span></div>
+            <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1 italic"><span>Date of Birth</span><span>:</span><span className="font-bold">{d.personalInfo.dateOfBirth}</span></div>
+            <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1 italic"><span>NIC</span><span>:</span><span className="font-bold">{d.personalInfo.nicNumber}</span></div>
+            <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1 italic"><span>Gender</span><span>:</span><span className="font-bold">{d.personalInfo.gender}</span></div>
+            <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1 italic"><span>Nationality</span><span>:</span><span className="font-bold">{d.personalInfo.nationality}</span></div>
+          </div>
+        </SidebarSection>
 
-      <SidebarSection title="Skills" isDefault={isDefault}>
-        <ul className="text-[11px] space-y-1 list-disc list-inside">
-          {d.skills.map((s, i) => <li key={i}>{s}</li>)}
-        </ul>
-      </SidebarSection>
+        <SidebarSection title="Skills" isDefault={isDefault}>
+          <ul className="text-[11px] grid grid-cols-2 md:grid-cols-1 gap-1 list-disc list-inside">
+            {d.skills.map((s, i) => <li key={i}>{s}</li>)}
+          </ul>
+        </SidebarSection>
 
-      <SidebarSection title="Language" isDefault={isDefault}>
-        <ul className="text-[11px] space-y-1 list-disc list-inside">
-          {d.languages.map((l, i) => <li key={i}>{l}</li>)}
-        </ul>
-      </SidebarSection>
+        <SidebarSection title="Language" isDefault={isDefault}>
+          <ul className="text-[11px] grid grid-cols-2 md:grid-cols-1 gap-1 list-disc list-inside">
+            {d.languages.map((l, i) => <li key={i}>{l}</li>)}
+          </ul>
+        </SidebarSection>
+      </div>
     </div>
 
     {/* Right Main Content */}
-    <div className="flex-1 p-12 py-10">
-      <header className="mb-10 text-center">
-        <h1 className={`text-3xl font-black uppercase tracking-tight ${isDefault ? 'text-blue-600' : textColor} mb-2 leading-tight`}>
+    <div className="flex-1 p-6 md:p-12 py-8 md:py-10 bg-white">
+      <header className="mb-8 md:mb-10 text-center md:text-left">
+        <h1 className={`text-2xl md:text-3xl font-black uppercase tracking-tight ${isDefault ? 'text-blue-600' : textColor} mb-2 leading-tight`}>
           {d.personalInfo.name}
         </h1>
-        <p className="text-[12px] text-gray-600 font-medium mb-4">{d.personalInfo.description}</p>
+        <p className="text-[11px] md:text-[12px] text-gray-600 font-medium mb-4">{d.personalInfo.description}</p>
         <div className={`h-0.5 w-full ${isDefault ? 'bg-blue-600' : accentColor.replace('border', 'bg')} opacity-30`}></div>
       </header>
 
@@ -103,8 +106,8 @@ const ProfessionalLayout = ({ d, sidebarBg, accentColor, textColor, isDefault }:
       </MainSection>
 
       <MainSection title="Education Qualifications" color={isDefault ? 'border-blue-600 text-blue-600' : accentColor + ' ' + textColor}>
-        <EducationDisplay title="Advanced Level Examination" level={d.education.aLevel} />
-        <EducationDisplay title="Ordinary Level Examination" level={d.education.oLevel} />
+        <EducationDisplay title="A/L Examination" level={d.education.aLevel} />
+        <EducationDisplay title="O/L Examination" level={d.education.oLevel} />
       </MainSection>
 
       <MainSection title="Work Experience" color={isDefault ? 'border-blue-600 text-blue-600' : accentColor + ' ' + textColor}>
@@ -118,13 +121,13 @@ const ProfessionalLayout = ({ d, sidebarBg, accentColor, textColor, isDefault }:
       </MainSection>
 
       <MainSection title="References" color={isDefault ? 'border-blue-600 text-blue-600' : accentColor + ' ' + textColor}>
-        <div className="grid grid-cols-2 gap-8 mt-2 text-left">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8 mt-2">
           {d.references.map((r, i) => (
             <div key={i} className="text-left">
               <p className="font-bold text-[11px] text-gray-800 uppercase">{r.name}</p>
               <p className="text-[10px] text-gray-500 font-medium">{r.designation}</p>
-              <p className="text-[10px] text-gray-500">{r.organization}</p>
-              <p className={`text-[10px] font-bold mt-1 ${isDefault ? 'text-blue-500' : textColor}`}>Phone: {r.phone}</p>
+              <p className="text-[10px] text-gray-500 italic">{r.organization}</p>
+              <p className={`text-[10px] font-bold mt-1 ${isDefault ? 'text-blue-500' : textColor}`}>Tel: {r.phone}</p>
             </div>
           ))}
         </div>
@@ -150,8 +153,15 @@ export function TemplateRenderer({ cvData, scale = 1 }: { cvData: CVData; scale?
   const theme = configs[cvData.selectedTemplate] || configs[1];
 
   return (
-    <div className="flex justify-center w-full overflow-hidden">
-      <div style={{ transform: `scale(${scale})`, transformOrigin: 'top center' }}>
+    <div className="flex justify-center w-full px-2 sm:px-0">
+      <div 
+        className="transition-transform duration-300 ease-in-out"
+        style={{ 
+          transform: `scale(${scale})`, 
+          transformOrigin: 'top center',
+          width: scale < 1 ? 'auto' : '100%' 
+        }}
+      >
         <ProfessionalLayout 
           d={cvData} 
           sidebarBg={theme.sidebar} 
