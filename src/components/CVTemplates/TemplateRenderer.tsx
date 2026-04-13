@@ -1,175 +1,199 @@
-import React from 'react';
-import { CVData } from '../../types/cv';
+import React, { useState, useEffect } from 'react';
+import { useCV } from '../context/CVContext';
+import { TemplateRenderer } from '../components/CVTemplates/TemplateRenderer';
+import { templateThemes } from '../types/cv';
+import { ChevronLeftIcon, PaletteIcon, XIcon, SendIcon, CheckCircle2Icon, UploadIcon, Loader2, Landmark, Copy } from 'lucide-react';
 
-interface Props { d: CVData; sidebarBg: string; accentColor: string; textColor: string; isDefault?: boolean }
+export function CVPreview({ onBack }: { onBack: () => void }) {
+  const { cvData, setSelectedTemplate } = useCV();
+  const [showThemes, setShowThemes] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [slipUrl, setSlipUrl] = useState('');
+  
+  // මොබයිල් වලදී scale එක පාලනය කරන්න state එකක්
+  const [previewScale, setPreviewScale] = useState(1);
 
-const SidebarSection = ({ title, isDefault, children }: { title: string; isDefault?: boolean; children: React.ReactNode }) => (
-  <div className="mb-6 md:mb-8 text-left">
-    <h3 className={`text-[12px] font-black uppercase tracking-widest border-b pb-1 mb-3 ${isDefault ? 'border-gray-300 text-gray-800' : 'border-white/20 text-white'}`}>
-      {title}
-    </h3>
-    {children}
-  </div>
-);
+  useEffect(() => {
+    const updateScale = () => {
+      // ඩෙස්ක්ටොප් එකේදී 0.9 ක් හෝ 1.0 ක් පාවිච්චි කරනවා
+      // මොබයිල් (width < 768) වලදී පේජ් එක කැපෙන්නේ නැතුව කියවන්න පුළුවන් මට්ටමට (0.5 - 0.6) පොඩි කරනවා
+      if (window.innerWidth < 768) {
+        setPreviewScale(0.55); 
+      } else {
+        setPreviewScale(0.85);
+      }
+    };
 
-const MainSection = ({ title, color, children }: { title: string; color: string; children: React.ReactNode }) => (
-  <div className="mb-6 md:mb-8 text-left">
-    <h3 className={`text-[13px] font-black uppercase tracking-[0.15em] border-b-2 ${color} pb-1 mb-4`}>
-      {title}
-    </h3>
-    {children}
-  </div>
-);
+    updateScale();
+    window.addEventListener('resize', updateScale);
+    return () => window.removeEventListener('resize', updateScale);
+  }, []);
 
-const EducationDisplay = ({ title, level }: { title: string; level: any }) => (
-  <div className="mb-5">
-    <p className="font-bold text-[11px] text-gray-800 uppercase tracking-tight">• Passed {title} - {level.year}</p>
-    <p className="text-[10px] text-gray-500 ml-3 mb-2 font-medium">Index Number - {level.indexNumber}</p>
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-1 ml-3">
-      {level.subjects.map((s: any, i: number) => (
-        <div key={i} className="flex justify-between text-[11px] border-b border-gray-100 py-0.5">
-          <span className="text-gray-600">{s.name}</span>
-          <span className="font-bold text-gray-800">{s.grade}</span>
-        </div>
-      ))}
-    </div>
-  </div>
-);
+  if (!cvData) return null;
 
-const ProfessionalLayout = ({ d, sidebarBg, accentColor, textColor, isDefault }: Props) => (
-  <div className="w-full max-w-[210mm] min-h-screen md:min-h-[297mm] bg-white flex flex-col md:flex-row text-left shadow-2xl mx-auto overflow-hidden">
-    
-    {/* Sidebar - Mobile: Top, Desktop: Left */}
-    <div className={`w-full md:w-[75mm] ${sidebarBg} ${isDefault ? 'text-gray-700 border-b md:border-b-0 md:border-r border-gray-100' : 'text-white'} p-6 md:p-8 flex flex-col`}>
-      <div className="flex justify-center mb-6 md:mb-10">
-        <div className={`p-1 rounded-full border-4 ${isDefault ? 'border-blue-500' : 'border-white/20'}`}>
-          <img 
-            src={d.personalInfo.photo || 'https://via.placeholder.com/150'} 
-            className="w-24 h-24 md:w-32 md:h-32 object-cover rounded-full shadow-md" 
-            alt="Profile"
-          />
-        </div>
-      </div>
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-      {/* Grid for mobile to save space if needed, otherwise standard stacked */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-x-6">
-        <SidebarSection title="Contact" isDefault={isDefault}>
-          <div className="space-y-3 text-[11px]">
-            <div className="flex items-start gap-2"><span>📞</span> <p>{d.contact.phone1} {d.contact.phone2 && <><br/>{d.contact.phone2}</>}</p></div>
-            <div className="flex items-start gap-2"><span>✉️</span> <p className="break-all">{d.contact.email}</p></div>
-            <div className="flex items-start gap-2"><span>📍</span> <p>{d.contact.address}</p></div>
-          </div>
-        </SidebarSection>
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append('image', file);
 
-        <SidebarSection title="Personal Details" isDefault={isDefault}>
-          <div className="space-y-2 text-[10px]">
-            <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1 italic"><span>Full Name</span><span>:</span><span className="font-bold">{d.personalInfo.fullName}</span></div>
-            <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1 italic"><span>Date of Birth</span><span>:</span><span className="font-bold">{d.personalInfo.dateOfBirth}</span></div>
-            <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1 italic"><span>NIC</span><span>:</span><span className="font-bold">{d.personalInfo.nicNumber}</span></div>
-            <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1 italic"><span>Gender</span><span>:</span><span className="font-bold">{d.personalInfo.gender}</span></div>
-            <div className="grid grid-cols-[1fr_auto_1.5fr] gap-x-1 italic"><span>Nationality</span><span>:</span><span className="font-bold">{d.personalInfo.nationality}</span></div>
-          </div>
-        </SidebarSection>
+    try {
+      const apiKey = '43b8bf4b90a4c63f2f931edfc646c148'; 
+      const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+        method: 'POST',
+        body: formData,
+      });
 
-        <SidebarSection title="Skills" isDefault={isDefault}>
-          <ul className="text-[11px] grid grid-cols-2 md:grid-cols-1 gap-1 list-disc list-inside">
-            {d.skills.map((s, i) => <li key={i}>{s}</li>)}
-          </ul>
-        </SidebarSection>
-
-        <SidebarSection title="Language" isDefault={isDefault}>
-          <ul className="text-[11px] grid grid-cols-2 md:grid-cols-1 gap-1 list-disc list-inside">
-            {d.languages.map((l, i) => <li key={i}>{l}</li>)}
-          </ul>
-        </SidebarSection>
-      </div>
-    </div>
-
-    {/* Right Main Content */}
-    <div className="flex-1 p-6 md:p-12 py-8 md:py-10 bg-white">
-      <header className="mb-8 md:mb-10 text-center md:text-left">
-        <h1 className={`text-2xl md:text-3xl font-black uppercase tracking-tight ${isDefault ? 'text-blue-600' : textColor} mb-2 leading-tight`}>
-          {d.personalInfo.name}
-        </h1>
-        <p className="text-[11px] md:text-[12px] text-gray-600 font-medium mb-4">{d.personalInfo.description}</p>
-        <div className={`h-0.5 w-full ${isDefault ? 'bg-blue-600' : accentColor.replace('border', 'bg')} opacity-30`}></div>
-      </header>
-
-      <MainSection title="Professional Qualifications" color={isDefault ? 'border-blue-600 text-blue-600' : accentColor + ' ' + textColor}>
-        <ul className="space-y-2 ml-1">
-          {d.professionalQualifications.map((q, i) => (
-            <li key={i} className="text-[11px] text-gray-700 font-medium flex items-start gap-2 italic">
-              <span className={isDefault ? 'text-blue-600' : textColor}>•</span> {q}
-            </li>
-          ))}
-        </ul>
-      </MainSection>
-
-      <MainSection title="Education Qualifications" color={isDefault ? 'border-blue-600 text-blue-600' : accentColor + ' ' + textColor}>
-        <EducationDisplay title="A/L Examination" level={d.education.aLevel} />
-        <EducationDisplay title="O/L Examination" level={d.education.oLevel} />
-      </MainSection>
-
-      <MainSection title="Work Experience" color={isDefault ? 'border-blue-600 text-blue-600' : accentColor + ' ' + textColor}>
-        {d.workExperience.map((ex, i) => (
-          <div key={i} className="mb-4">
-            <p className="font-bold text-[11px] text-gray-800">{ex.title}</p>
-            <p className="text-[10px] text-gray-500 font-bold uppercase mb-1">{ex.company}</p>
-            <p className="text-[11px] text-gray-600 leading-tight italic">{ex.description}</p>
-          </div>
-        ))}
-      </MainSection>
-
-      <MainSection title="References" color={isDefault ? 'border-blue-600 text-blue-600' : accentColor + ' ' + textColor}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8 mt-2">
-          {d.references.map((r, i) => (
-            <div key={i} className="text-left">
-              <p className="font-bold text-[11px] text-gray-800 uppercase">{r.name}</p>
-              <p className="text-[10px] text-gray-500 font-medium">{r.designation}</p>
-              <p className="text-[10px] text-gray-500 italic">{r.organization}</p>
-              <p className={`text-[10px] font-bold mt-1 ${isDefault ? 'text-blue-500' : textColor}`}>Tel: {r.phone}</p>
-            </div>
-          ))}
-        </div>
-      </MainSection>
-    </div>
-  </div>
-);
-
-export function TemplateRenderer({ cvData, scale = 1 }: { cvData: CVData; scale?: number }) {
-  const configs: Record<number, any> = {
-    1: { sidebar: "bg-gray-50", accent: "border-blue-600", text: "text-blue-600", isDefault: true },
-    2: { sidebar: "bg-[#1e3a8a]", accent: "border-blue-200", text: "text-blue-900" },
-    3: { sidebar: "bg-[#334155]", accent: "border-slate-200", text: "text-slate-800" },
-    4: { sidebar: "bg-[#064e3b]", accent: "border-emerald-200", text: "text-emerald-900" },
-    5: { sidebar: "bg-zinc-900", accent: "border-zinc-200", text: "text-zinc-900" },
-    6: { sidebar: "bg-[#451a03]", accent: "border-amber-200", text: "text-amber-900" },
-    7: { sidebar: "bg-black", accent: "border-gray-200", text: "text-black" },
-    8: { sidebar: "bg-[#991b1b]", accent: "border-red-200", text: "text-red-900" },
-    9: { sidebar: "bg-[#312e81]", accent: "border-indigo-200", text: "text-indigo-900" },
-    10: { sidebar: "bg-[#854d0e]", accent: "border-yellow-200", text: "text-yellow-900" },
+      const result = await response.json();
+      if (result.success) {
+        setSlipUrl(result.data.url);
+      } else {
+        alert("Upload failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error uploading:", error);
+      alert("Error uploading image.");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
-  const theme = configs[cvData.selectedTemplate] || configs[1];
+  const handleWhatsApp = () => {
+    const shortData = {
+      t: cvData.selectedTemplate,
+      pi: { 
+        n: cvData.personalInfo.name,
+        fn: cvData.personalInfo.fullName,
+        d: cvData.personalInfo.description,
+        db: cvData.personalInfo.dateOfBirth,
+        ni: cvData.personalInfo.nicNumber,
+        r: cvData.personalInfo.religion,
+        c: cvData.personalInfo.civilStatus,
+        g: cvData.personalInfo.gender,
+        nt: cvData.personalInfo.nationality,
+        ph: cvData.personalInfo.photo, 
+        pf: cvData.personalInfo.photoFormat,
+      },
+      co: { p1: cvData.contact.phone1, p2: cvData.contact.phone2, e: cvData.contact.email, a: cvData.contact.address },
+      sk: cvData.skills,
+      la: cvData.languages,
+      ex: cvData.workExperience,
+      ed: cvData.education,
+      pq: cvData.professionalQualifications,
+      re: cvData.references
+    };
+
+    const data = btoa(unescape(encodeURIComponent(JSON.stringify(shortData))));
+    const adminNumber = "94764781212";
+    const message = `Hi, I have completed my CV.\n\nSlip: ${slipUrl}\n\nRef: ${data}`;
+
+    window.open(`https://wa.me/${adminNumber}?text=${encodeURIComponent(message)}`, '_blank');
+  };
 
   return (
-    <div className="flex justify-center w-full px-2 sm:px-0">
-      <div 
-        className="transition-transform duration-300 ease-in-out"
-        style={{ 
-          transform: `scale(${scale})`, 
-          transformOrigin: 'top center',
-          width: scale < 1 ? 'auto' : '100%' 
-        }}
-      >
-        <ProfessionalLayout 
-          d={cvData} 
-          sidebarBg={theme.sidebar} 
-          accentColor={theme.accent} 
-          textColor={theme.text}
-          isDefault={theme.isDefault}
-        />
+    <div className="min-h-screen bg-zinc-100 flex flex-col">
+      {/* Navbar */}
+      <div className="bg-white/80 backdrop-blur-md border-b sticky top-0 z-40 px-4 py-3">
+        <div className="max-w-5xl mx-auto flex items-center justify-between">
+          <button onClick={onBack} className="flex items-center text-[10px] font-black text-zinc-500 uppercase tracking-widest">
+            <ChevronLeftIcon className="mr-1 w-4 h-4"/> Back
+          </button>
+          
+          <div className="flex gap-2">
+            <button onClick={() => setShowThemes(true)} className="p-2.5 bg-zinc-100 text-zinc-600 rounded-xl active:scale-90 transition-all">
+              <PaletteIcon size={18}/>
+            </button>
+            <button onClick={() => setShowPayment(true)} className="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-blue-200 active:scale-95 transition-all">
+              <SendIcon size={14}/> Download
+            </button>
+          </div>
+        </div>
       </div>
+
+      {/* CV Preview Area - මන් මෙතන තමයි ඔයාගේ ප්‍රශ්නය විසඳුවේ */}
+      <div className="flex-1 overflow-x-auto overflow-y-auto bg-zinc-200/50 p-4 md:p-8 flex justify-center">
+        <div 
+          className="shadow-2xl transition-all duration-500 origin-top bg-white"
+          style={{
+            transform: `scale(${previewScale})`,
+            // මෙතනදී අපි බල කරනවා මුල් A4 size එකම තියාගන්න කියලා
+            minWidth: '210mm', 
+            height: 'fit-content'
+          }}
+        >
+          <TemplateRenderer cvData={cvData} scale={1} />
+        </div>
+      </div>
+
+      {/* Payment Modal (Bottom Sheet style for Mobile) */}
+      {showPayment && (
+        <div className="fixed inset-0 bg-zinc-900/60 z-50 flex items-end sm:items-center justify-center backdrop-blur-sm p-0 sm:p-4 animate-in fade-in">
+          <div className="bg-white rounded-t-[2.5rem] sm:rounded-[2.5rem] p-6 md:p-8 max-w-md w-full shadow-2xl animate-in slide-in-from-bottom-10 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-50 rounded-xl"><Landmark className="text-blue-600 w-5 h-5" /></div>
+                <h3 className="text-lg font-black uppercase text-zinc-800">Payment</h3>
+              </div>
+              <button onClick={() => setShowPayment(false)} className="p-2 bg-zinc-100 rounded-full"><XIcon size={20}/></button>
+            </div>
+            
+            <div className="bg-zinc-50 rounded-[1.5rem] p-5 border border-zinc-100 mb-6 space-y-3">
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-zinc-400 font-bold uppercase text-[9px]">Bank</span>
+                <span className="font-bold text-zinc-800">Bank of Ceylon</span>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-zinc-400 font-bold uppercase text-[9px]">Account</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-zinc-800">91691764</span>
+                  <Copy size={14} className="text-zinc-300 cursor-pointer" onClick={() => {navigator.clipboard.writeText('91691764'); alert('Copied!');}}/>
+                </div>
+              </div>
+              <div className="pt-3 border-t flex justify-between items-center">
+                <span className="text-zinc-800 font-black uppercase text-[11px]">Amount</span>
+                <span className="font-black text-xl text-blue-600">Rs.500/=</span>
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <label className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-[1.5rem] cursor-pointer transition-all ${slipUrl ? 'bg-green-50 border-green-200' : 'bg-zinc-50 border-zinc-200'}`}>
+                {isUploading ? <Loader2 className="animate-spin text-blue-600" /> : 
+                 slipUrl ? <CheckCircle2Icon className="text-green-600" /> : 
+                 <div className="flex flex-col items-center text-zinc-400"><UploadIcon size={20} /><span className="text-[9px] font-black uppercase mt-2">Upload Slip</span></div>}
+                <input type="file" className="hidden" accept="image/*" onChange={handleFileUpload} disabled={isUploading} />
+              </label>
+            </div>
+
+            <button onClick={handleWhatsApp} disabled={!slipUrl || isUploading} className={`w-full py-4 rounded-xl font-black uppercase text-[10px] flex items-center justify-center gap-3 ${slipUrl ? 'bg-zinc-900 text-white shadow-xl' : 'bg-zinc-100 text-zinc-400'}`}>
+              Confirm Order <SendIcon size={14}/>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Themes Modal */}
+      {showThemes && (
+        <div className="fixed inset-0 bg-zinc-900/60 z-50 flex items-end sm:items-center justify-center backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white rounded-t-[2rem] sm:rounded-[2.5rem] p-6 md:p-8 max-w-md w-full animate-in slide-in-from-bottom-10">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg font-black uppercase text-zinc-800">Select Template</h3>
+              <button onClick={() => setShowThemes(false)} className="p-2 bg-zinc-100 rounded-full"><XIcon size={20}/></button>
+            </div>
+            <div className="grid grid-cols-1 gap-2">
+              {templateThemes.map(t => (
+                <button key={t.id} onClick={() => { setSelectedTemplate(t.id); setShowThemes(false); }}
+                  className={`p-4 border-2 rounded-xl text-left flex items-center justify-between ${cvData.selectedTemplate === t.id ? 'border-blue-600 bg-blue-50' : 'border-zinc-100 bg-zinc-50'}`}>
+                  <span className={`font-black uppercase text-[10px] ${cvData.selectedTemplate === t.id ? 'text-blue-600' : 'text-zinc-600'}`}>{t.name}</span>
+                  {cvData.selectedTemplate === t.id && <CheckCircle2Icon size={16} className="text-blue-600" />}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
