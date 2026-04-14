@@ -1,19 +1,38 @@
 import React, { useState } from 'react';
 import { useCV } from '../../context/CVContext';
-import { PlusIcon, XIcon, Award } from 'lucide-react';
+import { PlusIcon, XIcon, Award, Sparkles, Loader2 } from 'lucide-react';
+import { generateAIContent } from '../../services/ai';
 
 export function ProfessionalQualifications() {
   const {
     cvData,
     addProfessionalQualification,
-    removeProfessionalQualification
+    removeProfessionalQualification,
+    updateProfessionalQualification
   } = useCV();
+  
   const [newQualification, setNewQualification] = useState('');
+  const [isEnhancing, setIsEnhancing] = useState<number | null>(null);
 
   const handleAdd = () => {
     if (newQualification.trim()) {
       addProfessionalQualification(newQualification);
       setNewQualification('');
+    }
+  };
+
+  const enhanceQualification = async (index: number, text: string) => {
+    setIsEnhancing(index);
+    try {
+      const prompt = `Rewrite this professional qualification or certification to be more formal and impactful for a CV: "${text}". Keep it concise (maximum 10-12 words). Just give the rewritten text.`;
+      const enhancedText = await generateAIContent(prompt);
+      if (enhancedText) {
+        updateProfessionalQualification(index, enhancedText);
+      }
+    } catch (error) {
+      console.error('AI Enhancement failed:', error);
+    } finally {
+      setIsEnhancing(null);
     }
   };
 
@@ -38,12 +57,12 @@ export function ProfessionalQualifications() {
             onChange={(e) => setNewQualification(e.target.value)}
             onKeyDown={handleKeyPress}
             placeholder="e.g., Diploma in Business Management"
-            className="flex-1 px-4 py-3.5 md:py-2.5 text-base md:text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none shadow-sm bg-white"
+            className="flex-1 px-4 py-3.5 md:py-2.5 text-base md:text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all outline-none shadow-sm bg-white"
           />
           <button
             onClick={handleAdd}
             disabled={!newQualification.trim()}
-            className="w-full sm:w-auto px-6 py-3.5 md:py-2.5 bg-zinc-900 text-white rounded-xl hover:bg-zinc-800 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 font-bold text-sm shadow-lg active:scale-95"
+            className="w-full sm:w-auto px-6 py-3.5 md:py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:bg-gray-200 disabled:text-gray-400 transition-all flex items-center justify-center gap-2 font-bold text-sm shadow-lg active:scale-95"
           >
             <PlusIcon className="w-5 h-5 sm:w-4 sm:h-4" />
             Add
@@ -62,19 +81,39 @@ export function ProfessionalQualifications() {
             {cvData.professionalQualifications.map((qualification, index) => (
               <div
                 key={index}
-                className="flex items-start justify-between p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-blue-200 transition-all group animate-in slide-in-from-left-2"
+                className="group relative flex items-start justify-between p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-blue-200 transition-all animate-in slide-in-from-left-2"
               >
                 <div className="flex gap-3 flex-1">
                   <div className="mt-1 p-1.5 bg-blue-50 rounded-lg">
                     <Award className="w-4 h-4 text-blue-600" />
                   </div>
-                  <span className="text-gray-700 text-sm md:text-base font-medium leading-relaxed">
-                    {qualification}
-                  </span>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-gray-700 text-sm md:text-base font-medium leading-relaxed pr-20">
+                      {qualification}
+                    </span>
+                    <button
+                      onClick={() => enhanceQualification(index, qualification)}
+                      disabled={isEnhancing !== null}
+                      className="flex items-center gap-1.5 text-[10px] font-bold text-blue-600 uppercase tracking-wider hover:text-blue-800 transition-colors disabled:opacity-50"
+                    >
+                      {isEnhancing === index ? (
+                        <>
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                          AI Polishing...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-3 h-3" />
+                          AI Refine
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
+
                 <button
                   onClick={() => removeProfessionalQualification(index)}
-                  className="ml-2 p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all flex-shrink-0"
+                  className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
                 >
                   <XIcon className="w-5 h-5 sm:w-4 sm:h-4" />
                 </button>
