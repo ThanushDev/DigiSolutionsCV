@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { CVData, defaultCVData } from '../types/cv';
+import { CVData, defaultCVData, Reference } from '../types/cv';
 
 const STORAGE_KEY = 'cv_builder_data_v1';
 
@@ -19,6 +19,8 @@ interface CVContextType {
   updateSubject: (level: 'oLevel' | 'aLevel', index: number, data: any) => void;
   removeSubject: (level: 'oLevel' | 'aLevel', index: number) => void;
   addProfessionalQualification: (q: string) => void;
+  // අලුතින් ඇඩ් කළ එක මෙන්න:
+  updateProfessionalQualification: (index: number, newText: string) => void;
   removeProfessionalQualification: (index: number) => void;
   updateReference: (index: 0 | 1, data: any) => void;
   setSelectedTemplate: (id: number) => void;
@@ -50,13 +52,43 @@ export function CVProvider({ children }: { children: React.ReactNode }) {
   const addSubject = (level: any) => setCVData(prev => ({ ...prev, education: { ...prev.education, [level]: { ...prev.education[level as 'oLevel'], subjects: [...prev.education[level as 'oLevel'].subjects, { name: '', grade: '' }] } } }));
   const updateSubject = (level: any, idx: number, data: any) => setCVData(prev => ({ ...prev, education: { ...prev.education, [level]: { ...prev.education[level as 'oLevel'], subjects: prev.education[level as 'oLevel'].subjects.map((s, i) => i === idx ? { ...s, ...data } : s) } } }));
   const removeSubject = (level: any, idx: number) => setCVData(prev => ({ ...prev, education: { ...prev.education, [level]: { ...prev.education[level as 'oLevel'], subjects: prev.education[level as 'oLevel'].subjects.filter((_, i) => i !== idx) } } }));
+  
+  // Professional Qualification update කරන ලොජික් එක:
   const addProfessionalQualification = (q: string) => setCVData(prev => ({ ...prev, professionalQualifications: [...prev.professionalQualifications, q] }));
+  const updateProfessionalQualification = (index: number, newText: string) => setCVData(prev => {
+    const updated = [...prev.professionalQualifications];
+    updated[index] = newText;
+    return { ...prev, professionalQualifications: updated };
+  });
   const removeProfessionalQualification = (i: number) => setCVData(prev => ({ ...prev, professionalQualifications: prev.professionalQualifications.filter((_, idx) => idx !== i) }));
+  
   const updateReference = (index: 0 | 1, data: any) => setCVData(prev => { const newRefs = [...prev.references]; newRefs[index] = { ...newRefs[index], ...data }; return { ...prev, references: newRefs as [Reference, Reference] }; });
   const setSelectedTemplate = (id: number) => setCVData(prev => ({ ...prev, selectedTemplate: id }));
 
   return (
-    <CVContext.Provider value={{ cvData, updatePersonalInfo, updateContact, addSkill, removeSkill, addLanguage, removeLanguage, addWorkExperience, updateWorkExperience, removeWorkExperience, updateEducation, addSubject, updateSubject, removeSubject, addProfessionalQualification, removeProfessionalQualification, updateReference, setSelectedTemplate, currentStep, setCurrentStep }}>
+    <CVContext.Provider value={{ 
+      cvData, 
+      updatePersonalInfo, 
+      updateContact, 
+      addSkill, 
+      removeSkill, 
+      addLanguage, 
+      removeLanguage, 
+      addWorkExperience, 
+      updateWorkExperience, 
+      removeWorkExperience, 
+      updateEducation, 
+      addSubject, 
+      updateSubject, 
+      removeSubject, 
+      addProfessionalQualification, 
+      updateProfessionalQualification, // මෙන්න මේක value එකට දැම්මා
+      removeProfessionalQualification, 
+      updateReference, 
+      setSelectedTemplate, 
+      currentStep, 
+      setCurrentStep 
+    }}>
       {children}
     </CVContext.Provider>
   );
