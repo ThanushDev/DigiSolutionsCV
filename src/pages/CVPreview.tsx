@@ -2,10 +2,7 @@ import React, { useState } from 'react';
 import { useCV } from '../context/CVContext';
 import { TemplateRenderer } from '../components/CVTemplates/TemplateRenderer';
 import { templateThemes } from '../types/cv';
-import { 
-  ChevronLeftIcon, PaletteIcon, XIcon, SendIcon, 
-  CheckCircle2Icon, UploadIcon, Loader2, Landmark, Copy 
-} from 'lucide-react';
+import { ChevronLeftIcon, PaletteIcon, XIcon, SendIcon, CheckCircle2Icon, UploadIcon, Loader2, Landmark, Copy } from 'lucide-react';
 
 export function CVPreview({ onBack }: { onBack: () => void }) {
   const { cvData, setSelectedTemplate } = useCV();
@@ -17,7 +14,6 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
 
   if (!cvData) return null;
 
-  // Payment Slip Upload to ImgBB
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -47,8 +43,8 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
     }
   };
 
-  // WhatsApp Submission with Base64 JSON
   const handleWhatsApp = () => {
+    // උඹේ ඔක්කොම details ටික මේ shortData එක ඇතුළේ තියෙනවා
     const shortData = {
       t: cvData.selectedTemplate,
       pi: { 
@@ -61,15 +57,10 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
         c: cvData.personalInfo.civilStatus,
         g: cvData.personalInfo.gender,
         nt: cvData.personalInfo.nationality,
-        ph: cvData.personalInfo.photo, // මෙතනට Original හෝ BG removed ලින්ක් එක එනවා
+        ph: cvData.personalInfo.photo, 
         pf: cvData.personalInfo.photoFormat,
       },
-      co: { 
-        p1: cvData.contact.phone1, 
-        p2: cvData.contact.phone2, 
-        e: cvData.contact.email, 
-        a: cvData.contact.address 
-      },
+      co: { p1: cvData.contact.phone1, p2: cvData.contact.phone2, e: cvData.contact.email, a: cvData.contact.address },
       sk: cvData.skills,
       la: cvData.languages,
       ex: cvData.workExperience,
@@ -78,6 +69,7 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
       re: cvData.references
     };
 
+    // JSON එක Base64 කරලා Ref එක හදන තැන
     const data = btoa(unescape(encodeURIComponent(JSON.stringify(shortData))));
     const adminNumber = "94764781212";
     const message = `Hi, I have completed my CV.\n\nSlip: ${slipUrl}\n\nRef: ${data}`;
@@ -111,10 +103,15 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
         </div>
       </div>
 
-      {/* CV Preview Area - ඔයා enter කරපු full details මෙතනින් පේනවා */}
-      <div className="flex-1 py-4 md:py-8 px-2 md:px-4 flex justify-center items-start overflow-x-hidden">
-        <div className="shadow-2xl shadow-zinc-300 origin-top transform scale-[0.45] sm:scale-[0.7] md:scale-[0.85] lg:scale-100 transition-transform duration-500">
-           <TemplateRenderer cvData={cvData} />
+      {/* CV Preview Area - මම මෙතන CSS ටික හරි ගැස්සුවා දැන් මැදට පේනවා */}
+      <div className="flex-1 py-10 md:py-16 px-4 flex justify-center items-start overflow-auto">
+        <div className="bg-white shadow-2xl origin-top transition-transform duration-500 mb-20" 
+             style={{ 
+               transform: `scale(${window.innerWidth < 640 ? 0.45 : window.innerWidth < 1024 ? 0.8 : 1})`,
+               width: '794px', // A4 Width
+               minHeight: '1123px' // A4 Height
+             }}>
+          <TemplateRenderer cvData={cvData} />
         </div>
       </div>
 
@@ -134,7 +131,6 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
               </button>
             </div>
             
-            {/* Bank Details Area */}
             <div className="bg-zinc-50 rounded-[1.5rem] md:rounded-[2rem] p-5 md:p-6 border border-zinc-100 mb-6 space-y-3">
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between items-center">
@@ -146,8 +142,8 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
                   <div className="flex items-center gap-2">
                     <span className="font-bold text-zinc-800 text-xs md:text-sm">91691764</span>
                     <Copy size={14} className="text-zinc-300 cursor-pointer active:text-blue-500" onClick={() => {
-                        navigator.clipboard.writeText('91691764');
-                        alert("Account number copied!");
+                      navigator.clipboard.writeText('91691764');
+                      alert("Copied!");
                     }}/>
                   </div>
                 </div>
@@ -162,25 +158,16 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
               </div>
             </div>
 
-            {/* Slip Upload Area */}
             <div className="mb-6">
               <label className={`group flex flex-col items-center justify-center w-full h-32 md:h-40 border-2 border-dashed rounded-[1.5rem] md:rounded-[2rem] cursor-pointer transition-all duration-300 ${slipUrl ? 'bg-green-50/50 border-green-200' : 'bg-zinc-50 hover:bg-zinc-100 border-zinc-200'}`}>
                 {isUploading ? (
-                  <div className="flex flex-col items-center text-blue-600">
-                    <Loader2 className="mb-2 animate-spin w-6 h-6 md:w-8 md:h-8" />
-                    <span className="text-[9px] font-black uppercase tracking-[0.2em]">Uploading...</span>
-                  </div>
+                  <div className="flex flex-col items-center text-blue-600"><Loader2 className="animate-spin" /><span className="text-[9px] font-black uppercase mt-2">Uploading...</span></div>
                 ) : slipUrl ? (
-                  <div className="flex flex-col items-center text-green-600">
-                    <CheckCircle2Icon className="mb-2 w-6 h-6 md:w-8 md:h-8" />
-                    <span className="text-[9px] font-black uppercase tracking-[0.2em]">Slip Attached</span>
-                  </div>
+                  <div className="flex flex-col items-center text-green-600"><CheckCircle2Icon /><span className="text-[9px] font-black uppercase mt-2">Slip Attached</span></div>
                 ) : (
-                  <div className="flex flex-col items-center text-zinc-400 group-hover:text-zinc-600">
-                    <div className="p-2 bg-white rounded-xl shadow-sm mb-2">
-                      <UploadIcon size={20} />
-                    </div>
-                    <span className="text-[9px] font-black uppercase tracking-[0.2em]">Upload Payment Slip</span>
+                  <div className="flex flex-col items-center text-zinc-400">
+                    <UploadIcon size={20} className="mb-2"/>
+                    <span className="text-[9px] font-black uppercase">Upload Payment Slip</span>
                   </div>
                 )}
                 <input type="file" className="hidden" accept="image/*" onChange={handleFileUpload} disabled={isUploading} />
@@ -190,43 +177,30 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
             <button 
               onClick={handleWhatsApp}
               disabled={!slipUrl || isUploading}
-              className={`w-full py-4 md:py-5 rounded-xl md:rounded-2xl font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-[10px] md:text-xs flex items-center justify-center gap-3 transition-all ${
-                slipUrl 
-                ? 'bg-zinc-900 text-white shadow-xl shadow-zinc-200 active:scale-[0.98]' 
-                : 'bg-zinc-100 text-zinc-400 cursor-not-allowed'
-              }`}
+              className={`w-full py-4 md:py-5 rounded-xl md:rounded-2xl font-black uppercase tracking-widest text-[10px] md:text-xs flex items-center justify-center gap-3 transition-all ${slipUrl ? 'bg-zinc-900 text-white shadow-xl' : 'bg-zinc-100 text-zinc-400'}`}
             >
-              Confirm Order
-              <SendIcon size={14} className="md:w-[16px]"/>
+              Confirm Order <SendIcon size={14}/>
             </button>
           </div>
         </div>
       )}
 
-      {/* Templates Selection Modal */}
+      {/* Themes Modal */}
       {showThemes && (
-        <div className="fixed inset-0 bg-zinc-900/60 z-50 flex items-end sm:items-center justify-center backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white rounded-t-[2rem] sm:rounded-[2.5rem] p-6 md:p-8 max-w-md w-full animate-in slide-in-from-bottom-10 duration-500 max-h-[80vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-zinc-900/60 z-50 flex items-end sm:items-center justify-center backdrop-blur-sm p-4">
+          <div className="bg-white rounded-[2rem] p-6 md:p-8 max-w-md w-full animate-in slide-in-from-bottom-10 max-h-[80vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg md:text-xl font-black uppercase tracking-tighter text-zinc-800 ml-1">Select Template</h3>
-              <button onClick={() => setShowThemes(false)} className="p-2 bg-zinc-100 rounded-full hover:bg-zinc-200 transition-colors">
-                <XIcon size={20}/>
-              </button>
+              <h3 className="text-lg font-black uppercase text-zinc-800">Select Template</h3>
+              <button onClick={() => setShowThemes(false)}><XIcon size={20}/></button>
             </div>
-            <div className="grid grid-cols-1 gap-2.5 md:gap-3">
+            <div className="grid grid-cols-1 gap-2">
               {templateThemes.map(t => (
                 <button 
                   key={t.id} 
                   onClick={() => { setSelectedTemplate(t.id); setShowThemes(false); }}
-                  className={`p-4 md:p-5 border-2 rounded-xl md:rounded-2xl text-left transition-all flex items-center justify-between ${
-                    cvData.selectedTemplate === t.id 
-                    ? 'border-blue-600 bg-blue-50/50' 
-                    : 'border-zinc-100 hover:border-zinc-300 bg-zinc-50/50'
-                  }`}
+                  className={`p-4 border-2 rounded-xl text-left transition-all flex items-center justify-between ${cvData.selectedTemplate === t.id ? 'border-blue-600 bg-blue-50' : 'border-zinc-100'}`}
                 >
-                  <span className={`font-black uppercase text-[10px] md:text-xs tracking-widest ${cvData.selectedTemplate === t.id ? 'text-blue-600' : 'text-zinc-600'}`}>
-                    {t.name}
-                  </span>
+                  <span className="font-black uppercase text-[10px]">{t.name}</span>
                   {cvData.selectedTemplate === t.id && <CheckCircle2Icon size={18} className="text-blue-600" />}
                 </button>
               ))}
