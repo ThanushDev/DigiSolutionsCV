@@ -10,21 +10,12 @@ import { References } from '../components/FormSections/References';
 import { Languages } from '../components/FormSections/Languages';
 import { PhotoUpload } from '../components/FormSections/PhotoUpload';
 
-interface CVBuilderProps {
-  onPreview: () => void;
-}
-
-export function CVBuilder({ onPreview }: CVBuilderProps) {
+export function CVBuilder({ onPreview }: { onPreview: () => void }) {
   const { currentStep, setCurrentStep } = useCV();
 
   const renderStep = () => {
     switch (currentStep) {
-      case 1: return (
-        <div className="space-y-8 animate-in fade-in duration-500">
-          <PhotoUpload />
-          <PersonalInfo />
-        </div>
-      );
+      case 1: return <div className="space-y-8 animate-in fade-in duration-500"><PhotoUpload /><PersonalInfo /></div>;
       case 2: return <ContactDetails />;
       case 3: return <Skills />;
       case 4: return <Languages />;
@@ -36,75 +27,23 @@ export function CVBuilder({ onPreview }: CVBuilderProps) {
     }
   };
 
-  const steps = [
-    { name: 'Personal', icon: '👤' },
-    { name: 'Contact', icon: '📞' },
-    { name: 'Skills', icon: '⚡' },
-    { name: 'Languages', icon: '🌐' },
-    { name: 'Experience', icon: '💼' },
-    { name: 'Education', icon: '🎓' },
-    { name: 'Qualifications', icon: '📜' },
-    { name: 'References', icon: '👥' }
-  ];
-
   return (
-    <div className="max-w-4xl mx-auto py-6 md:py-10 px-4">
-      
-      {/* --- Step Indicators (Mobile Responsive & Clickable) --- */}
-      <div className="flex justify-between mb-8 overflow-x-auto pb-4 gap-2 md:gap-4 no-scrollbar">
-        {steps.map((step, idx) => {
-          const stepNum = idx + 1;
-          const isActive = stepNum === currentStep;
-          const isCompleted = stepNum < currentStep;
-
-          return (
-            <button
-              key={idx}
-              onClick={() => setCurrentStep(stepNum)} // ක්ලික් කළ විට ටැබ් එක මාරු වේ
-              className={`flex flex-col items-center min-w-[75px] md:min-w-[90px] outline-none transition-all duration-300 ${
-                isActive ? 'scale-105' : 'opacity-70 hover:opacity-100'
-              }`}
-            >
-              <div className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center mb-2 font-bold text-sm md:text-base border-2 transition-all ${
-                isActive 
-                  ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-200' 
-                  : isCompleted 
-                  ? 'bg-green-500 text-white border-green-500' 
-                  : 'bg-white text-gray-400 border-gray-200'
-              }`}>
-                {isCompleted ? '✓' : stepNum}
-              </div>
-              <span className={`text-[9px] md:text-[10px] font-black uppercase tracking-tighter ${
-                isActive ? 'text-blue-600' : 'text-gray-400'
-              }`}>
-                {step.name}
-              </span>
-            </button>
-          );
-        })}
+    <div className="max-w-5xl mx-auto px-4 py-8 md:py-12">
+      {/* Header with Logo */}
+      <div className="flex items-center gap-4 mb-10">
+        <img src="/logo.png" alt="Logo" className="h-12 w-auto object-contain" />
+        <div>
+          <h1 className="text-2xl font-black text-gray-900 tracking-tighter uppercase italic">Digi CV Builder</h1>
+          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-[0.3em]">AI Powered Resume Creator</p>
+        </div>
       </div>
 
-      {/* --- Form Section --- */}
-      <div className="bg-white rounded-2xl shadow-xl shadow-gray-100/50 p-5 md:p-10 border border-gray-100 transition-all">
-        <div className="min-h-[300px]">
-          {renderStep()}
-        </div>
-
-        {/* --- Footer Buttons --- */}
-        <div className="mt-10 flex flex-col md:flex-row gap-4 justify-between pt-6 border-t border-gray-50">
-          <button 
-            disabled={currentStep === 1} 
-            onClick={() => setCurrentStep(currentStep - 1)}
-            className="order-2 md:order-1 px-6 py-3 text-gray-400 font-bold text-xs uppercase disabled:opacity-0 hover:text-gray-600 transition-all"
-          >
-            ← Back
-          </button>
-          
-          <button 
-            onClick={() => currentStep === 8 ? onPreview() : setCurrentStep(currentStep + 1)}
-            className="order-1 md:order-2 px-10 py-4 bg-blue-600 text-white rounded-2xl font-black text-xs uppercase shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all w-full md:w-auto"
-          >
-            {currentStep === 8 ? 'Finish & Preview' : 'Continue →'}
+      <div className="bg-white rounded-2xl shadow-xl p-6 md:p-10 border border-gray-100">
+        {renderStep()}
+        <div className="mt-10 flex justify-between pt-6 border-t">
+          <button disabled={currentStep === 1} onClick={() => setCurrentStep(currentStep - 1)} className="px-6 py-3 font-bold text-xs uppercase disabled:opacity-0">Back</button>
+          <button onClick={() => currentStep === 8 ? onPreview() : setCurrentStep(currentStep + 1)} className="px-10 py-4 bg-blue-600 text-white rounded-2xl font-black text-xs uppercase shadow-lg">
+            {currentStep === 8 ? 'Preview CV' : 'Next Step'}
           </button>
         </div>
       </div>
