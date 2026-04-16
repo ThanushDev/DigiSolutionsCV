@@ -39,112 +39,67 @@ export function PhotoUpload() {
     }
   };
 
-  const handleAiRemoveBg = async () => {
+  const handleRemoveBg = async () => {
     if (!cvData.personalInfo.photo) return;
     setIsRemovingBg(true);
-    
     try {
-      // මෙතනදී අපි remove.bg API එක හෝ වෙනත් self-hosted backend එකක් පාවිච්චි කරනවා
-      // දැනට logic එක විදියට අපි කලින් ලියපු API එකට base64 එකක් යවන විදියට හිතමු
-      const response = await fetch('/api/ai-photo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageUrl: cvData.personalInfo.photo })
-      });
+      // Background Removal Logic (ඔයාගේ කලින් API එක පාවිච්චි කර ඇත)
+      const response = await fetch(cvData.personalInfo.photo);
+      const blob = await response.blob();
+      const file = new File([blob], "photo.png", { type: "image/png" });
       
-      const { newPhotoUrl } = await response.json();
-      updatePersonalInfo({ photo: newPhotoUrl });
-    } catch (error) {
-      alert("Background removal failed. Try another photo.");
+      const formData = new FormData();
+      formData.append('image_file', file);
+      
+      const bgRes = await fetch('https://api.remove.bg/v1.0/removebg', {
+        method: 'POST',
+        headers: { 'X-Api-Key': 'bcKub9ab7FzoaNnTQEFEXBXs' },
+        body: formData,
+      });
+
+      if (bgRes.ok) {
+        const bgBlob = await bgRes.blob();
+        const reader = new FileReader();
+        reader.onloadend = () => updatePersonalInfo({ photo: reader.result as string });
+        reader.readAsDataURL(bgBlob);
+      }
+    } catch (e) {
+      alert("AI Background removal failed.");
     } finally {
       setIsRemovingBg(false);
     }
   };
 
-  const handleRemovePhoto = () => {
-    updatePersonalInfo({ photo: '' });
-    if (fileInputRef.current) fileInputRef.current.value = '';
-  };
-
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      <label className="block text-[11px] font-black uppercase tracking-widest text-gray-500 ml-1">
-        Profile Photo
-      </label>
-
-      <div className="flex flex-col items-center sm:flex-row gap-6 bg-gray-50/50 p-6 rounded-3xl border border-dashed border-gray-200">
-        <div className="relative">
-          <div className={`w-36 h-36 bg-white border-4 border-white flex items-center justify-center overflow-hidden shadow-xl transition-all duration-500 ${
-            cvData.personalInfo.photoFormat === 'circular' ? 'rounded-full' : 'rounded-3xl'
-          }`}>
-            {(isUploading || isRemovingBg) ? (
-              <div className="flex flex-col items-center gap-2">
-                <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
-                <span className="text-[10px] font-bold text-blue-600 uppercase">
-                  {isRemovingBg ? 'Magic in progress...' : 'Uploading...'}
-                </span>
-              </div>
-            ) : cvData.personalInfo.photo ? (
-              <img src={cvData.personalInfo.photo} alt="Profile" className="w-full h-full object-cover" />
-            ) : (
-              <div className="flex flex-col items-center gap-2 text-zinc-300">
-                <CameraIcon className="w-10 h-10" />
-                <span className="text-[10px] font-bold uppercase">No Image</span>
-              </div>
-            )}
-          </div>
-
-          {cvData.personalInfo.photo && !isUploading && !isRemovingBg && (
-            <button 
-              onClick={handleRemovePhoto} 
-              className="absolute -top-1 -right-1 p-2 bg-red-500 text-white rounded-full shadow-lg active:scale-90 transition-all"
-            >
-              <XIcon className="w-4 h-4" />
-            </button>
+    <div className="flex flex-col items-center sm:flex-row gap-6 p-6 bg-blue-50/50 rounded-3xl border border-blue-100">
+      <div className="relative group">
+        <div className={`w-32 h-32 md:w-40 md:h-40 bg-white shadow-xl flex items-center justify-center overflow-hidden border-4 border-white transition-all ${cvData.personalInfo.photoFormat === 'circular' ? 'rounded-full' : 'rounded-2xl'}`}>
+          {cvData.personalInfo.photo ? (
+            <img src={cvData.personalInfo.photo} alt="Profile" className="w-full h-full object-cover" />
+          ) : (
+            <CameraIcon className="w-10 h-10 text-gray-300" />
+          )}
+          {(isUploading || isRemovingBg) && (
+            <div className="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-sm">
+              <Loader2 className="w-8 h-8 text-white animate-spin" />
+            </div>
           )}
         </div>
+        <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
+      </div>
 
-        <div className="flex-1 w-full space-y-4 text-center sm:text-left">
-          <div className="space-y-3">
-            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" id="photo-upload" />
-            <div className="flex flex-col sm:flex-row gap-2">
-              <label 
-                htmlFor="photo-upload" 
-                className="inline-flex items-center justify-center px-8 py-3.5 bg-zinc-900 text-white text-[11px] font-black uppercase tracking-widest rounded-2xl cursor-pointer shadow-xl hover:bg-zinc-800 transition-all flex-1 sm:flex-none"
-              >
-                {cvData.personalInfo.photo ? 'Change Photo' : 'Upload Photo'}
-              </label>
-              
-              {cvData.personalInfo.photo && !isRemovingBg && (
-                <button
-                  onClick={handleAiRemoveBg}
-                  className="inline-flex items-center justify-center px-6 py-3.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[11px] font-black uppercase tracking-widest rounded-2xl shadow-xl hover:shadow-purple-200 transition-all flex-1 sm:flex-none gap-2"
-                >
-                  <Sparkles size={14} />
-                  AI Remove Background
-                </button>
-              )}
-            </div>
-            <p className="text-[10px] text-gray-400">Max size: 2MB (JPG, PNG)</p>
-          </div>
-
-          {/* Format Selector */}
-          <div className="flex items-center justify-center sm:justify-start gap-4 p-1 bg-gray-100 rounded-xl w-fit mx-auto sm:mx-0">
-            {['circular', 'square'].map((format) => (
-              <button
-                key={format}
-                onClick={() => updatePersonalInfo({ photoFormat: format as 'circular' | 'square' })}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
-                  cvData.personalInfo.photoFormat === format 
-                    ? 'bg-white text-blue-600 shadow-sm' 
-                    : 'text-gray-500'
-                }`}
-              >
-                <div className={`w-3 h-3 border-2 ${format === 'circular' ? 'rounded-full' : 'rounded-sm'} ${cvData.personalInfo.photoFormat === format ? 'border-blue-600' : 'border-gray-400'}`} />
-                <span className="text-[10px] font-black uppercase tracking-tighter">{format}</span>
-              </button>
-            ))}
-          </div>
+      <div className="flex-1 space-y-4 text-center sm:text-left">
+        <div>
+          <h3 className="text-lg font-black text-gray-800 uppercase italic">Profile Photo</h3>
+          <p className="text-xs text-gray-500 font-medium">Add a professional photo to stand out</p>
+        </div>
+        <div className="flex flex-wrap justify-center sm:justify-start gap-2">
+          <button onClick={() => fileInputRef.current?.click()} className="px-5 py-2.5 bg-blue-600 text-white text-[11px] font-black uppercase rounded-xl">Upload</button>
+          {cvData.personalInfo.photo && (
+            <button onClick={handleRemoveBg} disabled={isRemovingBg} className="px-5 py-2.5 bg-purple-600 text-white text-[11px] font-black uppercase rounded-xl flex items-center gap-2">
+              <Sparkles size={14} /> AI Remove BG
+            </button>
+          )}
         </div>
       </div>
     </div>
