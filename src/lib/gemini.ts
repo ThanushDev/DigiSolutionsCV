@@ -1,7 +1,5 @@
-// src/lib/gemini.ts
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// NEXT_PUBLIC_ අයින් කරන්න. සාමාන්‍ය රහස් Key එකක් විදිහට ගන්න.
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 export async function askAI(prompt: string) {
