@@ -10,16 +10,9 @@ function AppContent() {
 
   return (
     <Routes>
-      {/* Editor Page */}
       <Route path="/" element={<CVBuilder onPreview={() => navigate('/preview')} />} />
-      
-      {/* Preview Page */}
       <Route path="/preview" element={<CVPreview onBack={() => navigate('/')} />} />
-      
-      {/* Admin Page */}
       <Route path="/admin" element={<Admin />} />
-      
-      {/* වෙනත් ඕනෑම එකක් Editor එකට හරවන්න */}
       <Route path="*" element={<CVBuilder onPreview={() => navigate('/preview')} />} />
     </Routes>
   );
