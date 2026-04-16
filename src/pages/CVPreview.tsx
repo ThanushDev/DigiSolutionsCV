@@ -1,27 +1,239 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useCV } from '../context/CVContext';
 import { TemplateRenderer } from '../components/CVTemplates/TemplateRenderer';
-import { ChevronLeftIcon } from 'lucide-react';
+import { templateThemes } from '../types/cv';
+import { 
+  ChevronLeftIcon, PaletteIcon, XIcon, SendIcon, 
+  CheckCircle2Icon, UploadIcon, Loader2, Landmark, Copy 
+} from 'lucide-react';
 
 export function CVPreview({ onBack }: { onBack: () => void }) {
-  const { cvData } = useCV();
+  const { cvData, setSelectedTemplate } = useCV();
+  const [showThemes, setShowThemes] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
+  
+  const [isUploading, setIsUploading] = useState(false);
+  const [slipUrl, setSlipUrl] = useState(''); 
 
-  // cvData නැත්නම් මුකුත් පේන්නේ නැහැ. ඒක චෙක් කරමු.
-  if (!cvData) return <div className="p-10 text-center text-gray-400 font-bold">NO CV DATA FOUND</div>;
+  if (!cvData) return null;
+
+  // Payment Slip Upload to ImgBB
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const apiKey = '43b8bf4b90a4c63f2f931edfc646c148'; 
+      const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        setSlipUrl(result.data.url);
+      } else {
+        alert("Upload failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error uploading:", error);
+      alert("Error uploading image.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  // WhatsApp Submission with Base64 JSON
+  const handleWhatsApp = () => {
+    const shortData = {
+      t: cvData.selectedTemplate,
+      pi: { 
+        n: cvData.personalInfo.name,
+        fn: cvData.personalInfo.fullName,
+        d: cvData.personalInfo.description,
+        db: cvData.personalInfo.dateOfBirth,
+        ni: cvData.personalInfo.nicNumber,
+        r: cvData.personalInfo.religion,
+        c: cvData.personalInfo.civilStatus,
+        g: cvData.personalInfo.gender,
+        nt: cvData.personalInfo.nationality,
+        ph: cvData.personalInfo.photo, // මෙතනට Original හෝ BG removed ලින්ක් එක එනවා
+        pf: cvData.personalInfo.photoFormat,
+      },
+      co: { 
+        p1: cvData.contact.phone1, 
+        p2: cvData.contact.phone2, 
+        e: cvData.contact.email, 
+        a: cvData.contact.address 
+      },
+      sk: cvData.skills,
+      la: cvData.languages,
+      ex: cvData.workExperience,
+      ed: cvData.education,
+      pq: cvData.professionalQualifications,
+      re: cvData.references
+    };
+
+    const data = btoa(unescape(encodeURIComponent(JSON.stringify(shortData))));
+    const adminNumber = "94764781212";
+    const message = `Hi, I have completed my CV.\n\nSlip: ${slipUrl}\n\nRef: ${data}`;
+
+    window.open(`https://wa.me/${adminNumber}?text=${encodeURIComponent(message)}`, '_blank');
+  };
 
   return (
-    <div className="min-h-screen bg-zinc-100 pb-20 overflow-x-hidden">
-      <div className="max-w-4xl mx-auto p-4">
-        <button onClick={onBack} className="flex items-center gap-2 font-black text-xs uppercase mb-6 bg-white px-4 py-2 rounded-xl shadow-sm">
-          <ChevronLeftIcon size={16}/> Back to Editor
-        </button>
-
-        <div className="flex justify-center w-full overflow-hidden">
-          <div className="bg-white shadow-2xl p-0 md:p-0" style={{ width: '210mm', minHeight: '297mm' }}>
-            <TemplateRenderer cvData={cvData} scale={1} />
+    <div className="min-h-screen bg-zinc-100 flex flex-col">
+      {/* Top Navbar */}
+      <div className="bg-white/80 backdrop-blur-md border-b sticky top-0 z-30 px-4 py-3 md:p-4">
+        <div className="max-w-5xl mx-auto flex items-center justify-between">
+          <button onClick={onBack} className="flex items-center text-[10px] md:text-xs font-black text-zinc-500 uppercase tracking-widest hover:text-zinc-900 transition-colors">
+            <ChevronLeftIcon className="mr-1 w-4 h-4"/> Back
+          </button>
+          
+          <div className="flex gap-2">
+            <button 
+              onClick={() => setShowThemes(true)} 
+              className="p-2 md:p-3 bg-zinc-100 text-zinc-600 rounded-xl md:rounded-2xl hover:bg-zinc-200 transition-all active:scale-90"
+            >
+              <PaletteIcon size={18} className="md:w-[20px]"/>
+            </button>
+            <button 
+              onClick={() => setShowPayment(true)} 
+              className="bg-blue-600 text-white px-4 md:px-6 py-2.5 md:py-3 rounded-xl md:rounded-2xl font-black text-[10px] md:text-[11px] uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all"
+            >
+              <SendIcon size={14} className="md:w-[16px]"/> Download
+            </button>
           </div>
         </div>
       </div>
+
+      {/* CV Preview Area - ඔයා enter කරපු full details මෙතනින් පේනවා */}
+      <div className="flex-1 py-4 md:py-8 px-2 md:px-4 flex justify-center items-start overflow-x-hidden">
+        <div className="shadow-2xl shadow-zinc-300 origin-top transform scale-[0.45] sm:scale-[0.7] md:scale-[0.85] lg:scale-100 transition-transform duration-500">
+           <TemplateRenderer cvData={cvData} />
+        </div>
+      </div>
+
+      {/* Payment Modal */}
+      {showPayment && (
+        <div className="fixed inset-0 bg-zinc-900/60 z-50 flex items-end sm:items-center justify-center backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white rounded-t-[2rem] sm:rounded-[2.5rem] p-6 md:p-8 max-w-md w-full shadow-2xl animate-in slide-in-from-bottom-10 duration-500 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-50 rounded-xl">
+                  <Landmark className="text-blue-600 w-5 h-5" />
+                </div>
+                <h3 className="text-lg md:text-xl font-black uppercase tracking-tighter text-zinc-800">Payment</h3>
+              </div>
+              <button onClick={() => setShowPayment(false)} className="p-2 bg-zinc-100 rounded-full hover:bg-zinc-200 transition-colors">
+                <XIcon size={20}/>
+              </button>
+            </div>
+            
+            {/* Bank Details Area */}
+            <div className="bg-zinc-50 rounded-[1.5rem] md:rounded-[2rem] p-5 md:p-6 border border-zinc-100 mb-6 space-y-3">
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-zinc-400 font-bold uppercase text-[9px] tracking-widest">Bank</span>
+                  <span className="font-bold text-zinc-800 text-xs md:text-sm">Bank of Ceylon</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-zinc-400 font-bold uppercase text-[9px] tracking-widest">Account</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-zinc-800 text-xs md:text-sm">91691764</span>
+                    <Copy size={14} className="text-zinc-300 cursor-pointer active:text-blue-500" onClick={() => {
+                        navigator.clipboard.writeText('91691764');
+                        alert("Account number copied!");
+                    }}/>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-zinc-400 font-bold uppercase text-[9px] tracking-widest">Name</span>
+                  <span className="font-bold text-zinc-800 text-xs md:text-sm">PTN Pathiranage</span>
+                </div>
+                <div className="pt-3 border-t border-zinc-200 flex justify-between items-center">
+                  <span className="text-zinc-800 font-black uppercase text-[11px]">Amount</span>
+                  <span className="font-black text-lg md:text-xl text-blue-600">Rs.500/=</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Slip Upload Area */}
+            <div className="mb-6">
+              <label className={`group flex flex-col items-center justify-center w-full h-32 md:h-40 border-2 border-dashed rounded-[1.5rem] md:rounded-[2rem] cursor-pointer transition-all duration-300 ${slipUrl ? 'bg-green-50/50 border-green-200' : 'bg-zinc-50 hover:bg-zinc-100 border-zinc-200'}`}>
+                {isUploading ? (
+                  <div className="flex flex-col items-center text-blue-600">
+                    <Loader2 className="mb-2 animate-spin w-6 h-6 md:w-8 md:h-8" />
+                    <span className="text-[9px] font-black uppercase tracking-[0.2em]">Uploading...</span>
+                  </div>
+                ) : slipUrl ? (
+                  <div className="flex flex-col items-center text-green-600">
+                    <CheckCircle2Icon className="mb-2 w-6 h-6 md:w-8 md:h-8" />
+                    <span className="text-[9px] font-black uppercase tracking-[0.2em]">Slip Attached</span>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center text-zinc-400 group-hover:text-zinc-600">
+                    <div className="p-2 bg-white rounded-xl shadow-sm mb-2">
+                      <UploadIcon size={20} />
+                    </div>
+                    <span className="text-[9px] font-black uppercase tracking-[0.2em]">Upload Payment Slip</span>
+                  </div>
+                )}
+                <input type="file" className="hidden" accept="image/*" onChange={handleFileUpload} disabled={isUploading} />
+              </label>
+            </div>
+
+            <button 
+              onClick={handleWhatsApp}
+              disabled={!slipUrl || isUploading}
+              className={`w-full py-4 md:py-5 rounded-xl md:rounded-2xl font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-[10px] md:text-xs flex items-center justify-center gap-3 transition-all ${
+                slipUrl 
+                ? 'bg-zinc-900 text-white shadow-xl shadow-zinc-200 active:scale-[0.98]' 
+                : 'bg-zinc-100 text-zinc-400 cursor-not-allowed'
+              }`}
+            >
+              Confirm Order
+              <SendIcon size={14} className="md:w-[16px]"/>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Templates Selection Modal */}
+      {showThemes && (
+        <div className="fixed inset-0 bg-zinc-900/60 z-50 flex items-end sm:items-center justify-center backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white rounded-t-[2rem] sm:rounded-[2.5rem] p-6 md:p-8 max-w-md w-full animate-in slide-in-from-bottom-10 duration-500 max-h-[80vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg md:text-xl font-black uppercase tracking-tighter text-zinc-800 ml-1">Select Template</h3>
+              <button onClick={() => setShowThemes(false)} className="p-2 bg-zinc-100 rounded-full hover:bg-zinc-200 transition-colors">
+                <XIcon size={20}/>
+              </button>
+            </div>
+            <div className="grid grid-cols-1 gap-2.5 md:gap-3">
+              {templateThemes.map(t => (
+                <button 
+                  key={t.id} 
+                  onClick={() => { setSelectedTemplate(t.id); setShowThemes(false); }}
+                  className={`p-4 md:p-5 border-2 rounded-xl md:rounded-2xl text-left transition-all flex items-center justify-between ${
+                    cvData.selectedTemplate === t.id 
+                    ? 'border-blue-600 bg-blue-50/50' 
+                    : 'border-zinc-100 hover:border-zinc-300 bg-zinc-50/50'
+                  }`}
+                >
+                  <span className={`font-black uppercase text-[10px] md:text-xs tracking-widest ${cvData.selectedTemplate === t.id ? 'text-blue-600' : 'text-zinc-600'}`}>
+                    {t.name}
+                  </span>
+                  {cvData.selectedTemplate === t.id && <CheckCircle2Icon size={18} className="text-blue-600" />}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
