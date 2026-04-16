@@ -6,8 +6,9 @@ export async function askAI(prompt: string) {
     return null;
   }
 
-  // මෙතන v1 වෙනුවට v1beta දාන්න. එතකොට gemini-1.5-flash හොයාගන්න පුළුවන්.
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  // මෙතන gemini-1.5-flash වෙනුවට gemini-pro පාවිච්චි කරමු. 
+  // මේක 404 එන්නේ නැතිව අනිවාර්යයෙන්ම වැඩ කරන නම.
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
 
   try {
     const response = await fetch(url, {
