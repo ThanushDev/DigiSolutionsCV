@@ -45,35 +45,20 @@ export interface ContactDetails {
   address: string;
 }
 
-export interface Education {
-  oLevel: EducationLevel;
-  aLevel: EducationLevel;
-}
-
 export interface CVData {
   personalInfo: PersonalInfo;
   contact: ContactDetails;
   skills: string[];
   languages: string[];
   workExperience: WorkExperienceEntry[];
-  education: Education;
+  education: {
+    oLevel: EducationLevel;
+    aLevel: EducationLevel;
+  };
   professionalQualifications: string[];
   references: [Reference, Reference];
   selectedTemplate: number;
 }
-
-export const templateThemes = [
-  { id: 1, name: 'Professional Sidebar (Default)' },
-  { id: 2, name: 'Executive Blue' },
-  { id: 3, name: 'Corporate Gray' },
-  { id: 4, name: 'Modern Emerald' },
-  { id: 5, name: 'Dark Professional' },
-  { id: 6, name: 'Classic Serif' },
-  { id: 7, name: 'Minimalist' },
-  { id: 8, name: 'Crimson Tech' },
-  { id: 9, name: 'Indigo Premium' },
-  { id: 10, name: 'Golden Standard' }
-];
 
 export const defaultCVData: CVData = {
   personalInfo: {
