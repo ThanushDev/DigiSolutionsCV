@@ -1,40 +1,37 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-const genAI = new GoogleGenerativeAI(apiKey || "");
-
 export async function askAI(prompt: string) {
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+
   if (!apiKey) {
-    console.error("Gemini API Key is missing!");
+    console.error("API Key missing");
     return null;
   }
 
+  // SDK එක පාවිච්චි නොකර කෙලින්ම API එකට Request එක යවනවා
+  const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
   try {
-    // ගොඩක් වෙලාවට වැඩ කරන්නේ මේ නම: "gemini-1.5-flash"
-    // ඒක වැඩ නැත්තම් "gemini-pro" කියලා දාලා බලන්නත් පුළුවන්
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash",
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{ text: prompt }]
+        }]
+      })
     });
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+    const data = await response.json();
 
-    return text.trim() || null;
-  } catch (error: any) {
-    console.error("Gemini Error Details:", error);
-    
-    // 404 ආවොත් විතරක් මේ Fallback එක රන් වෙනවා
-    if (error.message?.includes("404")) {
-      console.warn("404 detected, trying with legacy model name...");
-      try {
-        const fallback = genAI.getGenerativeModel({ model: "gemini-pro" });
-        const res = await fallback.generateContent(prompt);
-        return res.response.text().trim();
-      } catch (e) {
-        return null;
-      }
+    if (data.error) {
+      console.error("Gemini API Error:", data.error);
+      return null;
     }
+
+    return data.candidates[0].content.parts[0].text;
+  } catch (error) {
+    console.error("Network Error:", error);
     return null;
   }
 }
