@@ -1,8 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// .env.local එකේ ඇති Key එක ලබා ගැනීම
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.NEXT_PUBLIC_GEMINI_API_KEY;
-const genAI = new GoogleGenerativeAI(API_KEY || "");
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || "";
+const genAI = new GoogleGenerativeAI(API_KEY);
 
 export async function askAI(type: string, data: any) {
   try {
@@ -20,23 +19,20 @@ export async function askAI(type: string, data: any) {
         prompt = `Suggest 5-8 trending professional skills for a ${data.jobTitle} as a comma separated list.`;
         break;
       case "ats_analysis":
-        prompt = `Analyze this CV data and give an ATS score out of 100 and 2 short tips. CV Data: ${JSON.stringify(data)}. Return ONLY a JSON object like {"score": 85, "tips": ["Tip 1", "Tip 2"]}`;
+        prompt = `Analyze this CV data and give an ATS score out of 100 and 2 short tips. Return ONLY a JSON object like {"score": 85, "tips": ["Tip 1", "Tip 2"]}. Data: ${JSON.stringify(data)}`;
         break;
       case "suggest_education":
-        prompt = `Suggest 3-5 standard school subjects for a ${data.level} student in ${data.stream} stream. Return as a comma separated list.`;
+        prompt = `Suggest 5 standard school subjects for a ${data.level} student in ${data.stream} stream as a comma separated list.`;
         break;
-      default:
-        prompt = data.prompt || "";
     }
 
     const result = await model.generateContent(prompt);
     const text = result.response.text();
 
     if (type === "ats_analysis") {
-      const jsonMatch = text.match(/\{.*\}/s);
-      return jsonMatch ? JSON.parse(jsonMatch[0]) : { score: 50, tips: ["Add more details to sections"] };
+        const jsonMatch = text.match(/\{.*\}/s);
+        return jsonMatch ? JSON.parse(jsonMatch[0]) : { score: 50, tips: ["Add more details"] };
     }
-
     return text;
   } catch (error) {
     console.error("AI Error:", error);
