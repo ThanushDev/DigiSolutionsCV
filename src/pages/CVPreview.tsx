@@ -46,33 +46,39 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
   const handleWhatsApp = () => {
     if (!slipUrl) return alert("Please upload the payment slip first!");
 
-    // දත්ත කිසිවක් මිස් නොවී keys ටික පමණක් කෙටි කිරීම (Compression)
-    const compressedData = {
-      pi: { 
-        n: finalCVData.personalInfo.name, 
-        fn: finalCVData.personalInfo.fullName, 
-        d: finalCVData.personalInfo.description || finalCVData.personalInfo.objective,
-        p: finalCVData.profileImage 
-      },
-      c: { 
-        e: finalCVData.contact?.email || finalCVData.personalInfo.email, 
-        p: finalCVData.contact?.phone1 || finalCVData.personalInfo.phone, 
-        a: finalCVData.contact?.address || finalCVData.personalInfo.address 
-      },
-      sk: finalCVData.skills?.map((s: any) => s.name || s), 
-      ex: finalCVData.experience?.map((e: any) => ({ 
-        t: e.position, c: e.company, d: e.duration, ds: e.description 
-      })),
-      ed: finalCVData.education?.map((ed: any) => ({ 
-        d: ed.degree, s: ed.school, y: ed.year 
-      })),
-      t: finalCVData.selectedTemplate,
-      cl: finalCVData.customColor
-    };
+    try {
+      // දත්ත කෙටි කිරීමේදී Crash වීම වැළැක්වීමට Safety checks ඇතුළත් කර ඇත
+      const compressedData = {
+        pi: { 
+          n: finalCVData.personalInfo?.name || "", 
+          fn: finalCVData.personalInfo?.fullName || "", 
+          d: finalCVData.personalInfo?.description || finalCVData.personalInfo?.objective || "",
+          p: finalCVData.profileImage || ""
+        },
+        c: { 
+          e: finalCVData.contact?.email || finalCVData.personalInfo?.email || "", 
+          p: finalCVData.contact?.phone1 || finalCVData.personalInfo?.phone || "", 
+          a: finalCVData.contact?.address || finalCVData.personalInfo?.address || "" 
+        },
+        // Array.isArray සහ ?.map භාවිතයෙන් crash වීම වළක්වයි
+        sk: Array.isArray(finalCVData.skills) ? finalCVData.skills.map((s: any) => s.name || s) : [], 
+        ex: Array.isArray(finalCVData.experience) ? finalCVData.experience.map((e: any) => ({ 
+          t: e.position || "", c: e.company || "", d: e.duration || "", ds: e.description || "" 
+        })) : [],
+        ed: Array.isArray(finalCVData.education) ? finalCVData.education.map((ed: any) => ({ 
+          d: ed.degree || "", s: ed.school || "", y: ed.year || "" 
+        })) : [],
+        t: finalCVData.selectedTemplate || 1,
+        cl: finalCVData.customColor || "#1e3a8a"
+      };
 
-    const encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(compressedData))));
-    const message = `*🔥 NEW CV ORDER 🔥*\n\n*Slip:* ${slipUrl}\n\n*Ref Data:*\n${encodedData}`;
-    window.open(`https://wa.me/94764781212?text=${encodeURIComponent(message)}`, '_blank');
+      const encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(compressedData))));
+      const message = `*🔥 NEW CV ORDER 🔥*\n\n*Slip:* ${slipUrl}\n\n*Ref Data:*\n${encodedData}`;
+      window.open(`https://wa.me/94764781212?text=${encodeURIComponent(message)}`, '_blank');
+    } catch (err) {
+      console.error("Encoding error:", err);
+      alert("Something went wrong while preparing the message.");
+    }
   };
 
   return (
