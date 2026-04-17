@@ -45,8 +45,33 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
 
   const handleWhatsApp = () => {
     if (!slipUrl) return alert("Please upload the payment slip first!");
-    const encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(finalCVData))));
-    const message = `*🔥 NEW CV ORDER 🔥*\n\n*Name:* ${finalCVData.personalInfo.name}\n*Slip:* ${slipUrl}\n\n*Ref Data:*\n${encodedData}`;
+
+    // දත්ත කිසිවක් මිස් නොවී keys ටික පමණක් කෙටි කිරීම (Compression)
+    const compressedData = {
+      pi: { 
+        n: finalCVData.personalInfo.name, 
+        fn: finalCVData.personalInfo.fullName, 
+        d: finalCVData.personalInfo.description || finalCVData.personalInfo.objective,
+        p: finalCVData.profileImage 
+      },
+      c: { 
+        e: finalCVData.contact?.email || finalCVData.personalInfo.email, 
+        p: finalCVData.contact?.phone1 || finalCVData.personalInfo.phone, 
+        a: finalCVData.contact?.address || finalCVData.personalInfo.address 
+      },
+      sk: finalCVData.skills?.map((s: any) => s.name || s), 
+      ex: finalCVData.experience?.map((e: any) => ({ 
+        t: e.position, c: e.company, d: e.duration, ds: e.description 
+      })),
+      ed: finalCVData.education?.map((ed: any) => ({ 
+        d: ed.degree, s: ed.school, y: ed.year 
+      })),
+      t: finalCVData.selectedTemplate,
+      cl: finalCVData.customColor
+    };
+
+    const encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(compressedData))));
+    const message = `*🔥 NEW CV ORDER 🔥*\n\n*Slip:* ${slipUrl}\n\n*Ref Data:*\n${encodedData}`;
     window.open(`https://wa.me/94764781212?text=${encodeURIComponent(message)}`, '_blank');
   };
 
@@ -121,9 +146,7 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
             <h3 className="text-2xl font-black uppercase mb-1 italic tracking-tight text-zinc-900 text-center">Payment Info</h3>
             <p className="text-zinc-400 text-[10px] mb-6 font-bold uppercase tracking-widest text-center italic underline decoration-blue-500 underline-offset-4">Bank Transfer Details</p>
             
-            {/* --- UPDATED BLACK BOX WITH AMOUNT --- */}
             <div className="bg-zinc-950 text-white rounded-[2.5rem] p-7 mb-6 shadow-2xl shadow-blue-500/20 border border-white/5 relative overflow-hidden">
-              {/* ලස්සනට Amount එක පේන්න දාපු badge එක */}
               <div className="absolute top-0 right-0 bg-blue-600 px-6 py-2 rounded-bl-[1.5rem] font-black text-sm">
                 RS. 500
               </div>
