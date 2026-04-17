@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 // Build error එක fix කරන්න මෙතන path එක ../../ ලෙස වෙනස් කළා
 import { useCV } from '../context/CVContext';
-import { CVTemplateBase } from '../../components/CVTemplates/CVTemplateBase';
-import { templateThemes } from '../../types/cv';
+import { CVTemplateBase } from '../components/CVTemplates/CVTemplateBase';
+import { templateThemes } from '../types/cv';
 import { 
   ChevronLeftIcon, CheckCircle2Icon, Loader2, XIcon, 
   Paintbrush, SendIcon, Smartphone, Monitor, Menu 
