@@ -19,7 +19,12 @@ interface CVContextType {
   removeProfessionalQualification: (index: number) => void;
   addProfessionalQualification: (q: string) => void;
   updateReference: (index: 0 | 1, data: any) => void;
-  setSelectedTemplate: (id: number) => void;
+  
+  // මේ ටික මම අලුතෙන් ඇඩ් කළා උඹේ Color & Template වැඩේට
+  setSelectedTemplate: (id: string) => void; // ID එක string එකක් කළා
+  updateThemeColor: (color: string) => void; // පාට වෙනස් කරන්න
+  setBrightness: (value: number) => void; // Brightness වෙනස් කරන්න
+  
   currentStep: number;
   setCurrentStep: (step: number) => void;
 }
@@ -29,6 +34,7 @@ const CVContext = createContext<CVContextType | undefined>(undefined);
 export function CVProvider({ children }: { children: React.ReactNode }) {
   const [cvData, setCVData] = useState<CVData>(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
+    // මෙතනදී default values තියෙනවාද කියලා බලනවා
     return saved ? JSON.parse(saved) : defaultCVData;
   });
   const [currentStep, setCurrentStep] = useState(1);
@@ -37,6 +43,7 @@ export function CVProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(cvData));
   }, [cvData]);
 
+  // --- Helpers ---
   const updatePersonalInfo = (data: any) => setCVData(prev => ({ ...prev, personalInfo: { ...prev.personalInfo, ...data } }));
   const updateContact = (data: any) => setCVData(prev => ({ ...prev, contact: { ...prev.contact, ...data } }));
   const addSkill = (skill: string) => setCVData(prev => ({ ...prev, skills: [...prev.skills, skill] }));
@@ -76,14 +83,36 @@ export function CVProvider({ children }: { children: React.ReactNode }) {
     return { ...prev, references: newRefs as any };
   });
 
-  const setSelectedTemplate = (id: number) => setCVData(prev => ({ ...prev, selectedTemplate: id }));
+  // --- මම හදපු අලුත් Functions ටික ---
+
+  // Template එක මාරු කරන කොට ID එක හරියට Update කරනවා
+  const setSelectedTemplate = (id: string) => {
+    setCVData(prev => ({ ...prev, selectedTemplate: id }));
+  };
+
+  // User තෝරන පාට CV එකට දානවා
+  const updateThemeColor = (color: string) => {
+    setCVData(prev => ({
+      ...prev,
+      customColor: color // මේක පාවිච්චි කරලා අපිට Template එක පාට කරන්න පුළුවන්
+    }));
+  };
+
+  // Seekbar එකෙන් එන brightness එක
+  const setBrightness = (value: number) => {
+    setCVData(prev => ({
+      ...prev,
+      brightness: value
+    }));
+  };
 
   return (
     <CVContext.Provider value={{ 
       cvData, updatePersonalInfo, updateContact, addSkill, removeSkill, 
       addWorkExperience, updateWorkExperience, removeWorkExperience,
       updateEducation, updateProfessionalQualification, removeProfessionalQualification,
-      addProfessionalQualification, updateReference, setSelectedTemplate,
+      addProfessionalQualification, updateReference, 
+      setSelectedTemplate, updateThemeColor, setBrightness, // අලුත් ඒවා මෙතනට දැම්මා
       currentStep, setCurrentStep,
       addLanguage: (l) => setCVData(p => ({ ...p, languages: [...p.languages, l] })),
       removeLanguage: (i) => setCVData(p => ({ ...p, languages: p.languages.filter((_, idx) => idx !== i) }))
