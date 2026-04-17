@@ -1,6 +1,12 @@
 export async function askAI(prompt: string) {
   const apiKey = import.meta.env.VITE_HUGGINGFACE_API_KEY;
-  if (!apiKey) return null;
+  
+  if (!apiKey) {
+    console.error("Hugging Face API Key එක නැහැ මචං!");
+    return "API Key Missing";
+  }
+
+  console.log("AI එකට පණිවිඩය යැව්වා:", prompt);
 
   try {
     const response = await fetch(
@@ -19,16 +25,22 @@ export async function askAI(prompt: string) {
     );
 
     const result = await response.json();
-    
-    // Hugging Face එකෙන් එන්නේ array එකක් විදියට
+    console.log("AI එකෙන් ආපු අමු දත්ත:", result);
+
     if (Array.isArray(result) && result[0].generated_text) {
       const fullText = result[0].generated_text;
-      // Instruction එක අයින් කරලා උත්තරේ විතරක් ගන්නවා
-      return fullText.split("[/INST]").pop().trim();
+      const answer = fullText.split("[/INST]").pop().trim();
+      return answer;
     }
-    return "AI Error occurred";
+    
+    if (result.error) {
+      console.error("AI Error:", result.error);
+      return "Error: " + result.error;
+    }
+
+    return "AI response format error";
   } catch (error) {
-    console.error("HF Error:", error);
-    return null;
+    console.error("Network Error:", error);
+    return "Network error occurred";
   }
 }
