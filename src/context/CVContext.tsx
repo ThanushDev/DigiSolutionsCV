@@ -15,18 +15,23 @@ interface CVContextType {
   updateWorkExperience: (id: string, data: Partial<CVData['workExperience'][0]>) => void;
   removeWorkExperience: (id: string) => void;
   updateEducation: (level: 'oLevel' | 'aLevel', data: any) => void;
+  
+  // --- මෙන්න මේ ටික අලුතින් එකතු කළා ---
+  addSubject: (level: 'oLevel' | 'aLevel') => void;
+  updateSubject: (level: 'oLevel' | 'aLevel', index: number, data: any) => void;
+  removeSubject: (level: 'oLevel' | 'aLevel', index: number) => void;
+  // ---------------------------------
+
   updateProfessionalQualification: (index: number, newText: string) => void;
   removeProfessionalQualification: (index: number) => void;
   addProfessionalQualification: (q: string) => void;
   updateReference: (index: 0 | 1, data: any) => void;
   
-  // Template & Theme Settings
   setSelectedTemplate: (id: string) => void;
   updateThemeColor: (color: string) => void;
   setBrightness: (value: number) => void;
   
-  // Reset & Navigation
-  resetCV: () => void; // මේක තමයි අලුත් එක
+  resetCV: () => void; 
   currentStep: number;
   setCurrentStep: (step: number) => void;
 }
@@ -44,13 +49,11 @@ export function CVProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(cvData));
   }, [cvData]);
 
-  // --- Reset Function ---
   const resetCV = () => {
-    setCVData(defaultCVData); // Data ටික මුල් තත්වයට පත් කරනවා
-    localStorage.removeItem(STORAGE_KEY); // Browser එකේ සේව් වෙලා තියෙන ඒවා මකනවා
+    setCVData(defaultCVData);
+    localStorage.removeItem(STORAGE_KEY);
   };
 
-  // --- Helpers ---
   const updatePersonalInfo = (data: any) => setCVData(prev => ({ ...prev, personalInfo: { ...prev.personalInfo, ...data } }));
   const updateContact = (data: any) => setCVData(prev => ({ ...prev, contact: { ...prev.contact, ...data } }));
   const addSkill = (skill: string) => setCVData(prev => ({ ...prev, skills: [...prev.skills, skill] }));
@@ -76,6 +79,42 @@ export function CVProvider({ children }: { children: React.ReactNode }) {
     education: { ...prev.education, [level]: { ...prev.education[level], ...data } }
   }));
 
+  // --- අලුතින් එකතු කළ Education Logic එක ---
+  const addSubject = (level: 'oLevel' | 'aLevel') => setCVData(prev => ({
+    ...prev,
+    education: {
+      ...prev.education,
+      [level]: {
+        ...prev.education[level],
+        subjects: [...prev.education[level].subjects, { name: '', grade: '' }]
+      }
+    }
+  }));
+
+  const updateSubject = (level: 'oLevel' | 'aLevel', index: number, data: any) => setCVData(prev => {
+    const newSubjects = [...prev.education[level].subjects];
+    newSubjects[index] = { ...newSubjects[index], ...data };
+    return {
+      ...prev,
+      education: {
+        ...prev.education,
+        [level]: { ...prev.education[level], subjects: newSubjects }
+      }
+    };
+  });
+
+  const removeSubject = (level: 'oLevel' | 'aLevel', index: number) => setCVData(prev => ({
+    ...prev,
+    education: {
+      ...prev.education,
+      [level]: {
+        ...prev.education[level],
+        subjects: prev.education[level].subjects.filter((_, i) => i !== index)
+      }
+    }
+  }));
+  // ----------------------------------------
+
   const addProfessionalQualification = (q: string) => setCVData(prev => ({ ...prev, professionalQualifications: [...prev.professionalQualifications, q] }));
   const updateProfessionalQualification = (index: number, newText: string) => setCVData(prev => {
     const updated = [...prev.professionalQualifications];
@@ -90,26 +129,20 @@ export function CVProvider({ children }: { children: React.ReactNode }) {
     return { ...prev, references: newRefs as any };
   });
 
-  const setSelectedTemplate = (id: string) => {
-    setCVData(prev => ({ ...prev, selectedTemplate: id }));
-  };
-
-  const updateThemeColor = (color: string) => {
-    setCVData(prev => ({ ...prev, customColor: color }));
-  };
-
-  const setBrightness = (value: number) => {
-    setCVData(prev => ({ ...prev, brightness: value }));
-  };
+  const setSelectedTemplate = (id: string) => setCVData(prev => ({ ...prev, selectedTemplate: id }));
+  const updateThemeColor = (color: string) => setCVData(prev => ({ ...prev, customColor: color }));
+  const setBrightness = (value: number) => setCVData(prev => ({ ...prev, brightness: value }));
 
   return (
     <CVContext.Provider value={{ 
       cvData, updatePersonalInfo, updateContact, addSkill, removeSkill, 
       addWorkExperience, updateWorkExperience, removeWorkExperience,
-      updateEducation, updateProfessionalQualification, removeProfessionalQualification,
+      updateEducation, 
+      addSubject, updateSubject, removeSubject, // Provider එකට දාන්න අමතක වූ කොටස
+      updateProfessionalQualification, removeProfessionalQualification,
       addProfessionalQualification, updateReference, 
       setSelectedTemplate, updateThemeColor, setBrightness,
-      resetCV, // අලුත් function එක මෙතනට දැම්මා
+      resetCV,
       currentStep, setCurrentStep,
       addLanguage: (l) => setCVData(p => ({ ...p, languages: [...p.languages, l] })),
       removeLanguage: (i) => setCVData(p => ({ ...p, languages: p.languages.filter((_, idx) => idx !== i) }))
