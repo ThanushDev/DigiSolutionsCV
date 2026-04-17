@@ -48,14 +48,14 @@ export interface CVData {
 }
 
 export const templateThemes = [
-  { id: 1, name: 'Thanush Dark Sidebar' },
-  { id: 2, name: 'Steven Terry Header' },
-  { id: 3, name: 'Yellow Ribbon Modern' },
-  { id: 4, name: 'Professional Table Grid' },
-  { id: 5, name: 'Executive Minimal' },
-  { id: 6, name: 'Corporate Blue' },
-  { id: 7, name: 'Classic Accountant' },
-  { id: 8, name: 'Premium Gold' }
+  { id: 1, name: 'Thanush Dark Sidebar', primaryColor: '#1e293b' },
+  { id: 2, name: 'Steven Terry Modern', primaryColor: '#0369a1' },
+  { id: 3, name: 'Yellow Ribbon Bold', primaryColor: '#eab308' },
+  { id: 4, name: 'Corporate Clean Grid', primaryColor: '#1e3a8a' },
+  { id: 5, name: 'Executive Minimalist', primaryColor: '#000000' },
+  { id: 6, name: 'Professional Timeline', primaryColor: '#374151' },
+  { id: 7, name: 'Premium Golden Edge', primaryColor: '#854d0e' },
+  { id: 8, name: 'Classic Accountant', primaryColor: '#2563eb' }
 ];
 
 export const defaultCVData: CVData = {
@@ -65,5 +65,5 @@ export const defaultCVData: CVData = {
   education: { oLevel: { indexNumber: '', year: '', subjects: [] }, aLevel: { indexNumber: '', year: '', subjects: [] } },
   professionalQualifications: [],
   references: [{ name: '', designation: '', organization: '', phone: '' }, { name: '', designation: '', organization: '', phone: '' }],
-  selectedTemplate: 1, customColor: '#1e3a8a', brightness: 100
+  selectedTemplate: 1, customColor: '#1e293b', brightness: 100
 };
