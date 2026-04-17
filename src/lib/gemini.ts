@@ -1,46 +1,32 @@
 export async function askAI(prompt: string) {
-  const apiKey = import.meta.env.VITE_HUGGINGFACE_API_KEY;
-  
-  if (!apiKey) {
-    console.error("Hugging Face API Key එක නැහැ මචං!");
-    return "API Key Missing";
-  }
+  const apiKey = import.meta.env.VITE_GROQ_API_KEY;
 
-  console.log("AI එකට පණිවිඩය යැව්වා:", prompt);
+  if (!apiKey) return "API Key Missing";
 
   try {
-    const response = await fetch(
-      "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2",
-      {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-        body: JSON.stringify({
-          inputs: `<s>[INST] ${prompt} [/INST]`,
-          parameters: { max_new_tokens: 500, temperature: 0.7 }
-        }),
-      }
-    );
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        // අපි මෙතන පාවිච්චි කරන්නේ Meta ගේ Llama 3 AI එක (පට්ට බලවත්)
+        model: "llama3-8b-8192",
+        messages: [
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        temperature: 0.7
+      })
+    });
 
-    const result = await response.json();
-    console.log("AI එකෙන් ආපු අමු දත්ත:", result);
-
-    if (Array.isArray(result) && result[0].generated_text) {
-      const fullText = result[0].generated_text;
-      const answer = fullText.split("[/INST]").pop().trim();
-      return answer;
-    }
-    
-    if (result.error) {
-      console.error("AI Error:", result.error);
-      return "Error: " + result.error;
-    }
-
-    return "AI response format error";
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content || "No response";
   } catch (error) {
-    console.error("Network Error:", error);
-    return "Network error occurred";
+    console.error("Groq Error:", error);
+    return "AI Error occurred";
   }
 }
