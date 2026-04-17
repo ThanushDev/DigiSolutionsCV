@@ -28,9 +28,9 @@ export function CVBuilder({ onPreview }: { onPreview: () => void }) {
   };
 
   const steps = [
-    { n: 1, label: 'Bio' }, { n: 2, label: 'Contact' }, { n: 3, label: 'Skills' },
-    { n: 4, label: 'Languages' }, { n: 5, label: 'Work' }, { n: 6, label: 'Study' },
-    { n: 7, label: 'Awards' }, { n: 8, label: 'Refs' }
+    { n: 1, label: 'Personal Info' }, { n: 2, label: 'Contact' }, { n: 3, label: 'Skills' },
+    { n: 4, label: 'Languages' }, { n: 5, label: 'Work Expirience' }, { n: 6, label: 'Education Qualifications' },
+    { n: 7, label: 'Professional Qualifications' }, { n: 8, label: 'References' }
   ];
 
   return (
