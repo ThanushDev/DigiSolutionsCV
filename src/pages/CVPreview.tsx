@@ -47,44 +47,38 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
     if (!slipUrl) return alert("Please upload the payment slip first!");
 
     try {
-      // දත්ත කෙටි කිරීමේදී Crash වීම වැළැක්වීමට Safety checks ඇතුළත් කර ඇත
-      const compressedData = {
-        pi: { 
-          n: finalCVData.personalInfo?.name || "", 
-          fn: finalCVData.personalInfo?.fullName || "", 
-          d: finalCVData.personalInfo?.description || finalCVData.personalInfo?.objective || "",
-          p: finalCVData.profileImage || ""
+      // දත්ත කිසිවක් කෙටි නොකර, සම්පූර්ණ Structure එකම encode කිරීම
+      const fullDataExport = {
+        personalInfo: {
+          name: finalCVData.personalInfo?.name || "",
+          fullName: finalCVData.personalInfo?.fullName || "",
+          description: finalCVData.personalInfo?.description || finalCVData.personalInfo?.objective || "",
+          photo: finalCVData.profileImage || ""
         },
-        c: { 
-          e: finalCVData.contact?.email || finalCVData.personalInfo?.email || "", 
-          p: finalCVData.contact?.phone1 || finalCVData.personalInfo?.phone || "", 
-          a: finalCVData.contact?.address || finalCVData.personalInfo?.address || "" 
+        contact: {
+          email: finalCVData.contact?.email || finalCVData.personalInfo?.email || "",
+          phone1: finalCVData.contact?.phone1 || finalCVData.personalInfo?.phone || "",
+          address: finalCVData.contact?.address || finalCVData.personalInfo?.address || ""
         },
-        // Array.isArray සහ ?.map භාවිතයෙන් crash වීම වළක්වයි
-        sk: Array.isArray(finalCVData.skills) ? finalCVData.skills.map((s: any) => s.name || s) : [], 
-        ex: Array.isArray(finalCVData.experience) ? finalCVData.experience.map((e: any) => ({ 
-          t: e.position || "", c: e.company || "", d: e.duration || "", ds: e.description || "" 
-        })) : [],
-        ed: Array.isArray(finalCVData.education) ? finalCVData.education.map((ed: any) => ({ 
-          d: ed.degree || "", s: ed.school || "", y: ed.year || "" 
-        })) : [],
-        t: finalCVData.selectedTemplate || 1,
-        cl: finalCVData.customColor || "#1e3a8a"
+        skills: Array.isArray(finalCVData.skills) ? finalCVData.skills : [],
+        experience: Array.isArray(finalCVData.experience) ? finalCVData.experience : [],
+        education: Array.isArray(finalCVData.education) ? finalCVData.education : [],
+        languages: Array.isArray(finalCVData.languages) ? finalCVData.languages : [],
+        references: Array.isArray(finalCVData.references) ? finalCVData.references : [],
+        selectedTemplate: finalCVData.selectedTemplate || 1,
+        customColor: finalCVData.customColor || "#1e3a8a"
       };
 
-      const encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(compressedData))));
+      const encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(fullDataExport))));
       const message = `*🔥 NEW CV ORDER 🔥*\n\n*Slip:* ${slipUrl}\n\n*Ref Data:*\n${encodedData}`;
       window.open(`https://wa.me/94764781212?text=${encodeURIComponent(message)}`, '_blank');
     } catch (err) {
-      console.error("Encoding error:", err);
-      alert("Something went wrong while preparing the message.");
+      alert("Error generating order link!");
     }
   };
 
   return (
     <div className="h-screen bg-zinc-950 flex overflow-hidden relative font-sans">
-      
-      {/* Sidebar Section */}
       <div className={`fixed md:relative z-[70] h-full bg-white border-r w-[320px] md:w-[380px] transition-transform duration-300 flex flex-col ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
         <div className="p-6 border-b flex justify-between items-center">
           <button onClick={onBack} className="flex items-center text-[10px] font-black text-zinc-400 uppercase tracking-widest hover:text-blue-600 transition-colors">
@@ -97,9 +91,7 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
           <button onClick={() => setShowPayment(true)} className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black uppercase text-[13px] flex items-center justify-center gap-2.5 shadow-xl shadow-blue-100 hover:bg-blue-700 active:scale-95 transition-all">
             <SendIcon size={18}/> Get Full CV
           </button>
-
           <hr className="border-zinc-200" />
-
           <div className="space-y-3">
             <p className="text-[10px] font-black uppercase text-zinc-400 ml-1 tracking-widest text-center">Templates</p>
             <div className="grid grid-cols-1 gap-2">
@@ -112,7 +104,6 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
               ))}
             </div>
           </div>
-
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <p className="text-[10px] font-black uppercase text-zinc-400 text-center">Color</p>
@@ -129,7 +120,6 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
         </div>
       </div>
 
-      {/* Main Preview */}
       <div className="flex-1 relative flex flex-col h-full bg-zinc-900 overflow-hidden">
         <div className="md:hidden p-4 flex justify-between items-center z-30 bg-zinc-900/50 backdrop-blur-md">
           <button onClick={() => setIsSidebarOpen(true)} className="p-3 bg-white/10 rounded-xl text-white border border-white/10"><Menu size={20}/></button>
@@ -143,62 +133,33 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
         </div>
       </div>
 
-      {/* Payment Modal */}
       {showPayment && (
-        <div className="fixed inset-0 bg-black/95 z-[100] flex items-center justify-center p-4 backdrop-blur-xl animate-in fade-in duration-300">
+        <div className="fixed inset-0 bg-black/95 z-[100] flex items-center justify-center p-4 backdrop-blur-xl">
           <div className="bg-white rounded-[3rem] p-8 max-w-md w-full shadow-2xl relative animate-in zoom-in duration-300">
-            <button onClick={() => setShowPayment(false)} className="absolute top-6 right-6 p-2 bg-zinc-100 rounded-full hover:bg-zinc-200 transition-transform active:scale-90"><XIcon size={20}/></button>
+            <button onClick={() => setShowPayment(false)} className="absolute top-6 right-6 p-2 bg-zinc-100 rounded-full"><XIcon size={20}/></button>
+            <h3 className="text-2xl font-black uppercase mb-1 italic text-center text-zinc-900">Payment Info</h3>
+            <p className="text-zinc-400 text-[10px] mb-6 font-bold uppercase text-center tracking-widest italic underline decoration-blue-500 underline-offset-4">Bank Transfer Details</p>
             
-            <h3 className="text-2xl font-black uppercase mb-1 italic tracking-tight text-zinc-900 text-center">Payment Info</h3>
-            <p className="text-zinc-400 text-[10px] mb-6 font-bold uppercase tracking-widest text-center italic underline decoration-blue-500 underline-offset-4">Bank Transfer Details</p>
-            
-            <div className="bg-zinc-950 text-white rounded-[2.5rem] p-7 mb-6 shadow-2xl shadow-blue-500/20 border border-white/5 relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-blue-600 px-6 py-2 rounded-bl-[1.5rem] font-black text-sm">
-                RS. 500
-              </div>
-
+            <div className="bg-zinc-950 text-white rounded-[2.5rem] p-7 mb-6 shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 bg-blue-600 px-6 py-2 rounded-bl-[1.5rem] font-black text-sm">RS. 500</div>
               <div className="space-y-5">
                 <div>
                   <p className="text-[9px] uppercase font-black text-zinc-500 tracking-[0.2em] mb-1">Account Number (BOC)</p>
-                  <p className="text-3xl text-blue-400 font-black tracking-wider underline underline-offset-8 decoration-white/20">91691764</p>
+                  <p className="text-3xl text-blue-400 font-black tracking-wider">91691764</p>
                 </div>
-                
                 <div>
                   <p className="text-[9px] uppercase font-black text-zinc-500 tracking-[0.2em] mb-1">Account Holder</p>
-                  <p className="text-sm font-bold uppercase tracking-tight text-zinc-100">PTN Pathiranage</p>
-                </div>
-
-                <div className="pt-2 border-t border-white/5">
-                  <p className="text-[10px] font-bold text-blue-200/60 uppercase tracking-widest">
-                    Pay exactly <span className="text-white text-lg">Rs. 500.00</span>
-                  </p>
+                  <p className="text-sm font-bold uppercase text-zinc-100">PTN Pathiranage</p>
                 </div>
               </div>
             </div>
 
-            <label className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-[2.5rem] cursor-pointer transition-all ${slipUrl ? 'bg-green-50 border-green-200' : 'bg-zinc-50 border-zinc-200 hover:border-blue-400'}`}>
-              {isUploading ? (
-                <Loader2 className="animate-spin text-blue-600" />
-              ) : slipUrl ? (
-                <div className="flex flex-col items-center gap-2 text-green-600">
-                  <CheckCircle2Icon size={32} />
-                  <span className="text-[10px] font-black uppercase tracking-widest">Slip Uploaded!</span>
-                </div>
-              ) : (
-                <div className="text-center">
-                  <UploadIcon size={24} className="mx-auto text-zinc-300 mb-2"/>
-                  <span className="text-[9px] font-black uppercase text-zinc-400">Upload Bank Slip</span>
-                </div>
-              )}
+            <label className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-[2.5rem] cursor-pointer transition-all ${slipUrl ? 'bg-green-50 border-green-200' : 'bg-zinc-50 border-zinc-200'}`}>
+              {isUploading ? <Loader2 className="animate-spin text-blue-600" /> : slipUrl ? <div className="text-green-600 text-center"><CheckCircle2Icon size={32} className="mx-auto" /><span className="text-[10px] font-black uppercase">Slip Uploaded!</span></div> : <div className="text-center"><UploadIcon size={24} className="mx-auto text-zinc-300 mb-2"/><span className="text-[9px] font-black uppercase text-zinc-400">Upload Bank Slip</span></div>}
               <input type="file" className="hidden" accept="image/*" onChange={handleSlipUpload} />
             </label>
 
-            <button onClick={handleWhatsApp} disabled={!slipUrl || isUploading} 
-              className={`w-full py-5 rounded-[1.5rem] font-black uppercase text-[12px] mt-6 transition-all shadow-xl ${
-                slipUrl ? 'bg-blue-600 text-white shadow-blue-200 hover:bg-blue-700 active:scale-95' : 'bg-zinc-100 text-zinc-400 cursor-not-allowed'
-              }`}>
-              Confirm Order via WhatsApp
-            </button>
+            <button onClick={handleWhatsApp} disabled={!slipUrl || isUploading} className={`w-full py-5 rounded-[1.5rem] font-black uppercase text-[12px] mt-6 transition-all ${slipUrl ? 'bg-blue-600 text-white shadow-xl hover:bg-blue-700 active:scale-95' : 'bg-zinc-100 text-zinc-400 cursor-not-allowed'}`}>Confirm Order via WhatsApp</button>
           </div>
         </div>
       )}
