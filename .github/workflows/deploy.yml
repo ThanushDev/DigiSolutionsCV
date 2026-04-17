@@ -28,9 +28,10 @@ jobs:
         run: npm install
 
       - name: Build
-        # මෙතනදී තමයි GitHub Secret එක Vite එකට සම්බන්ධ කරන්නේ
+        # මෙතනදී තමයි අලුත් Hugging Face Key එක Build එකට එකතු කරන්නේ
         run: npm run build
         env:
+          VITE_HUGGINGFACE_API_KEY: ${{ secrets.VITE_HUGGINGFACE_API_KEY }}
           VITE_GEMINI_API_KEY: ${{ secrets.VITE_GEMINI_API_KEY }}
 
       - name: Setup Pages
