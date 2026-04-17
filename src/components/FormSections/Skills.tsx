@@ -34,7 +34,8 @@ export function Skills() {
 
   return (
     <div className="space-y-6 animate-in fade-in">
-      <div className="flex gap-2">
+      {/* Mobile responsive input row */}
+      <div className="flex flex-col sm:flex-row gap-2">
         <input 
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
@@ -42,7 +43,7 @@ export function Skills() {
           placeholder="Add a skill (e.g. React, English)"
           className="flex-1 px-4 py-3 border rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm"
         />
-        <button onClick={handleManualAdd} className="px-6 bg-zinc-900 text-white rounded-2xl font-bold uppercase text-[10px] tracking-widest">Add</button>
+        <button onClick={handleManualAdd} className="px-6 py-3 sm:py-0 bg-zinc-900 text-white rounded-2xl font-bold uppercase text-[10px] tracking-widest">Add</button>
       </div>
 
       <button 
