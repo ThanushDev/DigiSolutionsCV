@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TemplateRenderer } from '../components/CVTemplates/TemplateRenderer';
-import { SearchIcon, ClipboardPaste, Trash2 } from 'lucide-react';
+import { SearchIcon } from 'lucide-react';
 
 export function Admin() {
   const [inputCode, setInputCode] = useState('');
@@ -14,21 +14,31 @@ export function Admin() {
 
       if (!raw) return alert("Please paste the code!");
 
-      // Base64 Decoding with UTF-8 support
+      // Base64 Decoding
       const json = JSON.parse(decodeURIComponent(escape(atob(raw))));
       
-      // Safety Mapping - Ensures arrays exist to prevent .map() crashes
+      // දත්ත නැවත පූර්ණ ව්‍යුහයට හැරවීම (De-compression)
       const formatted = {
-        ...json,
         personalInfo: {
-          ...json.personalInfo,
-          photo: json.personalInfo?.photo || json.profileImage || ""
+          name: json.pi?.n || "",
+          fullName: json.pi?.fn || "",
+          description: json.pi?.d || "",
+          photo: json.pi?.p || ""
         },
-        skills: Array.isArray(json.skills) ? json.skills : [],
-        experience: Array.isArray(json.experience) ? json.experience : (Array.isArray(json.workExperience) ? json.workExperience : []),
-        education: Array.isArray(json.education) ? json.education : [],
-        languages: Array.isArray(json.languages) ? json.languages : [],
-        references: Array.isArray(json.references) ? json.references : []
+        contact: {
+          email: json.c?.e || "",
+          phone1: json.c?.p || "",
+          address: json.c?.address || json.c?.a || ""
+        },
+        skills: Array.isArray(json.sk) ? json.sk.map((s: any) => ({ name: s })) : [],
+        experience: Array.isArray(json.ex) ? json.ex.map((e: any) => ({ 
+          position: e.t, company: e.c, duration: e.d, description: e.ds 
+        })) : [],
+        education: Array.isArray(json.ed) ? json.ed.map((ed: any) => ({ 
+          degree: ed.d, school: ed.s, year: ed.y 
+        })) : [],
+        selectedTemplate: Number(json.t) || 1,
+        customColor: json.cl || "#1e3a8a"
       };
 
       setDecodedData(formatted);
@@ -73,4 +83,4 @@ export function Admin() {
   );
 }
 
-export default Admin; // Build error එක fix වෙන්න අනිවාර්යයි
+export default Admin;
