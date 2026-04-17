@@ -23,17 +23,42 @@ export function PersonalInfo() {
 
   return (
     <div className="space-y-6">
-       {/* නම ඇතුළත් කරන Input එක (පරණ විදිහමයි) */}
+       {/* Name */}
        <div>
-          <label className="block text-sm font-semibold text-gray-700">Name</label>
+          <label className="block text-sm font-semibold text-gray-700">Full Name</label>
           <input 
             type="text" 
-            value={cvData.personalInfo.name} 
+            value={cvData.personalInfo.name || ''} 
             onChange={(e) => updatePersonalInfo({ name: e.target.value })}
             className="w-full px-4 py-2 border rounded-xl"
           />
        </div>
 
+       {/* අලුතෙන් එකතු කරපු Personal Details ටික */}
+       <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700">NIC Number</label>
+            <input type="text" value={cvData.personalInfo.nic || ''} onChange={(e) => updatePersonalInfo({ nic: e.target.value })} className="w-full px-4 py-2 border rounded-xl" />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700">Gender</label>
+            <input type="text" value={cvData.personalInfo.gender || ''} onChange={(e) => updatePersonalInfo({ gender: e.target.value })} className="w-full px-4 py-2 border rounded-xl" />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700">Nationality</label>
+            <input type="text" value={cvData.personalInfo.nationality || ''} onChange={(e) => updatePersonalInfo({ nationality: e.target.value })} className="w-full px-4 py-2 border rounded-xl" />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700">Religion</label>
+            <input type="text" value={cvData.personalInfo.religion || ''} onChange={(e) => updatePersonalInfo({ religion: e.target.value })} className="w-full px-4 py-2 border rounded-xl" />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700">Civil Status</label>
+            <input type="text" value={cvData.personalInfo.civilStatus || ''} onChange={(e) => updatePersonalInfo({ civilStatus: e.target.value })} className="w-full px-4 py-2 border rounded-xl" />
+          </div>
+       </div>
+
+       {/* Professional Summary */}
        <div className="space-y-1.5">
           <div className="flex justify-between items-center">
             <label className="block text-sm font-semibold text-gray-700">Professional Summary</label>
@@ -47,7 +72,7 @@ export function PersonalInfo() {
             </button>
           </div>
           <textarea
-            value={cvData.personalInfo.description}
+            value={cvData.personalInfo.description || ''}
             onChange={(e) => updatePersonalInfo({ description: e.target.value })}
             rows={4}
             className="w-full px-4 py-2 border rounded-xl text-sm"
