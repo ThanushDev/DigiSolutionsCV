@@ -1,7 +1,4 @@
-export interface Subject {
-  name: string;
-  grade: string;
-}
+export interface Subject { name: string; grade: string; }
 
 export interface EducationLevel {
   indexNumber: string;
@@ -62,34 +59,25 @@ export interface CVData {
   brightness?: number;
 }
 
-// උඹ එවපු Screenshot වල හැඩයට අනුව නම් කරපු Templates ටික
 export const templateThemes = [
-  { id: 1, name: 'Modern Timeline Sidebar', primaryColor: '#2c3e50' },
-  { id: 2, name: 'Professional Ribbon Style', primaryColor: '#e67e22' },
-  { id: 3, name: 'Executive Dark Blue', primaryColor: '#1e3a8a' },
-  { id: 4, name: 'Corporate Gray Structure', primaryColor: '#4b5563' },
-  { id: 5, name: 'Minimalist Emerald', primaryColor: '#059669' },
-  { id: 6, name: 'Golden Premium', primaryColor: '#ca8a04' }
+  { id: 1, name: 'Modern Sidebar Dark', primaryColor: '#2c3e50' },
+  { id: 2, name: 'Executive Ribbon Blue', primaryColor: '#1e3a8a' },
+  { id: 3, name: 'Professional Timeline Gray', primaryColor: '#4b5563' },
+  { id: 4, name: 'Minimalist Emerald Border', primaryColor: '#059669' },
+  { id: 5, name: 'Nina Lane Yellow Accent', primaryColor: '#ca8a04' },
+  { id: 6, name: 'Brian Baxter Tech Ribbon', primaryColor: '#7c2d12' },
+  { id: 7, name: 'Golden Badge Premium', primaryColor: '#854d0e' },
+  { id: 8, name: 'Classic Structured White', primaryColor: '#000000' }
 ];
 
 export const defaultCVData: CVData = {
   personalInfo: {
-    name: '',
-    description: '',
-    photo: '',
-    photoFormat: 'circular',
-    fullName: '',
-    dateOfBirth: '',
-    nicNumber: '',
-    gender: '',
-    nationality: '',
-    religion: '',
-    civilStatus: ''
+    name: '', description: '', photo: '', photoFormat: 'circular',
+    fullName: '', dateOfBirth: '', nicNumber: '', gender: '',
+    nationality: '', religion: '', civilStatus: ''
   },
   contact: { phone1: '', phone2: '', email: '', address: '' },
-  skills: [],
-  languages: [],
-  workExperience: [],
+  skills: [], languages: [], workExperience: [],
   education: {
     oLevel: { indexNumber: '', year: '', subjects: [] },
     aLevel: { indexNumber: '', year: '', subjects: [] }
