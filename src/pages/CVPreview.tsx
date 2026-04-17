@@ -121,7 +121,7 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
         {/* Mobile Header Menu Button */}
         <div className="md:hidden p-4 flex justify-between items-center z-30 bg-zinc-900/50 backdrop-blur-md">
           <button onClick={() => setIsSidebarOpen(true)} className="p-3 bg-white/10 rounded-xl text-white border border-white/10"><Menu size={20}/></button>
-          <span className="text-white font-black uppercase text-[10px] tracking-widest opacity-60 italic">Seeharaawa CV</span>
+          <span className="text-white font-black uppercase text-[10px] tracking-widest opacity-60 italic">PTN Pathiranage</span>
           <div className="w-10"></div>
         </div>
 
@@ -143,9 +143,9 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
             
             <div className="bg-zinc-950 text-white rounded-[2.5rem] p-7 mb-6 shadow-2xl shadow-blue-900/20">
               <div className="space-y-4">
-                <div><p className="text-[9px] uppercase font-black text-zinc-500 tracking-[0.2em]">Bank (BOC)</p></div>
+                <div><p className="text-[9px] uppercase font-black text-zinc-500 tracking-[0.2em]">Account Number(Bank of Cyelon - BOC)</p></div>
                 <div><p className="text-2xl text-blue-400 font-black tracking-wider underline underline-offset-4">91691764</p></div>
-                <div><p className="text-[9px] uppercase font-black text-zinc-500 tracking-[0.2em]">Account Holder</p><p className="text-sm font-bold uppercase tracking-tight text-zinc-100">W. S. SEEHARA</p></div>
+                <div><p className="text-[9px] uppercase font-black text-zinc-500 tracking-[0.2em]">Account Holder</p><p className="text-sm font-bold uppercase tracking-tight text-zinc-100">PTN Pathiranage</p></div>
               </div>
             </div>
 
