@@ -1,41 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useCV } from '../../context/CVContext';
-import { PlusIcon, TrashIcon, Sparkles, Loader2 } from 'lucide-react';
-import { askAI } from '../../lib/gemini'; // AI function එක import කළා
+import { TrashIcon, PlusIcon } from 'lucide-react';
 
-export function Education() { // මෙතන export කියන එක අනිවාර්යයි
+export function Education() {
   const { cvData, updateEducation, addSubject, updateSubject, removeSubject } = useCV();
-  const [isAiLoading, setIsAiLoading] = useState<'oLevel' | 'aLevel' | null>(null);
-
-  const handleAiSubjects = async (level: 'oLevel' | 'aLevel', stream: string) => {
-    if (!stream) return alert("Please enter the stream/field first!");
-    
-    setIsAiLoading(level);
-    try {
-      const prompt = `List 8 standard subjects for ${level === 'oLevel' ? 'G.C.E. O/L' : 'G.C.E. A/L'} ${stream} stream in Sri Lanka. Return ONLY a comma-separated list of subject names. No numbers or bullets.`;
-      
-      const result = await askAI(prompt);
-      
-      if (result) {
-        const subjectsArray = result.split(',').map(s => s.trim().replace(/\*/g, ''));
-        
-        // එකින් එක විෂයන් ඇඩ් කිරීම
-        subjectsArray.forEach((subName, index) => {
-          addSubject(level);
-          // අලුතින් ඇඩ් වන විෂයට නම ලබා දීම
-          // Note: Context එකේ addSubject එකෙන් පස්සේ state එක update වෙන්න වෙලාවක් යන නිසා
-          // කෙලින්ම index එක පාවිච්චි කිරීමේදී ප්‍රවේශම් වන්න.
-          setTimeout(() => {
-            updateSubject(level, index, { name: subName, grade: '' });
-          }, 100);
-        });
-      }
-    } catch (e) {
-      console.error("AI Education Error:", e);
-    } finally {
-      setIsAiLoading(null);
-    }
-  };
 
   const renderEducationLevel = (level: 'oLevel' | 'aLevel', title: string) => {
     const data = cvData.education[level];
@@ -44,14 +12,6 @@ export function Education() { // මෙතන export කියන එක අන�
       <div className="p-6 bg-white border border-gray-100 rounded-[2rem] shadow-sm space-y-5">
         <div className="flex justify-between items-center border-b border-gray-50 pb-4">
           <h3 className="font-black text-gray-800 uppercase tracking-tighter">{title}</h3>
-          <button 
-            onClick={() => handleAiSubjects(level, data.year)} // මෙතන year එක හෝ stream එක පාවිච්චි කරන්න
-            disabled={isAiLoading === level}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-600 text-white rounded-xl text-[10px] font-bold uppercase transition-all hover:opacity-90 disabled:opacity-50"
-          >
-            {isAiLoading === level ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}
-            AI Auto-Fill
-          </button>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -99,9 +59,9 @@ export function Education() { // මෙතන export කියන එක අන�
 
         <button
           onClick={() => addSubject(level)}
-          className="w-full py-3 border-2 border-dashed border-gray-100 rounded-2xl text-gray-400 hover:text-blue-600 hover:bg-blue-50 hover:border-blue-200 transition-all text-xs font-bold uppercase"
+          className="w-full py-3 border-2 border-dashed border-gray-100 rounded-2xl text-gray-400 hover:text-blue-600 hover:bg-blue-50 hover:border-blue-200 transition-all text-xs font-bold uppercase flex items-center justify-center gap-2"
         >
-          + Add Subject
+          <PlusIcon size={14} /> Add Subject
         </button>
       </div>
     );
