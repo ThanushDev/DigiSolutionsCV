@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 
 export function CVPreview({ onBack }: { onBack: () => void }) {
-  const { cvData, setSelectedTemplate, updateThemeColor } = useCV();
+  const { cvData, setSelectedTemplate, updateThemeColor, updatePersonalInfo } = useCV();
   const [showPayment, setShowPayment] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [slipUrl, setSlipUrl] = useState('');
@@ -27,7 +27,13 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
         body: formData,
       });
       const result = await response.json();
-      if (result.success) setSlipUrl(result.data.url);
+      if (result.success) {
+        const imageUrl = result.data.url;
+        setSlipUrl(imageUrl); // පේමන්ට් ස්ලිප් එකට
+        
+        // --- මෙන්න මේ line එක ඇඩ් කළා: User ගේ Profile එකටත් image එක update කරනවා ---
+        updatePersonalInfo({ profileImage: imageUrl }); 
+      }
     } catch (error) {
       alert("Error uploading image.");
     } finally {
@@ -140,7 +146,7 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
         </div>
       </div>
 
-      {/* --- Payment Modal (පරණ එකමයි, Clean කළා) --- */}
+      {/* --- Payment Modal --- */}
       {showPayment && (
         <div className="fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4 backdrop-blur-md">
           <div className="bg-white rounded-[2.5rem] p-8 max-w-md w-full shadow-2xl relative">
