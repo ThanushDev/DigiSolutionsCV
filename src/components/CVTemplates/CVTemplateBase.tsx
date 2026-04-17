@@ -6,7 +6,7 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
   const theme = cvData.customColor || '#1e3a8a';
   const brightness = cvData.brightness || 100;
 
-  // --- Data Extractors (උඹේ පරණ කෝඩ් එකේ තිබ්බ විදිහටමයි) ---
+  // --- Data Extractors (100% Original Logic) ---
   const pInfo = cvData.personalInfo || {} as any;
   const contactInfo = cvData.contact || {} as any;
 
@@ -22,6 +22,7 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
   const civilStatus = pInfo.civilStatus || '';
 
   const phone1 = contactInfo.phone || contactInfo.phone1 || '';
+  const phone2 = contactInfo.phone2 || '';
   const email = contactInfo.email || '';
   const address = contactInfo.address || '';
 
@@ -34,32 +35,34 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
   const workList = cvData.workExperience || [];
   const refList = cvData.references || [];
 
-  // --- Strict A4 Wrapper ---
+  // --- Wrapper for A4 Constraints ---
   const A4Page = ({ children }: { children: React.ReactNode }) => (
-    <div className="w-[210mm] h-[297mm] bg-white overflow-hidden flex flex-col relative print:shadow-none shadow-none">
+    <div className="w-[210mm] h-[297mm] bg-white overflow-hidden flex flex-col relative print:shadow-none">
       {children}
     </div>
   );
 
   const PersonalInfoList = ({ isDark = false }) => (
-    <div className={`space-y-1 text-[9px] font-bold uppercase ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
-      {nic && <div className="grid grid-cols-[60px_1fr] border-b border-black/5 pb-0.5"><span>NIC:</span><span>{nic}</span></div>}
-      {dob && <div className="grid grid-cols-[60px_1fr] border-b border-black/5 pb-0.5"><span>DOB:</span><span>{dob}</span></div>}
-      {gender && <div className="grid grid-cols-[60px_1fr] border-b border-black/5 pb-0.5"><span>Gender:</span><span>{gender}</span></div>}
-      {nationality && <div className="grid grid-cols-[60px_1fr] border-b border-black/5 pb-0.5"><span>Nationality:</span><span>{nationality}</span></div>}
-      {civilStatus && <div className="grid grid-cols-[60px_1fr] border-b border-black/5 pb-0.5"><span>Status:</span><span>{civilStatus}</span></div>}
+    <div className={`space-y-1 text-[10px] font-bold uppercase ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
+      {nic && <div className="grid grid-cols-[70px_1fr]"><span>NIC:</span> <span>{nic}</span></div>}
+      {dob && <div className="grid grid-cols-[70px_1fr]"><span>DOB:</span> <span>{dob}</span></div>}
+      {gender && <div className="grid grid-cols-[70px_1fr]"><span>Gender:</span> <span>{gender}</span></div>}
+      {nationality && <div className="grid grid-cols-[70px_1fr]"><span>Nationality:</span> <span>{nationality}</span></div>}
+      {religion && <div className="grid grid-cols-[70px_1fr]"><span>Religion:</span> <span>{religion}</span></div>}
+      {civilStatus && <div className="grid grid-cols-[70px_1fr]"><span>Status:</span> <span>{civilStatus}</span></div>}
     </div>
   );
 
   const EduTable = ({ level, data }: { level: string, data: any }) => {
     if (!data || !data.subjects || data.subjects.length === 0) return null;
     return (
-      <div className="mb-2">
-        <p className="font-bold text-[10px] uppercase mb-1">• G.C.E. {level} - {data.year}</p>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 pl-3 text-[9px]">
+      <div className="mb-3">
+        <p className="font-bold text-[11px] uppercase">• Passed G.C.E. {level} - {data.year}</p>
+        <p className="pl-4 text-[10px] text-zinc-500 italic">Index Number: {data.indexNumber}</p>
+        <div className="grid grid-cols-2 gap-x-10 gap-y-1 pl-4 text-[11px]">
           {data.subjects.map((s: Subject, i: number) => (
-            <div key={i} className="flex justify-between border-b border-zinc-100 italic">
-              <span className="truncate pr-2">{s.name}</span><span className="font-bold" style={{ color: theme }}>{s.grade}</span>
+            <div key={i} className="flex justify-between border-b border-zinc-100">
+              <span>{s.name}</span><span className="font-bold" style={{ color: theme }}>{s.grade}</span>
             </div>
           ))}
         </div>
@@ -67,22 +70,22 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
     );
   };
 
-  // --- layouts 1 to 8 (සියල්ලම A4 ලොක් කර ඇත) ---
-
   const Layout1 = () => (
     <A4Page>
       <div className="flex h-full">
-        <div className="w-[32%] bg-zinc-50 border-r p-6 flex flex-col gap-5 h-full shrink-0">
-          <img src={profileImg} className="w-32 h-32 rounded-full border-4 mx-auto object-cover" style={{ borderColor: theme }} />
-          <section><h3 className="text-[11px] font-black uppercase mb-2" style={{ color: theme }}>Contact</h3><div className="space-y-2 text-[10px]"><p className="flex items-center gap-2"><Phone size={10}/> {phone1}</p><p className="flex items-center gap-2 truncate"><Mail size={10}/> {email}</p><p className="flex items-start gap-2"><MapPin size={10}/> {address}</p></div></section>
-          <section><h3 className="text-[11px] font-black uppercase mb-2" style={{ color: theme }}>Personal Info</h3><PersonalInfoList /></section>
-          <section><h3 className="text-[11px] font-black uppercase mb-2" style={{ color: theme }}>Skills</h3><div className="flex flex-wrap gap-1">{skillsList.map((s, i) => <span key={i} className="bg-white border px-1.5 py-0.5 rounded text-[8px] font-bold uppercase">{s}</span>)}</div></section>
+        <div className="w-[33%] bg-zinc-50 border-r p-8 flex flex-col gap-8 shrink-0">
+          <img src={profileImg} className="w-36 h-36 rounded-full border-4 object-cover shadow-lg mx-auto" style={{ borderColor: theme }} />
+          <section><h3 className="text-[12px] font-black uppercase mb-2" style={{ color: theme }}>Contact</h3><div className="space-y-3 text-[10px]"><p className="flex items-center gap-2"><Phone size={12}/> {phone1} {phone2 && `/ ${phone2}`}</p><p className="flex items-center gap-2 truncate"><Mail size={12}/> {email}</p><p className="flex items-start gap-2"><MapPin size={12}/> {address}</p></div></section>
+          <section><h3 className="text-[12px] font-black uppercase mb-2" style={{ color: theme }}>Personal Info</h3><PersonalInfoList /></section>
+          <section><h3 className="text-[12px] font-black uppercase mb-2" style={{ color: theme }}>Skills</h3><div className="flex flex-wrap gap-2">{skillsList.map((s, i) => <span key={i} className="bg-white border px-2 py-1 rounded text-[9px] font-bold uppercase">{s}</span>)}</div></section>
+          <section><h3 className="text-[12px] font-black uppercase mb-2" style={{ color: theme }}>Languages</h3><div className="flex flex-wrap gap-2">{langList.map((l, i) => <span key={i} className="bg-white border px-2 py-1 rounded text-[9px] font-bold uppercase">{l}</span>)}</div></section>
         </div>
-        <div className="flex-1 p-8 flex flex-col gap-4 overflow-hidden">
-          <h1 className="text-3xl font-black uppercase" style={{ color: theme }}>{fullName}</h1>
-          <section><h3 className="text-[11px] font-black uppercase border-b mb-2 pb-0.5" style={{ color: theme }}>Qualifications</h3><ul className="list-disc pl-4 text-[10px] space-y-0.5">{qualList.map((q, i) => <li key={i}>{q}</li>)}</ul></section>
-          <section><h3 className="text-[11px] font-black uppercase border-b mb-2 pb-0.5" style={{ color: theme }}>Education</h3><EduTable level="A/L" data={cvData.education?.aLevel} /><EduTable level="O/L" data={cvData.education?.oLevel} /></section>
-          <section className="mt-auto"><h3 className="text-[11px] font-black uppercase border-b mb-2 pb-0.5" style={{ color: theme }}>References</h3><div className="grid grid-cols-2 gap-4 text-[9px]">{refList.map((r: any, i: number) => <div key={i}><b>{r.name}</b><br/>{r.phone}</div>)}</div></section>
+        <div className="flex-1 p-10 flex flex-col gap-6 overflow-hidden">
+          <div><h1 className="text-4xl font-black uppercase" style={{ color: theme }}>{fullName}</h1>{summary && <p className="text-zinc-500 italic mt-2 text-sm leading-relaxed">"{summary}"</p>}</div>
+          <section><h3 className="text-[12px] font-black uppercase border-b mb-2 pb-0.5" style={{ color: theme }}>Professional Qualifications</h3><ul className="space-y-2 pl-2 text-[11px] font-medium text-zinc-700">{qualList.map((q, i) => <li key={i} className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: theme }}></span>{q}</li>)}</ul></section>
+          <section><h3 className="text-[12px] font-black uppercase border-b mb-2 pb-0.5" style={{ color: theme }}>Education</h3><EduTable level="Advanced Level" data={cvData.education?.aLevel} /><EduTable level="Ordinary Level" data={cvData.education?.oLevel} /></section>
+          <section><h3 className="text-[12px] font-black uppercase border-b mb-2 pb-0.5" style={{ color: theme }}>Work Experience</h3><div className="space-y-4">{workList.map((w: any, i: number) => (<div key={i}><div className="flex justify-between"><h4 className="font-black text-[11px] uppercase">{w.title || w.position}</h4><span className="text-[9px] font-bold text-zinc-400">{w.duration}</span></div><p className="text-[10px] font-bold" style={{ color: theme }}>{w.company}</p><p className="text-zinc-500 mt-1 text-[10px]">{w.description}</p></div>))}</div></section>
+          <section className="mt-auto"><h3 className="text-[12px] font-black uppercase border-b mb-2 pb-0.5" style={{ color: theme }}>References</h3><div className="grid grid-cols-2 gap-8">{refList.map((r: any, i: number) => (<div key={i} className="text-[10px]"><b>{r.name}</b><br/>{r.designation}<br/>{r.phone}</div>))}</div></section>
         </div>
       </div>
     </A4Page>
@@ -90,20 +93,23 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
 
   const Layout2 = () => (
     <A4Page>
-      <div className="h-32 flex items-center justify-between px-10 text-white shrink-0" style={{ backgroundColor: theme }}>
-        <h1 className="text-3xl font-black uppercase tracking-tight">{fullName}</h1>
-        <img src={profileImg} className="w-24 h-24 object-cover rounded-full border-4 border-white/20 shadow-md" />
+      <div className="h-40 flex items-center justify-between px-12 text-white shrink-0" style={{ backgroundColor: theme }}>
+        <div><h1 className="text-4xl font-black uppercase">{fullName}</h1><p className="text-sm opacity-80 uppercase tracking-widest mt-1">Professional Resume</p></div>
+        <img src={profileImg} className="w-28 h-28 object-cover rounded-lg border-4 border-white/20 shadow-lg" />
       </div>
-      <div className="flex flex-1 overflow-hidden">
-        <div className="w-[30%] bg-zinc-50 border-r p-6 space-y-6">
-          <section><h3 className="font-black uppercase text-[10px] border-b-2 mb-2 pb-1" style={{ borderColor: theme }}>Contact</h3><p className="text-[9px]">{phone1}<br/>{email}</p></section>
-          <section><h3 className="font-black uppercase text-[10px] border-b-2 mb-2 pb-1" style={{ borderColor: theme }}>Personal</h3><PersonalInfoList /></section>
-          <section><h3 className="font-black uppercase text-[10px] border-b-2 mb-2 pb-1" style={{ borderColor: theme }}>Skills</h3>{skillsList.map((s, i) => <div key={i} className="text-[8px] font-bold">• {s}</div>)}</section>
+      <div className="flex-1 flex overflow-hidden">
+        <div className="w-[30%] bg-zinc-50 border-r p-8 space-y-8">
+          <section><h3 className="font-black text-xs mb-3 border-b-2" style={{ borderColor: theme }}>Contact</h3><div className="text-[10px] space-y-2"><p>{phone1}</p><p className="truncate">{email}</p><p>{address}</p></div></section>
+          <section><h3 className="font-black text-xs mb-3 border-b-2" style={{ borderColor: theme }}>Details</h3><PersonalInfoList /></section>
+          <section><h3 className="font-black text-xs mb-3 border-b-2" style={{ borderColor: theme }}>Skills</h3>{skillsList.map((s, i) => <div key={i} className="text-[9px] font-bold uppercase">• {s}</div>)}</section>
+          <section><h3 className="font-black text-xs mb-3 border-b-2" style={{ borderColor: theme }}>Languages</h3>{langList.map((l, i) => <div key={i} className="text-[9px] font-bold uppercase">• {l}</div>)}</section>
         </div>
-        <div className="flex-1 p-8 flex flex-col gap-6 overflow-hidden">
-          <section><h2 className="text-[11px] font-black uppercase mb-3" style={{ color: theme }}>Qualifications</h2><ul className="list-disc pl-5 text-[10px]">{qualList.map((q, i) => <li key={i}>{q}</li>)}</ul></section>
-          <section><h2 className="text-[11px] font-black uppercase mb-3" style={{ color: theme }}>Education</h2><EduTable level="A/L" data={cvData.education?.aLevel} /><EduTable level="O/L" data={cvData.education?.oLevel} /></section>
-          <section className="mt-auto border-t pt-4"><h2 className="text-[11px] font-black uppercase mb-2" style={{ color: theme }}>References</h2><div className="grid grid-cols-2 text-[9px]">{refList.map((r: any, i: number) => <div key={i}><b>{r.name}</b><br/>{r.phone}</div>)}</div></section>
+        <div className="flex-1 p-10 space-y-6 overflow-hidden">
+          {summary && <p className="text-zinc-600 italic border-l-4 pl-4" style={{ borderColor: theme }}>{summary}</p>}
+          <section><h2 className="text-sm font-black uppercase mb-4" style={{ color: theme }}>Qualifications</h2><ul className="list-disc pl-5 space-y-1 text-[11px]">{qualList.map((q, i) => <li key={i}>{q}</li>)}</ul></section>
+          <section><h2 className="text-sm font-black uppercase mb-4" style={{ color: theme }}>Education</h2><EduTable level="A/L" data={cvData.education?.aLevel} /><EduTable level="O/L" data={cvData.education?.oLevel} /></section>
+          <section><h2 className="text-sm font-black uppercase mb-4" style={{ color: theme }}>Work Experience</h2>{workList.map((w: any, i: number) => <div key={i} className="mb-3 text-[11px]"><p className="font-black">{w.title || w.position}</p><p className="text-[10px] text-zinc-500">{w.company} | {w.duration}</p></div>)}</section>
+          <section className="mt-auto border-t pt-4"><h2 className="text-sm font-black uppercase mb-4" style={{ color: theme }}>References</h2><div className="grid grid-cols-2 gap-4 text-[10px]">{refList.map((r: any, i: number) => <div key={i}><b>{r.name}</b><br/>{r.phone}</div>)}</div></section>
         </div>
       </div>
     </A4Page>
@@ -111,20 +117,22 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
 
   const Layout3 = () => (
     <A4Page>
-      <div className="p-6 h-full flex flex-col">
-        <div className="h-24 bg-zinc-900 rounded-2xl flex items-center px-8 mb-10 text-white shrink-0 relative">
-          <h1 className="text-2xl font-black uppercase italic">{fullName}</h1>
-          <img src={profileImg} className="absolute -bottom-6 right-8 w-24 h-24 rounded-full border-4 border-white object-cover" />
+      <div className="p-8 h-full flex flex-col">
+        <div className="relative h-28 bg-zinc-900 rounded-3xl flex items-center px-10 mb-14 shrink-0">
+          <h1 className="text-3xl font-black text-white uppercase italic">{fullName}</h1>
+          <img src={profileImg} className="absolute -bottom-8 right-10 w-28 h-28 rounded-full border-4 border-white object-cover shadow-xl" />
         </div>
-        <div className="flex-1 flex gap-8 overflow-hidden">
-          <div className="w-[30%] space-y-4">
-             <div className="p-4 rounded-xl border-2" style={{ borderColor: theme }}><h3 className="font-black uppercase text-[9px] mb-1">Contact</h3><p className="text-[8px] truncate">{phone1}<br/>{email}</p></div>
-             <div className="p-4 rounded-xl bg-zinc-50 space-y-4"><PersonalInfoList /><section><h3 className="font-black uppercase text-[9px]">Skills</h3>{skillsList.map((s, i) => <div key={i} className="text-[8px] font-bold">• {s}</div>)}</section></div>
+        <div className="grid grid-cols-12 gap-8 flex-1 overflow-hidden">
+          <div className="col-span-4 space-y-6">
+            <div className="p-5 rounded-3xl border-2" style={{ borderColor: theme }}><h3 className="font-black text-xs mb-3">Contact</h3><div className="text-[10px] space-y-1"><p>{phone1}</p><p className="truncate">{email}</p></div></div>
+            <div className="p-5 rounded-3xl bg-zinc-50 space-y-5"><PersonalInfoList /><section><h3 className="font-black text-xs">Skills</h3>{skillsList.map((s, i) => <div key={i} className="text-[9px] font-bold">• {s}</div>)}</section></div>
           </div>
-          <div className="flex-1 space-y-4 overflow-hidden">
-            <section><h2 className="text-[10px] font-black uppercase border-b-2 inline-block mb-2" style={{ borderColor: theme }}>Qualifications</h2><ul className="list-disc pl-4 text-[10px]">{qualList.map((q, i) => <li key={i}>{q}</li>)}</ul></section>
-            <section><h2 className="text-[10px] font-black uppercase border-b-2 inline-block mb-2" style={{ borderColor: theme }}>Education</h2><EduTable level="A/L" data={cvData.education?.aLevel} /><EduTable level="O/L" data={cvData.education?.oLevel} /></section>
-            <section className="mt-auto border-t pt-4"><div className="grid grid-cols-2 text-[9px]">{refList.map((r: any, i: number) => <div key={i}><b>{r.name}</b><br/>{r.phone}</div>)}</div></section>
+          <div className="col-span-8 space-y-6 pr-4 overflow-hidden">
+            {summary && <p className="italic text-zinc-600 text-[11px]">"{summary}"</p>}
+            <section><h2 className="text-sm font-black uppercase border-b-4 inline-block mb-3" style={{ borderColor: theme }}>Qualifications</h2><ul className="list-disc pl-4 text-[11px]">{qualList.map((q, i) => <li key={i}>{q}</li>)}</ul></section>
+            <section><h2 className="text-sm font-black uppercase border-b-4 inline-block mb-3" style={{ borderColor: theme }}>Education</h2><EduTable level="A/L" data={cvData.education?.aLevel} /><EduTable level="O/L" data={cvData.education?.oLevel} /></section>
+            <section><h2 className="text-sm font-black uppercase border-b-4 inline-block mb-3" style={{ borderColor: theme }}>Work</h2>{workList.map((w: any, i: number) => <div key={i} className="mb-2 text-[11px]"><p className="font-bold">{w.title}</p><p className="text-[9px] opacity-60">{w.company}</p></div>)}</section>
+            <section className="mt-auto pt-4 border-t"><div className="grid grid-cols-2 gap-4 text-[10px]">{refList.map((r: any, i: number) => <div key={i}><b>{r.name}</b><br/>{r.phone}</div>)}</div></section>
           </div>
         </div>
       </div>
@@ -134,17 +142,18 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
   const Layout4 = () => (
     <A4Page>
       <div className="flex h-full">
-        <div className="w-[28%] bg-zinc-900 text-white p-6 flex flex-col gap-6 shrink-0 h-full">
-          <img src={profileImg} className="w-24 h-24 rounded-full border-2 border-zinc-700 mx-auto object-cover" />
-          <section><h3 className="border-b border-zinc-700 pb-1 mb-2 text-[9px] font-black uppercase text-zinc-400">Contact</h3><p className="text-[9px]">{phone1}<br/>{email}</p></section>
-          <section><h3 className="border-b border-zinc-700 pb-1 mb-2 text-[9px] font-black uppercase text-zinc-400">Personal Info</h3><PersonalInfoList isDark={true} /></section>
-          <section><h3 className="border-b border-zinc-700 pb-1 mb-2 text-[9px] font-black uppercase text-zinc-400">Skills</h3>{skillsList.slice(0, 6).map((s, i) => <p key={i} className="text-[8px]">• {s}</p>)}</section>
+        <div className="w-[30%] bg-zinc-900 text-white p-8 flex flex-col gap-6 shrink-0 h-full">
+          <img src={profileImg} className="w-32 h-32 rounded-full border-2 border-zinc-500 object-cover mx-auto" />
+          <section><h3 className="border-b border-zinc-700 pb-1 mb-3 text-[10px] font-black uppercase text-zinc-400">Contact</h3><div className="text-[9px] space-y-2"><p>{phone1}</p><p className="truncate">{email}</p><p>{address}</p></div></section>
+          <section><h3 className="border-b border-zinc-700 pb-1 mb-3 text-[10px] font-black uppercase text-zinc-400">Details</h3><PersonalInfoList isDark={true}/></section>
+          <section><h3 className="border-b border-zinc-700 pb-1 mb-3 text-[10px] font-black uppercase text-zinc-400">Skills</h3>{skillsList.map((s, i) => <p key={i} className="text-[9px]">• {s}</p>)}</section>
         </div>
-        <div className="flex-1 p-8 flex flex-col gap-6 overflow-hidden">
-          <h1 className="text-3xl font-black uppercase text-zinc-800 leading-none">{fullName}</h1>
-          <section><h2 className="text-[11px] font-black uppercase border-b-2 mb-2 pb-0.5" style={{ borderColor: theme }}>Qualifications</h2><ul className="list-disc pl-4 text-[10px]">{qualList.map((q, i) => <li key={i}>{q}</li>)}</ul></section>
-          <section><h2 className="text-[11px] font-black uppercase border-b-2 mb-2 pb-0.5" style={{ borderColor: theme }}>Education</h2><EduTable level="A/L" data={cvData.education?.aLevel} /><EduTable level="O/L" data={cvData.education?.oLevel} /></section>
-          <section className="mt-auto"><h2 className="text-[11px] font-black uppercase border-b-2 mb-2 pb-0.5" style={{ borderColor: theme }}>References</h2><div className="grid grid-cols-2 text-[10px]">{refList.map((r: any, i: number) => <div key={i}><b>{r.name}</b><br/>{r.phone}</div>)}</div></section>
+        <div className="flex-1 p-10 flex flex-col gap-8 overflow-hidden">
+          <div><h1 className="text-4xl font-black uppercase text-zinc-800">{fullName}</h1>{summary && <p className="mt-2 text-zinc-500 text-sm leading-relaxed">{summary}</p>}</div>
+          <section><h2 className="text-sm font-black uppercase mb-3 text-zinc-800 border-b-2 pb-1" style={{ borderColor: theme }}>Qualifications</h2><ul className="list-disc pl-4 text-zinc-600 text-[11px]">{qualList.map((q, i) => <li key={i}>{q}</li>)}</ul></section>
+          <section><h2 className="text-sm font-black uppercase mb-3 text-zinc-800 border-b-2 pb-1" style={{ borderColor: theme }}>Education</h2><EduTable level="A/L" data={cvData.education?.aLevel} /><EduTable level="O/L" data={cvData.education?.oLevel} /></section>
+          <section><h2 className="text-sm font-black uppercase mb-3 text-zinc-800 border-b-2 pb-1" style={{ borderColor: theme }}>Work Experience</h2>{workList.map((w: any, i: number) => <div key={i} className="mb-2 text-[11px]"><span className="font-bold">{w.title}</span><p className="text-zinc-500">{w.company}</p></div>)}</section>
+          <section className="mt-auto"><div className="grid grid-cols-2 gap-4 text-[10px]">{refList.map((r: any, i: number) => <div key={i}><b>{r.name}</b><br/>{r.phone}</div>)}</div></section>
         </div>
       </div>
     </A4Page>
@@ -153,16 +162,17 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
   const Layout5 = () => (
     <A4Page>
       <div className="p-10 flex flex-col h-full overflow-hidden">
-        <div className="flex justify-between items-center border-b-4 pb-4 mb-6 shrink-0" style={{ borderColor: theme }}>
-          <div><h1 className="text-3xl font-black uppercase">{fullName}</h1><p className="text-[9px] font-bold opacity-50">{phone1} | {email}</p></div>
-          <img src={profileImg} className="w-20 h-20 object-cover border-2" style={{ borderColor: theme }} />
+        <div className="flex justify-between items-center border-b-4 pb-6 mb-8 shrink-0" style={{ borderColor: theme }}>
+          <div><h1 className="text-4xl font-black uppercase">{fullName}</h1><p className="text-xs font-bold opacity-50 uppercase mt-2">{phone1} | {email}</p></div>
+          <img src={profileImg} className="w-24 h-24 object-cover border-4 border-zinc-100" />
         </div>
-        <div className="grid grid-cols-2 gap-x-8 gap-y-4 flex-1 overflow-hidden">
-          <section className="col-span-2"><h2 className="text-[10px] font-black uppercase border-b mb-2" style={{ color: theme }}>Qualifications</h2><ul className="list-disc pl-4 grid grid-cols-2 gap-x-4 text-[10px]">{qualList.map((q, i) => <li key={i}>{q}</li>)}</ul></section>
-          <section className="col-span-2"><h2 className="text-[10px] font-black uppercase border-b mb-2" style={{ color: theme }}>Education</h2><div className="grid grid-cols-2 gap-6"><EduTable level="A/L" data={cvData.education?.aLevel} /><EduTable level="O/L" data={cvData.education?.oLevel} /></div></section>
-          <section><h2 className="text-[10px] font-black uppercase border-b mb-2" style={{ color: theme }}>Details</h2><PersonalInfoList /></section>
-          <section><h2 className="text-[10px] font-black uppercase border-b mb-2" style={{ color: theme }}>Skills</h2><div className="flex flex-wrap gap-1">{skillsList.map((s, i) => <span key={i} className="bg-zinc-100 px-1.5 py-0.5 rounded text-[8px]">{s}</span>)}</div></section>
-          <section className="col-span-2 mt-auto"><h2 className="text-[10px] font-black uppercase border-b mb-2" style={{ color: theme }}>References</h2><div className="grid grid-cols-3 gap-2 text-[9px]">{refList.map((r: any, i: number) => <div key={i}><b>{r.name}</b><br/>{r.phone}</div>)}</div></section>
+        <div className="flex-1 grid grid-cols-2 gap-x-10 gap-y-8 overflow-hidden">
+          {summary && <div className="col-span-2 text-zinc-600 italic border-l-2 pl-4 mb-4" style={{ borderColor: theme }}>{summary}</div>}
+          <section><h2 className="text-xs font-black uppercase border-b pb-1 mb-4" style={{ color: theme, borderColor: theme }}>Personal Info</h2><PersonalInfoList /></section>
+          <section><h2 className="text-xs font-black uppercase border-b pb-1 mb-4" style={{ color: theme, borderColor: theme }}>Skills & Languages</h2><div className="space-y-2 text-[10px]"><div><b>Skills:</b> {skillsList.join(', ')}</div><div><b>Languages:</b> {langList.join(', ')}</div></div></section>
+          <section className="col-span-2"><h2 className="text-xs font-black uppercase border-b pb-1 mb-4" style={{ color: theme, borderColor: theme }}>Qualifications</h2><ul className="list-disc pl-4 grid grid-cols-2 gap-2 text-[10px]">{qualList.map((q, i) => <li key={i}>{q}</li>)}</ul></section>
+          <section className="col-span-2"><h2 className="text-xs font-black uppercase border-b pb-1 mb-4" style={{ color: theme, borderColor: theme }}>Education</h2><EduTable level="A/L" data={cvData.education?.aLevel} /><EduTable level="O/L" data={cvData.education?.oLevel} /></section>
+          <section className="col-span-2 mt-auto pt-4"><div className="grid grid-cols-3 gap-4 text-[9px]">{refList.map((r: any, i: number) => <div key={i}><b>{r.name}</b><br/>{r.phone}</div>)}</div></section>
         </div>
       </div>
     </A4Page>
@@ -170,21 +180,22 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
 
   const Layout6 = () => (
     <A4Page>
-      <div className="m-4 border h-[calc(100%-2rem)] p-8 flex flex-col relative overflow-hidden">
+      <div className="m-4 border h-[calc(100%-2rem)] p-8 flex flex-col overflow-hidden">
         <div className="flex gap-6 items-end mb-8 shrink-0">
-          <img src={profileImg} className="w-24 h-32 object-cover border-4 border-white shadow-md shrink-0" />
-          <h1 className="text-3xl font-black uppercase border-b-4 w-full pb-2" style={{ borderColor: theme, color: theme }}>{fullName}</h1>
+          <img src={profileImg} className="w-28 h-36 object-cover border-4 border-white shadow-xl shrink-0" />
+          <div className="flex-1"><h1 className="text-4xl font-black uppercase border-b-4 pb-2" style={{ borderColor: theme, color: theme }}>{fullName}</h1>{summary && <p className="text-[11px] text-zinc-500 mt-2 italic line-clamp-2">{summary}</p>}</div>
         </div>
         <div className="grid grid-cols-12 gap-8 flex-1 overflow-hidden">
-          <div className="col-span-7 flex flex-col gap-5 overflow-hidden">
-            <section><h2 className="text-[10px] font-black uppercase bg-zinc-800 text-white px-2 py-0.5 mb-2">Qualifications</h2><ul className="list-disc pl-4 text-[10px]">{qualList.map((q, i) => <li key={i}>{q}</li>)}</ul></section>
-            <section className="flex-1"><h2 className="text-[10px] font-black uppercase bg-zinc-800 text-white px-2 py-0.5 mb-2">Education</h2><EduTable level="A/L" data={cvData.education?.aLevel} /><EduTable level="O/L" data={cvData.education?.oLevel} /></section>
-            <section className="mt-auto"><h2 className="text-[10px] font-black uppercase bg-zinc-800 text-white px-2 py-0.5 mb-2">References</h2><div className="grid grid-cols-2 text-[9px]">{refList.map((r: any, i: number) => <div key={i}><b>{r.name}</b><br/>{r.phone}</div>)}</div></section>
+          <div className="col-span-7 space-y-6 overflow-hidden">
+            <section><h2 className="text-[10px] font-black uppercase bg-zinc-800 text-white px-2 py-1 mb-3">Qualifications</h2><ul className="list-disc pl-5 text-[10px]">{qualList.map((q, i) => <li key={i}>{q}</li>)}</ul></section>
+            <section><h2 className="text-[10px] font-black uppercase bg-zinc-800 text-white px-2 py-1 mb-3">Education</h2><EduTable level="A/L" data={cvData.education?.aLevel} /><EduTable level="O/L" data={cvData.education?.oLevel} /></section>
+            <section className="mt-auto"><h2 className="text-[10px] font-black uppercase bg-zinc-800 text-white px-2 py-1 mb-3">References</h2><div className="grid grid-cols-2 text-[10px] gap-4">{refList.map((r: any, i: number) => <div key={i}><b>{r.name}</b><br/>{r.phone}</div>)}</div></section>
           </div>
-          <div className="col-span-5 bg-zinc-50 p-4 rounded-xl space-y-4 shrink-0 h-full">
-            <section><h3 className="font-black text-[9px] border-b pb-1">Contact</h3><p className="text-[9px]">{phone1}<br/>{email}</p></section>
-            <section><h3 className="font-black text-[9px] border-b pb-1">Details</h3><PersonalInfoList /></section>
-            <section><h3 className="font-black text-[9px] border-b pb-1">Skills</h3><div className="space-y-1 text-[8px]">{skillsList.map((s, i) => <p key={i}>• {s}</p>)}</div></section>
+          <div className="col-span-5 bg-zinc-50 p-6 rounded-3xl space-y-6 shrink-0 h-full">
+            <section><h3 className="font-black text-[10px] border-b pb-1 mb-2">Contact</h3><div className="text-[10px] space-y-1"><p>{phone1}</p><p className="truncate">{email}</p></div></section>
+            <section><h3 className="font-black text-[10px] border-b pb-1 mb-2">Details</h3><PersonalInfoList /></section>
+            <section><h3 className="font-black text-[10px] border-b pb-1 mb-2">Skills</h3>{skillsList.map((s, i) => <p key={i} className="text-[9px] font-bold">• {s}</p>)}</section>
+            <section><h3 className="font-black text-[10px] border-b pb-1 mb-2">Languages</h3>{langList.map((l, i) => <p key={i} className="text-[9px] font-bold">• {l}</p>)}</section>
           </div>
         </div>
       </div>
@@ -193,17 +204,18 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
 
   const Layout7 = () => (
     <A4Page>
-      <div className="flex h-full p-10 gap-8">
-        <div className="flex-1 flex flex-col gap-6 overflow-hidden">
-          <header><h1 className="text-3xl font-black uppercase italic leading-none" style={{ color: theme }}>{fullName}</h1></header>
-          <section><h2 className="font-black uppercase text-[10px] mb-3 text-white px-2 py-0.5 inline-block" style={{ backgroundColor: theme }}>Qualifications</h2><ul className="list-disc pl-5 text-[10px]">{qualList.map((q, i) => <li key={i}>{q}</li>)}</ul></section>
-          <section className="flex-1 overflow-hidden"><h2 className="font-black uppercase text-[10px] mb-2" style={{ color: theme }}>Education</h2><EduTable level="A/L" data={cvData.education?.aLevel} /><EduTable level="O/L" data={cvData.education?.oLevel} /></section>
-          <section className="mt-auto border-t pt-4"><div className="grid grid-cols-2 text-[9px]">{refList.map((r: any, i: number) => <div key={i}><b>{r.name}</b><br/>{r.phone}</div>)}</div></section>
+      <div className="p-12 flex h-full gap-10">
+        <div className="flex-1 space-y-8 overflow-hidden">
+          <header><h1 className="text-4xl font-black uppercase italic leading-none" style={{ color: theme }}>{fullName}</h1>{summary && <p className="text-zinc-500 mt-4 text-[11px] leading-relaxed">{summary}</p>}</header>
+          <section><h2 className="font-black uppercase text-[10px] mb-4 text-white px-3 py-1 inline-block" style={{ backgroundColor: theme }}>Qualifications</h2><ul className="list-disc pl-5 text-[11px] space-y-1">{qualList.map((q, i) => <li key={i}>{q}</li>)}</ul></section>
+          <section><h2 className="font-black uppercase text-[10px] mb-4" style={{ color: theme }}>Academic Background</h2><EduTable level="A/L" data={cvData.education?.aLevel} /><EduTable level="O/L" data={cvData.education?.oLevel} /></section>
+          <section className="mt-auto border-t pt-6"><div className="grid grid-cols-2 gap-6 text-[10px]">{refList.map((r: any, i: number) => <div key={i}><b>{r.name}</b><br/>{r.phone}</div>)}</div></section>
         </div>
-        <div className="w-48 flex flex-col gap-6 shrink-0 h-full">
-          <img src={profileImg} className="w-full h-48 object-cover rounded shadow-md border" />
-          <section><h3 className="font-black uppercase text-[9px] opacity-40">Contact</h3><p className="text-[9px]">{phone1}<br/>{email}</p></section>
-          <section><h3 className="font-black uppercase text-[9px] opacity-40">Personal</h3><PersonalInfoList /></section>
+        <div className="w-52 flex flex-col gap-8 shrink-0 h-full border-l pl-10">
+          <img src={profileImg} className="w-full h-48 object-cover rounded shadow-lg" />
+          <section><h3 className="font-black uppercase text-[10px] opacity-40 mb-3">Contact</h3><div className="text-[10px] space-y-2"><p>{phone1}</p><p className="truncate">{email}</p></div></section>
+          <section><h3 className="font-black uppercase text-[10px] opacity-40 mb-3">Personal</h3><PersonalInfoList /></section>
+          <section><h3 className="font-black uppercase text-[10px] opacity-40 mb-3">Skills</h3>{skillsList.slice(0, 8).map((s, i) => <div key={i} className="text-[9px] font-bold mb-1">• {s}</div>)}</section>
         </div>
       </div>
     </A4Page>
@@ -211,20 +223,21 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
 
   const Layout8 = () => (
     <A4Page>
-      <div className="p-10 flex flex-col h-full text-[10px] leading-relaxed overflow-hidden">
-        <div className="text-center border-b-2 pb-4 mb-4 shrink-0" style={{ borderColor: theme }}>
-          <img src={profileImg} className="w-20 h-20 rounded-full mx-auto mb-2 object-cover border-2 p-0.5" style={{ borderColor: theme }} />
-          <h1 className="text-2xl font-black uppercase leading-none">{fullName}</h1>
-          <p className="mt-1 text-zinc-400 font-bold text-[8px] uppercase tracking-tighter">{address} | {phone1} | {email}</p>
+      <div className="p-12 flex flex-col h-full text-[11px] overflow-hidden">
+        <div className="text-center border-b-2 pb-6 mb-8 shrink-0" style={{ borderColor: theme }}>
+          <img src={profileImg} className="w-24 h-24 rounded-full mx-auto mb-4 object-cover border-2 p-1 shadow-sm" style={{ borderColor: theme }} />
+          <h1 className="text-3xl font-black uppercase tracking-widest">{fullName}</h1>
+          <p className="mt-2 text-zinc-400 font-bold text-[9px] uppercase">{address} | {phone1} | {email}</p>
         </div>
-        <div className="flex-1 flex flex-col gap-4 overflow-hidden">
-          <section><h2 className="font-black uppercase bg-zinc-50 px-3 py-0.5 mb-2 border-l-4" style={{ borderColor: theme }}>Personal Data</h2><div className="px-3"><PersonalInfoList /></div></section>
-          <div className="grid grid-cols-2 gap-4 px-3">
-            <section><h2 className="font-black uppercase text-[9px] border-b mb-1">Qualifications</h2><ul className="list-disc pl-4 text-[9px] space-y-0.5">{qualList.slice(0, 4).map((q, i) => <li key={i}>{q}</li>)}</ul></section>
-            <section><h2 className="font-black uppercase text-[9px] border-b mb-1">Expertise</h2><p className="text-[9px]"><b>Skills:</b> {skillsList.join(', ')}</p></section>
+        <div className="flex-1 space-y-6 overflow-hidden">
+          {summary && <p className="text-center italic px-10 text-zinc-600">"{summary}"</p>}
+          <section><h2 className="font-black uppercase bg-zinc-50 px-4 py-1.5 mb-3 border-l-4" style={{ borderColor: theme }}>Personal Data</h2><div className="px-4"><PersonalInfoList /></div></section>
+          <div className="grid grid-cols-2 gap-8 px-4">
+            <section><h2 className="font-black uppercase text-[10px] border-b-2 mb-3 pb-1" style={{ borderColor: theme }}>Qualifications</h2><ul className="list-disc pl-4 space-y-1">{qualList.slice(0, 5).map((q, i) => <li key={i}>{q}</li>)}</ul></section>
+            <section><h2 className="font-black uppercase text-[10px] border-b-2 mb-3 pb-1" style={{ borderColor: theme }}>Skills & Expertise</h2><p><b>Technical:</b> {skillsList.join(', ')}</p><p className="mt-2"><b>Languages:</b> {langList.join(', ')}</p></section>
           </div>
-          <section className="flex-1 overflow-hidden"><h2 className="font-black uppercase bg-zinc-50 px-3 py-0.5 mb-2 border-l-4" style={{ borderColor: theme }}>Academic Details</h2><div className="px-3"><EduTable level="A/L" data={cvData.education?.aLevel} /><EduTable level="O/L" data={cvData.education?.oLevel} /></div></section>
-          <section className="mt-auto pt-2"><h2 className="font-black uppercase bg-zinc-50 px-3 py-0.5 mb-1 border-l-4" style={{ borderColor: theme }}>References</h2><div className="grid grid-cols-2 px-3 gap-2 text-[9px]">{refList.map((r: any, i: number) => <div key={i}><b>{r.name}</b><br/>{r.phone}</div>)}</div></section>
+          <section className="flex-1 overflow-hidden"><h2 className="font-black uppercase bg-zinc-50 px-4 py-1.5 mb-3 border-l-4" style={{ borderColor: theme }}>Academic Details</h2><div className="px-4"><EduTable level="A/L" data={cvData.education?.aLevel} /><EduTable level="O/L" data={cvData.education?.oLevel} /></div></section>
+          <section className="mt-auto pt-4 border-t"><div className="grid grid-cols-2 gap-6 px-4 text-[10px]">{refList.map((r: any, i: number) => <div key={i}><b>{r.name}</b><br/>{r.phone}</div>)}</div></section>
         </div>
       </div>
     </A4Page>
