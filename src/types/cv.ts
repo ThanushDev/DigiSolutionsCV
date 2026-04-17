@@ -72,3 +72,26 @@ export const templateThemes = [
   { id: 7, name: 'Premium Golden Badge', primaryColor: '#854d0e' },
   { id: 8, name: 'Classic Grey Minimal', primaryColor: '#4b5563' }
 ];
+
+// මෙන්න මේකයි කලින් අතෑරුණේ - EXPORT keyword එක දැම්මා
+export const defaultCVData: CVData = {
+  personalInfo: {
+    name: '', description: '', photo: '', photoFormat: 'circular',
+    fullName: '', dateOfBirth: '', nicNumber: '', gender: '',
+    nationality: '', religion: '', civilStatus: ''
+  },
+  contact: { phone1: '', phone2: '', email: '', address: '' },
+  skills: [], languages: [], workExperience: [],
+  education: {
+    oLevel: { indexNumber: '', year: '', subjects: [] },
+    aLevel: { indexNumber: '', year: '', subjects: [] }
+  },
+  professionalQualifications: [],
+  references: [
+    { name: '', designation: '', organization: '', phone: '' },
+    { name: '', designation: '', organization: '', phone: '' }
+  ],
+  selectedTemplate: 1,
+  customColor: '#2c3e50',
+  brightness: 100
+};
