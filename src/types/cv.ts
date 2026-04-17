@@ -1,4 +1,7 @@
-export interface Subject { name: string; grade: string; }
+export interface Subject {
+  name: string;
+  grade: string;
+}
 
 export interface EducationLevel {
   indexNumber: string;
@@ -22,48 +25,33 @@ export interface Reference {
 }
 
 export interface CVData {
+  profileImage: string;
   personalInfo: {
-    name: string;
     fullName: string;
-    description: string;
-    photo: string;
-    photoFormat: 'circular' | 'square';
-    dateOfBirth: string;
-    nicNumber: string;
+    objective: string;
+    dob: string;
+    nic: string;
     gender: string;
     nationality: string;
     religion: string;
     civilStatus: string;
   };
-  contact: { phone1: string; phone2: string; email: string; address: string; };
-  skills: string[];
-  languages: string[];
+  contact: {
+    email: string;
+    phone1: string;
+    phone2: string; // Optional Phone 2
+    address: string;
+  };
+  skills: { id: string; name: string }[];
+  languages: { id: string; name: string }[];
   workExperience: WorkExperienceEntry[];
-  education: { oLevel: EducationLevel; aLevel: EducationLevel; };
-  professionalQualifications: string[];
-  references: [Reference, Reference];
+  education: {
+    oLevel: EducationLevel;
+    aLevel: EducationLevel;
+  };
+  professionalQualifications: { id: string; qualification: string }[];
+  references: Reference[]; // Array for 2 references
   selectedTemplate: number;
   customColor: string;
   brightness: number;
 }
-
-export const templateThemes = [
-  { id: 1, name: 'Thanush Dark Sidebar', primaryColor: '#1e293b' },
-  { id: 2, name: 'Steven Terry Modern', primaryColor: '#0369a1' },
-  { id: 3, name: 'Yellow Ribbon Bold', primaryColor: '#eab308' },
-  { id: 4, name: 'Corporate Clean Grid', primaryColor: '#1e3a8a' },
-  { id: 5, name: 'Executive Minimalist', primaryColor: '#111827' },
-  { id: 6, name: 'Professional Timeline', primaryColor: '#374151' },
-  { id: 7, name: 'Premium Golden Edge', primaryColor: '#854d0e' },
-  { id: 8, name: 'Classic Accountant', primaryColor: '#2563eb' }
-];
-
-export const defaultCVData: CVData = {
-  personalInfo: { name: '', fullName: '', description: '', photo: '', photoFormat: 'circular', dateOfBirth: '', nicNumber: '', gender: '', nationality: '', religion: '', civilStatus: '' },
-  contact: { phone1: '', phone2: '', email: '', address: '' },
-  skills: [], languages: [], workExperience: [],
-  education: { oLevel: { indexNumber: '', year: '', subjects: [] }, aLevel: { indexNumber: '', year: '', subjects: [] } },
-  professionalQualifications: [],
-  references: [{ name: '', designation: '', organization: '', phone: '' }, { name: '', designation: '', organization: '', phone: '' }],
-  selectedTemplate: 1, customColor: '#1e293b', brightness: 100
-};
