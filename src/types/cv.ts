@@ -63,34 +63,12 @@ export interface CVData {
 }
 
 export const templateThemes = [
-  { id: 1, name: 'Modern Sidebar (Blue)' },
-  { id: 2, name: 'Executive Ribbon' },
-  { id: 3, name: 'Steven Terry Style' },
-  { id: 4, name: 'Robert William Executive' },
-  { id: 5, name: 'Nina Lane Yellow' },
-  { id: 6, name: 'Accountant Structure' },
-  { id: 7, name: 'Golden Badge Premium' },
-  { id: 8, name: 'Structured Grey' }
+  { id: 1, name: 'Modern Sidebar', primaryColor: '#2c3e50' },
+  { id: 2, name: 'Professional Ribbon', primaryColor: '#1e3a8a' },
+  { id: 3, name: 'Steven Terry Style', primaryColor: '#2c3e50' },
+  { id: 4, name: 'Robert William Executive', primaryColor: '#1e3a8a' },
+  { id: 5, name: 'Nina Lane Yellow Accent', primaryColor: '#ca8a04' },
+  { id: 6, name: 'Accountant Structure', primaryColor: '#000000' },
+  { id: 7, name: 'Premium Golden Badge', primaryColor: '#854d0e' },
+  { id: 8, name: 'Classic Grey Minimal', primaryColor: '#4b5563' }
 ];
-
-export const defaultCVData: CVData = {
-  personalInfo: {
-    name: '', description: '', photo: '', photoFormat: 'circular',
-    fullName: '', dateOfBirth: '', nicNumber: '', gender: '',
-    nationality: '', religion: '', civilStatus: ''
-  },
-  contact: { phone1: '', phone2: '', email: '', address: '' },
-  skills: [], languages: [], workExperience: [],
-  education: {
-    oLevel: { indexNumber: '', year: '', subjects: [] },
-    aLevel: { indexNumber: '', year: '', subjects: [] }
-  },
-  professionalQualifications: [],
-  references: [
-    { name: '', designation: '', organization: '', phone: '' },
-    { name: '', designation: '', organization: '', phone: '' }
-  ],
-  selectedTemplate: 1,
-  customColor: '#2c3e50',
-  brightness: 100
-};
