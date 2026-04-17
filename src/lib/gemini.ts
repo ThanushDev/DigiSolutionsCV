@@ -1,34 +1,34 @@
 export async function askAI(prompt: string) {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-
-  if (!apiKey) {
-    console.error("API Key missing!");
-    return null;
-  }
-
-  // URL එක v1 වලට මාරු කරලා බලමු (Beta නෙවෙයි)
-  const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  const apiKey = import.meta.env.VITE_HUGGINGFACE_API_KEY;
+  if (!apiKey) return null;
 
   try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }]
-      })
-    });
+    const response = await fetch(
+      "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2",
+      {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify({
+          inputs: `<s>[INST] ${prompt} [/INST]`,
+          parameters: { max_new_tokens: 500, temperature: 0.7 }
+        }),
+      }
+    );
 
-    const data = await response.json();
-
-    // මෙන්න මෙතන එන Error එක හරියටම බලාගන්න මේක දැම්මා
-    if (data.error) {
-      console.log("FULL ERROR FROM GOOGLE:", JSON.stringify(data.error));
-      return null;
+    const result = await response.json();
+    
+    // Hugging Face එකෙන් එන්නේ array එකක් විදියට
+    if (Array.isArray(result) && result[0].generated_text) {
+      const fullText = result[0].generated_text;
+      // Instruction එක අයින් කරලා උත්තරේ විතරක් ගන්නවා
+      return fullText.split("[/INST]").pop().trim();
     }
-
-    return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || null;
+    return "AI Error occurred";
   } catch (error) {
-    console.error("Network Error:", error);
+    console.error("HF Error:", error);
     return null;
   }
 }
