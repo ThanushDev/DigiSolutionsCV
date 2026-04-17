@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+// Build error එක fix කරන්න මෙතන path එක ../../ ලෙස වෙනස් කළා
 import { useCV } from '../../context/CVContext';
 import { CVTemplateBase } from '../../components/CVTemplates/CVTemplateBase';
 import { templateThemes } from '../../types/cv';
@@ -34,7 +35,7 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
       if (result.success) {
         setSlipUrl(result.data.url);
       } else {
-        alert("Upload failed. Please try again.");
+        alert("Slip upload failed. Please try again.");
       }
     } catch (error) {
       alert("Error uploading slip.");
@@ -43,12 +44,11 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
     }
   };
 
-  // --- WhatsApp Order Trick ---
+  // --- WhatsApp Order Logic ---
   const handleWhatsAppOrder = () => {
     if (!slipUrl) return alert("Please upload the payment slip first!");
 
     const cvJson = JSON.stringify(cvData);
-    // JSON එක Base64 කරලා යවනවා trick එකක් විදියට
     const encodedData = btoa(unescape(encodeURIComponent(cvJson)));
     
     const message = `*🔥 NEW CV ORDER 🔥*\n\n` +
@@ -74,19 +74,19 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
       <div className={`fixed md:relative z-[70] h-full bg-white border-r w-[320px] md:w-[380px] transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
         <div className="p-6 border-b flex justify-between items-center">
           <div>
-            <button onClick={onBack} className="flex items-center text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-2">
+            <button onClick={onBack} className="flex items-center text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-2 transition-colors hover:text-blue-600">
               <ChevronLeftIcon size={14} className="mr-1"/> Editor
             </button>
             <div className="flex items-center gap-2">
               <Paintbrush size={18} className="text-blue-600"/>
-              <h2 className="text-lg font-black uppercase italic tracking-tighter">Customize</h2>
+              <h2 className="text-lg font-black uppercase italic tracking-tighter text-zinc-900">Customize</h2>
             </div>
           </div>
           <button onClick={() => setIsSidebarOpen(false)} className="md:hidden p-2 text-zinc-400"><XIcon size={24}/></button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-5 space-y-6 bg-zinc-50/30 custom-scrollbar">
-          {/* Template Style */}
+          {/* Template Styles */}
           <div>
             <p className="text-[10px] font-black uppercase text-zinc-400 mb-3 ml-1 tracking-widest">Select Style</p>
             <div className="space-y-2">
@@ -138,8 +138,8 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
         </div>
 
         <div className="flex-1 overflow-auto p-4 md:p-12 flex justify-center items-start custom-scrollbar z-10">
+          {/* cvData.personalInfo.photo එක Template එකේ හරියට පේන්න නම් CVTemplateBase එකේ src={cvData.personalInfo.photo} ලෙස තිබිය යුතුය */}
           <div className="transition-all duration-500 shadow-[0_30px_100px_rgba(0,0,0,0.5)] origin-top" style={{ transform: `scale(${previewScale})` }}>
-            {/* මෙතන cvData කෙලින්ම යන නිසා personalInfo.photo එක template එකේ පේන්න ඕනේ */}
             <CVTemplateBase cvData={cvData} />
           </div>
         </div>
@@ -150,7 +150,7 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
         <div className="fixed inset-0 bg-black/95 z-[100] flex items-center justify-center p-4 backdrop-blur-xl animate-in fade-in duration-300">
           <div className="bg-white rounded-[2.5rem] p-8 max-w-md w-full shadow-2xl relative animate-in zoom-in duration-300">
             <button onClick={() => setShowPayment(false)} className="absolute top-6 right-6 p-2 bg-zinc-100 hover:bg-zinc-200 rounded-full transition-colors"><XIcon size={20}/></button>
-            <h3 className="text-2xl font-black uppercase mb-1 italic tracking-tight">Checkout</h3>
+            <h3 className="text-2xl font-black uppercase mb-1 italic tracking-tight text-zinc-900">Checkout</h3>
             <p className="text-zinc-400 text-[10px] mb-6 font-bold uppercase tracking-widest">Pay & upload your slip to get the CV</p>
             
             {/* Bank Details */}
