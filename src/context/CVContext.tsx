@@ -20,11 +20,13 @@ interface CVContextType {
   addProfessionalQualification: (q: string) => void;
   updateReference: (index: 0 | 1, data: any) => void;
   
-  // මේ ටික මම අලුතෙන් ඇඩ් කළා උඹේ Color & Template වැඩේට
-  setSelectedTemplate: (id: string) => void; // ID එක string එකක් කළා
-  updateThemeColor: (color: string) => void; // පාට වෙනස් කරන්න
-  setBrightness: (value: number) => void; // Brightness වෙනස් කරන්න
+  // Template & Theme Settings
+  setSelectedTemplate: (id: string) => void;
+  updateThemeColor: (color: string) => void;
+  setBrightness: (value: number) => void;
   
+  // Reset & Navigation
+  resetCV: () => void; // මේක තමයි අලුත් එක
   currentStep: number;
   setCurrentStep: (step: number) => void;
 }
@@ -34,7 +36,6 @@ const CVContext = createContext<CVContextType | undefined>(undefined);
 export function CVProvider({ children }: { children: React.ReactNode }) {
   const [cvData, setCVData] = useState<CVData>(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
-    // මෙතනදී default values තියෙනවාද කියලා බලනවා
     return saved ? JSON.parse(saved) : defaultCVData;
   });
   const [currentStep, setCurrentStep] = useState(1);
@@ -42,6 +43,12 @@ export function CVProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(cvData));
   }, [cvData]);
+
+  // --- Reset Function ---
+  const resetCV = () => {
+    setCVData(defaultCVData); // Data ටික මුල් තත්වයට පත් කරනවා
+    localStorage.removeItem(STORAGE_KEY); // Browser එකේ සේව් වෙලා තියෙන ඒවා මකනවා
+  };
 
   // --- Helpers ---
   const updatePersonalInfo = (data: any) => setCVData(prev => ({ ...prev, personalInfo: { ...prev.personalInfo, ...data } }));
@@ -83,27 +90,16 @@ export function CVProvider({ children }: { children: React.ReactNode }) {
     return { ...prev, references: newRefs as any };
   });
 
-  // --- මම හදපු අලුත් Functions ටික ---
-
-  // Template එක මාරු කරන කොට ID එක හරියට Update කරනවා
   const setSelectedTemplate = (id: string) => {
     setCVData(prev => ({ ...prev, selectedTemplate: id }));
   };
 
-  // User තෝරන පාට CV එකට දානවා
   const updateThemeColor = (color: string) => {
-    setCVData(prev => ({
-      ...prev,
-      customColor: color // මේක පාවිච්චි කරලා අපිට Template එක පාට කරන්න පුළුවන්
-    }));
+    setCVData(prev => ({ ...prev, customColor: color }));
   };
 
-  // Seekbar එකෙන් එන brightness එක
   const setBrightness = (value: number) => {
-    setCVData(prev => ({
-      ...prev,
-      brightness: value
-    }));
+    setCVData(prev => ({ ...prev, brightness: value }));
   };
 
   return (
@@ -112,7 +108,8 @@ export function CVProvider({ children }: { children: React.ReactNode }) {
       addWorkExperience, updateWorkExperience, removeWorkExperience,
       updateEducation, updateProfessionalQualification, removeProfessionalQualification,
       addProfessionalQualification, updateReference, 
-      setSelectedTemplate, updateThemeColor, setBrightness, // අලුත් ඒවා මෙතනට දැම්මා
+      setSelectedTemplate, updateThemeColor, setBrightness,
+      resetCV, // අලුත් function එක මෙතනට දැම්මා
       currentStep, setCurrentStep,
       addLanguage: (l) => setCVData(p => ({ ...p, languages: [...p.languages, l] })),
       removeLanguage: (i) => setCVData(p => ({ ...p, languages: p.languages.filter((_, idx) => idx !== i) }))
