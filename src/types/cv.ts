@@ -45,7 +45,6 @@ export interface ContactDetails {
   address: string;
 }
 
-// මෙන්න මේකට මම අලුත් fields 2ක් දැම්මා
 export interface CVData {
   personalInfo: PersonalInfo;
   contact: ContactDetails;
@@ -59,22 +58,18 @@ export interface CVData {
   professionalQualifications: string[];
   references: [Reference, Reference];
   selectedTemplate: number;
-  customColor?: string; // යූසර් තෝරන පාට
-  brightness?: number;  // යූසර් තෝරන දීප්තිය
+  customColor?: string;
+  brightness?: number;
 }
 
-// ටෙම්ප්ලේට් වලට අදාළ ඩීෆෝල්ට් පාටවල් ටිකත් මෙතනටම දැම්මා
+// උඹ එවපු Screenshot වල හැඩයට අනුව නම් කරපු Templates ටික
 export const templateThemes = [
-  { id: 1, name: 'Professional Sidebar', primaryColor: '#2563eb' },
-  { id: 2, name: 'Executive Blue', primaryColor: '#1e3a8a' },
-  { id: 3, name: 'Corporate Gray', primaryColor: '#334155' },
-  { id: 4, name: 'Modern Emerald', primaryColor: '#059669' },
-  { id: 5, name: 'Dark Professional', primaryColor: '#18181b' },
-  { id: 6, name: 'Classic Serif', primaryColor: '#7c2d12' },
-  { id: 7, name: 'Minimalist', primaryColor: '#000000' },
-  { id: 8, name: 'Crimson Tech', primaryColor: '#991b1b' },
-  { id: 9, name: 'Indigo Premium', primaryColor: '#4338ca' },
-  { id: 10, name: 'Golden Standard', primaryColor: '#854d0e' }
+  { id: 1, name: 'Modern Timeline Sidebar', primaryColor: '#2c3e50' },
+  { id: 2, name: 'Professional Ribbon Style', primaryColor: '#e67e22' },
+  { id: 3, name: 'Executive Dark Blue', primaryColor: '#1e3a8a' },
+  { id: 4, name: 'Corporate Gray Structure', primaryColor: '#4b5563' },
+  { id: 5, name: 'Minimalist Emerald', primaryColor: '#059669' },
+  { id: 6, name: 'Golden Premium', primaryColor: '#ca8a04' }
 ];
 
 export const defaultCVData: CVData = {
@@ -105,6 +100,6 @@ export const defaultCVData: CVData = {
     { name: '', designation: '', organization: '', phone: '' }
   ],
   selectedTemplate: 1,
-  customColor: '#2563eb',
+  customColor: '#2c3e50',
   brightness: 100
 };
