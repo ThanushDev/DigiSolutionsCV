@@ -52,7 +52,7 @@ export const templateThemes = [
   { id: 2, name: 'Steven Terry Modern', primaryColor: '#0369a1' },
   { id: 3, name: 'Yellow Ribbon Bold', primaryColor: '#eab308' },
   { id: 4, name: 'Corporate Clean Grid', primaryColor: '#1e3a8a' },
-  { id: 5, name: 'Executive Minimalist', primaryColor: '#000000' },
+  { id: 5, name: 'Executive Minimalist', primaryColor: '#111827' },
   { id: 6, name: 'Professional Timeline', primaryColor: '#374151' },
   { id: 7, name: 'Premium Golden Edge', primaryColor: '#854d0e' },
   { id: 8, name: 'Classic Accountant', primaryColor: '#2563eb' }
