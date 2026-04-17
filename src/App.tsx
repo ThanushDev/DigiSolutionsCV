@@ -3,7 +3,7 @@ import { HashRouter as Router, Routes, Route, useNavigate } from 'react-router-d
 import { CVProvider } from './context/CVContext';
 import { CVBuilder } from './pages/CVBuilder'; 
 import { CVPreview } from './pages/CVPreview';
-import { Admin } from './pages/Admin';
+import Admin from './pages/Admin'; // මෙතන {} නැතුව ගන්න
 
 function AppContent() {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ function AppContent() {
   );
 }
 
-export function App() {
+export default function App() {
   return (
     <CVProvider>
       <Router>
@@ -29,5 +29,3 @@ export function App() {
     </CVProvider>
   );
 }
-
-export default App;
