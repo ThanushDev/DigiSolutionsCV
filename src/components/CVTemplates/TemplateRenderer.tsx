@@ -1,27 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { CVTemplateBase } from './CVTemplateBase';
 import { templateThemes } from '../../types/cv';
+import { useCV } from '../../context/CVContext';
 
-interface TemplateRendererProps {
-  cvData: any;
-  scale?: number;
-}
+export function TemplateRenderer({ cvData, scale = 1 }: { cvData: any; scale?: number }) {
+  const { updateThemeColor } = useCV();
 
-export function TemplateRenderer({ cvData, scale = 1 }: TemplateRendererProps) {
-  // මෙතන Number(t.id) සහ Number(cvData.selectedTemplate) පාවිච්චි කරමු
-  const currentTheme = templateThemes.find(
-    t => Number(t.id) === Number(cvData.selectedTemplate)
-  ) || templateThemes[0];
+  // Template එක මාරු වෙද්දී පාට Auto-Select කරනවා
+  useEffect(() => {
+    const theme = templateThemes.find(t => t.id === Number(cvData.selectedTemplate));
+    if (theme && !cvData.customColor) {
+      updateThemeColor(theme.primaryColor);
+    }
+  }, [cvData.selectedTemplate]);
 
   if (!cvData) return null;
 
   return (
     <div className="relative w-full h-full flex justify-center items-start">
-      <CVTemplateBase 
-        cvData={cvData} 
-        theme={currentTheme} 
-        scale={scale} 
-      />
+      <CVTemplateBase cvData={cvData} scale={scale} />
     </div>
   );
 }
