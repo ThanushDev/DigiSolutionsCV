@@ -16,7 +16,7 @@ export function CVBuilder({ onPreview }: { onPreview: () => void }) {
   const { currentStep, setCurrentStep, resetCV } = useCV();
 
   const handleReset = () => {
-    if (window.confirm("ඔයාට සහතිකද? ඇතුළත් කරපු ඔක්කොම විස්තර මැකී යාවි!")) {
+    if (window.confirm("Are You Shuwer,Your Data will be Lost!")) {
       resetCV(); // මෙතනින් තමයි data ටික clean වෙන්නේ
       setCurrentStep(1); // ආපහු මුල් පියවරටම යනවා
     }
