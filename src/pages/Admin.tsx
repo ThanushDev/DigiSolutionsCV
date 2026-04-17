@@ -14,31 +14,20 @@ export function Admin() {
 
       if (!raw) return alert("Please paste the code!");
 
-      // Base64 Decoding
+      // Base64 Decode
       const json = JSON.parse(decodeURIComponent(escape(atob(raw))));
       
-      // දත්ත නැවත පූර්ණ ව්‍යුහයට හැරවීම (De-compression)
+      // දත්ත වල කිසිදු Keys එකක් වෙනස් නොකර කෙලින්ම TemplateRenderer එකට ලබා දීම
+      // Safety checks පමණක් සිදු කරයි
       const formatted = {
+        ...json,
         personalInfo: {
-          name: json.pi?.n || "",
-          fullName: json.pi?.fn || "",
-          description: json.pi?.d || "",
-          photo: json.pi?.p || ""
+          ...json.personalInfo,
+          photo: json.personalInfo?.photo || ""
         },
-        contact: {
-          email: json.c?.e || "",
-          phone1: json.c?.p || "",
-          address: json.c?.address || json.c?.a || ""
-        },
-        skills: Array.isArray(json.sk) ? json.sk.map((s: any) => ({ name: s })) : [],
-        experience: Array.isArray(json.ex) ? json.ex.map((e: any) => ({ 
-          position: e.t, company: e.c, duration: e.d, description: e.ds 
-        })) : [],
-        education: Array.isArray(json.ed) ? json.ed.map((ed: any) => ({ 
-          degree: ed.d, school: ed.s, year: ed.y 
-        })) : [],
-        selectedTemplate: Number(json.t) || 1,
-        customColor: json.cl || "#1e3a8a"
+        skills: Array.isArray(json.skills) ? json.skills : [],
+        experience: Array.isArray(json.experience) ? json.experience : [],
+        education: Array.isArray(json.education) ? json.education : []
       };
 
       setDecodedData(formatted);
@@ -51,9 +40,9 @@ export function Admin() {
   return (
     <div className="min-h-screen bg-zinc-50 p-4 md:p-8">
       <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <div className="lg:col-span-4 space-y-6">
-          <div className="bg-white p-6 rounded-[2rem] shadow-xl border border-zinc-100">
-            <h2 className="text-xl font-black uppercase italic mb-6">Admin Decoder</h2>
+        <div className="lg:col-span-4">
+          <div className="bg-white p-6 rounded-[2rem] shadow-xl border">
+            <h2 className="text-xl font-black uppercase mb-6 italic">Admin Decoder</h2>
             <textarea 
               value={inputCode} 
               onChange={e => setInputCode(e.target.value)} 
@@ -68,7 +57,7 @@ export function Admin() {
 
         <div className="lg:col-span-8 flex justify-center">
           {decodedData ? (
-            <div className="bg-white p-4 md:p-10 rounded-[2rem] shadow-2xl border border-zinc-100 w-full overflow-auto">
+            <div className="bg-white p-4 md:p-10 rounded-[2rem] shadow-2xl border w-full overflow-auto">
               <TemplateRenderer cvData={decodedData} />
             </div>
           ) : (
