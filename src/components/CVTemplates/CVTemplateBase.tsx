@@ -38,8 +38,10 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
   const email = contact.email || "";
   const address = contact.address || "";
 
-  const skillsList = (cvData.skills || []).filter(Boolean);
-  const langList = (cvData.languages || []).filter(Boolean);
+  // ERROR FIX: Ensuring skills and languages are strings, even if they come as objects
+  const skillsList = (cvData.skills || []).map(s => typeof s === 'object' ? (s as any).name : s).filter(Boolean);
+  const langList = (cvData.languages || []).map(l => typeof l === 'object' ? (l as any).name : l).filter(Boolean);
+  
   const qualList = (cvData.professionalQualifications || []).map((q: any) => typeof q === 'string' ? q : q.qualification).filter(Boolean);
   const workExpList = cvData.workExperience || [];
   const refList = cvData.references || [];
