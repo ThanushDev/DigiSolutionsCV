@@ -14,10 +14,7 @@ export function Admin() {
 
       if (!raw) return alert("Please paste the code!");
 
-      // Decode Full JSON
       const data = JSON.parse(decodeURIComponent(escape(atob(raw))));
-      
-      // දත්ත එලෙසම ලබා දීම (Full Object mapping)
       setDecodedData(data);
     } catch (e) {
       alert("Invalid Code Format!");
@@ -31,35 +28,39 @@ export function Admin() {
 
   return (
     <div className="min-h-screen bg-zinc-100 p-4 md:p-8">
-      {/* Print එක Fix කරන විශේෂ CSS එක */}
+      {/* පින්ට් එකේ Headers/Footers අයින් කරන CSS */}
       <style dangerouslySetInnerHTML={{ __html: `
+        @page {
+          size: auto;
+          margin: 0; /* මේකෙන් තමයි Date, Time, URL, Page Numbers ඔක්කොම අයින් වෙන්නේ */
+        }
+
         @media print {
-          /* Print එකේදී අනවශ්‍ය දේවල් ඔක්කොම අයින් කරනවා */
+          /* පින්ට් එකේදී අනවශ්‍ය UI අයින් කිරීම */
           .no-print, header, footer, nav, button, textarea { 
             display: none !important; 
           }
           
-          /* පිටුව සුදු පාට කරනවා */
-          body, .min-h-screen { 
+          body { 
             background: white !important; 
             margin: 0 !important; 
-            padding: 0 !important; 
           }
 
-          /* CV එක තියෙන තැන විතරක් පෙන්වනවා */
+          /* CV එක පේජ් එකට හරියටම ෆිට් කිරීම */
           #printable-area {
             position: absolute;
             left: 0;
             top: 0;
             width: 100% !important;
-            transform: none !important; /* Scale එක අයින් කරනවා */
+            height: 100% !important;
+            transform: none !important;
             margin: 0 !important;
             padding: 0 !important;
             visibility: visible !important;
             box-shadow: none !important;
           }
 
-          /* Colors සහ Images පේන්න ඕන නිසා මේක අනිවාර්යයි */
+          /* Colors සහ Images වල quality එක රැක ගැනීමට */
           * {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
@@ -68,7 +69,6 @@ export function Admin() {
       `}} />
 
       <div className="max-w-[1500px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* වම් පැත්ත (Inputs) - Print එකේදී මේක පේන්නේ නැහැ */}
         <div className="lg:col-span-4 no-print">
           <div className="bg-white p-6 rounded-[2rem] shadow-xl border">
             <h2 className="text-xl font-black uppercase mb-6 italic tracking-tighter">Admin CV Decoder</h2>
@@ -88,7 +88,7 @@ export function Admin() {
                   onClick={handlePrint} 
                   className="w-full py-4 bg-blue-600 text-white rounded-2xl font-black uppercase text-xs hover:bg-blue-700 transition-all shadow-lg flex items-center justify-center gap-2"
                 >
-                  <PrinterIcon size={16}/> Download PDF / Print
+                  <PrinterIcon size={16}/> Download PDF
                 </button>
               )}
             </div>
@@ -104,7 +104,6 @@ export function Admin() {
           )}
         </div>
 
-        {/* දකුණු පැත්ත (CV Preview) */}
         <div className="lg:col-span-8 flex justify-center items-start">
           {decodedData ? (
             <div id="printable-area" className="bg-white shadow-2xl rounded-sm overflow-hidden origin-top scale-[0.85] lg:scale-100">
