@@ -16,7 +16,7 @@ export function Admin() {
 
       const data = JSON.parse(decodeURIComponent(escape(atob(raw))));
       
-      // WhatsApp එකෙන් එන 'ds' අගය (0 හෝ 1) 'showDS' බවට පත් කිරීම
+      // ds (0/1) එක showDS (true/false) කිරීම
       if (data.ds !== undefined) {
         data.showDS = data.ds === 1;
       }
@@ -34,10 +34,10 @@ export function Admin() {
 
   return (
     <div className="min-h-screen bg-zinc-100 p-4 md:p-8">
-      {/* පින්ට් එකේ Headers/Footers අයින් කරන CSS */}
+      {/* PDF Print Settings */}
       <style dangerouslySetInnerHTML={{ __html: `
         @page {
-          size: auto;
+          size: A4;
           margin: 0;
         }
 
@@ -97,7 +97,6 @@ export function Admin() {
             </div>
           </div>
           
-          {/* පරණ කෝඩ් එකේ තිබ්බ Payment Slip එක මෙතන තියෙනවා */}
           {decodedData?.paymentSlip && (
             <div className="mt-6 p-4 bg-white rounded-2xl border shadow-sm">
               <p className="text-[10px] font-black uppercase text-zinc-400 mb-2">Payment Slip</p>
@@ -125,5 +124,4 @@ export function Admin() {
   );
 }
 
-// App.tsx එකේ error එක එන්නේ නැති වෙන්න default export එක දැම්මා
 export default Admin;
