@@ -4,12 +4,13 @@ import { PlusIcon, XIcon, Sparkles, Loader2 } from 'lucide-react';
 import { askAI } from '../../lib/gemini';
 
 export function Skills() {
-  const { cvData, addSkill, removeSkill } = useCV();
+  const context = useCV();
   const [inputValue, setInputValue] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
 
-  // Safety check: cvData.skills නැතිනම් empty array එකක් ගන්නවා
+  if (!context) return null;
+  const { cvData, addSkill, removeSkill } = context;
   const currentSkills = cvData?.skills || [];
 
   const handleManualAdd = () => {
@@ -22,7 +23,6 @@ export function Skills() {
   const fetchAiSuggestions = async () => {
     setAiLoading(true);
     try {
-      // Safety check for description
       const desc = cvData?.personalInfo?.description || "Job Seeker";
       const prompt = `Give me 8 professional skills for a ${desc}. Return only as a comma separated list. No intro.`;
       const result = await askAI(prompt);
@@ -72,7 +72,10 @@ export function Skills() {
       <div className="flex flex-wrap gap-2">
         {currentSkills.map((skill, index) => (
           <div key={index} className="flex items-center gap-2 px-4 py-2 bg-white border border-zinc-200 rounded-xl shadow-sm animate-in zoom-in duration-300">
-            <span className="text-sm font-semibold text-zinc-700">{skill}</span>
+            <span className="text-sm font-semibold text-zinc-700">
+              {/* මෙතන තමයි වැදගත්ම දේ: Object එකක් ආවොත් ඒකේ name එක පෙන්වනවා නැත්නම් කෙලින්ම skill එක පෙන්වනවා */}
+              {typeof skill === 'object' ? (skill as any).name : skill}
+            </span>
             <button onClick={() => removeSkill(index)} className="text-zinc-400 hover:text-red-500"><XIcon size={14}/></button>
           </div>
         ))}
