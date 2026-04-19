@@ -25,7 +25,7 @@ interface CVContextType {
   setSelectedTemplate: (id: number) => void;
   updateThemeColor: (color: string) => void;
   setBrightness: (value: number) => void;
-  setShowDS: (val: boolean) => void; // Added
+  setShowDS: (val: boolean) => void;
   resetCV: () => void;
   currentStep: number;
   setCurrentStep: (step: number) => void;
@@ -49,6 +49,8 @@ export function CVProvider({ children }: { children: React.ReactNode }) {
   const updateContact = (data: any) => setCVData(prev => ({ ...prev, contact: { ...prev.contact, ...data } }));
   const addSkill = (skill: string) => setCVData(prev => ({ ...prev, skills: [...prev.skills, { id: Date.now().toString(), name: skill }] }));
   const removeSkill = (index: number) => setCVData(prev => ({ ...prev, skills: prev.skills.filter((_, i) => i !== index) }));
+  const addLanguage = (l: string) => setCVData(p => ({ ...p, languages: [...p.languages, { id: Date.now().toString(), name: l }] }));
+  const removeLanguage = (i: number) => setCVData(p => ({ ...p, languages: p.languages.filter((_, idx) => idx !== i) }));
   const addWorkExperience = () => setCVData(prev => ({ ...prev, workExperience: [...prev.workExperience, { id: Date.now().toString(), title: '', company: '', duration: '', description: '' }] }));
   const updateWorkExperience = (id: string, data: any) => setCVData(prev => ({ ...prev, workExperience: prev.workExperience.map(exp => exp.id === id ? { ...exp, ...data } : exp) }));
   const removeWorkExperience = (id: string) => setCVData(prev => ({ ...prev, workExperience: prev.workExperience.filter(exp => exp.id !== id) }));
@@ -75,19 +77,17 @@ export function CVProvider({ children }: { children: React.ReactNode }) {
   const setSelectedTemplate = (id: number) => setCVData(prev => ({ ...prev, selectedTemplate: id }));
   const updateThemeColor = (color: string) => setCVData(prev => ({ ...prev, customColor: color }));
   const setBrightness = (value: number) => setCVData(prev => ({ ...prev, brightness: value }));
-  const setShowDS = (val: boolean) => setCVData(prev => ({ ...prev, showDS: val })); // Added
+  const setShowDS = (val: boolean) => setCVData(prev => ({ ...prev, showDS: val }));
 
   return (
     <CVContext.Provider value={{ 
-      cvData, updatePersonalInfo, updateContact, addSkill, removeSkill, 
+      cvData, updatePersonalInfo, updateContact, addSkill, removeSkill, addLanguage, removeLanguage,
       addWorkExperience, updateWorkExperience, removeWorkExperience,
       updateEducation, addSubject, updateSubject, removeSubject,
       updateProfessionalQualification, removeProfessionalQualification,
       addProfessionalQualification, updateReference, 
       setSelectedTemplate, updateThemeColor, setBrightness, setShowDS,
-      resetCV, currentStep, setCurrentStep,
-      addLanguage: (l) => setCVData(p => ({ ...p, languages: [...p.languages, { id: Date.now().toString(), name: l }] })),
-      removeLanguage: (i) => setCVData(p => ({ ...p, languages: p.languages.filter((_, idx) => idx !== i) }))
+      resetCV, currentStep, setCurrentStep
     }}>
       {children}
     </CVContext.Provider>
