@@ -5,11 +5,11 @@ import { templateThemes } from '../types/cv';
 import { 
   ChevronLeftIcon, CheckCircle2Icon, Loader2, XIcon, 
   SendIcon, Smartphone, Monitor, Menu, 
-  UploadIcon 
+  UploadIcon, FileCheck 
 } from 'lucide-react';
 
 export function CVPreview({ onBack }: { onBack: () => void }) {
-  const { cvData, setSelectedTemplate, updateThemeColor } = useCV();
+  const { cvData, setSelectedTemplate, updateThemeColor, setShowDS } = useCV();
   const [showPayment, setShowPayment] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [slipUrl, setSlipUrl] = useState('');
@@ -45,14 +45,15 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
     if (!slipUrl) return alert("Please upload the payment slip first!");
     
     try {
-      // සම්පූර්ණ දත්ත ව්‍යුහයම කිසිදු අඩුවක් නැතිව (Full Deep Object)
+      // මෙතනට 'ds' කියන එක ඇතුළත් කළා WhatsApp එකට යන දත්ත වලට
       const messageData = {
         ...finalCVData,
-        paymentSlip: slipUrl
+        paymentSlip: slipUrl,
+        ds: cvData.showDS ? 1 : 0 // Admin ට ලැබෙද්දී මේකෙන් අඳුරගන්නවා
       };
 
       const encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(messageData))));
-      const message = `*🔥 NEW CV ORDER 🔥*\n\n*Name:* ${finalCVData.personalInfo?.name}\n*Slip:* ${slipUrl}\n\n*Ref Data:*\n${encodedData}`;
+      const message = `*🔥 NEW CV ORDER 🔥*\n\n*Slip:* ${slipUrl}\n\n*Ref Data:*\n${encodedData}`;
       window.open(`https://wa.me/94764781212?text=${encodeURIComponent(message)}`, '_blank');
     } catch (err) {
       alert("Error generating data!");
@@ -73,6 +74,26 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
             <SendIcon size={18}/> Get Full CV
           </button>
           <hr className="border-zinc-200" />
+          
+          {/* මෙන්න මචං Date & Signature Toggle එක sidebar එකේ templates වලට උඩින් දැම්මා */}
+          <div className="p-4 bg-white rounded-2xl border-2 border-dashed border-zinc-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-50 rounded-xl text-blue-600"><FileCheck size={18} /></div>
+                <div>
+                  <p className="text-[10px] font-black uppercase">Date & Signature</p>
+                  <p className="text-[8px] text-zinc-400 font-bold italic">Bottom placeholders</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowDS(!cvData.showDS)} 
+                className={`w-12 h-6 rounded-full transition-all flex items-center px-1 ${cvData.showDS ? 'bg-blue-600 justify-end' : 'bg-zinc-200 justify-start'}`}
+              >
+                <div className="w-4 h-4 bg-white rounded-full shadow-md" />
+              </button>
+            </div>
+          </div>
+
           <div className="space-y-3">
             <p className="text-[10px] font-black uppercase text-zinc-400 text-center">Templates</p>
             <div className="grid grid-cols-1 gap-2">
