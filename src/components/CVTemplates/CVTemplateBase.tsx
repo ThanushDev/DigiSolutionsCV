@@ -129,7 +129,7 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
           <div className="flex h-full">
             <div className="w-[32%] bg-zinc-50 border-r h-full p-8 flex flex-col gap-6 shrink-0 overflow-hidden text-zinc-600">
               <img src={profileImg} className="w-32 h-32 rounded-full border-4 mx-auto object-cover" style={{ borderColor: theme }} />
-              <section><SectionTitle title="Contact" /><div className="space-y-2 text-[9px] font-bold"><p className="flex items-center gap-2"><Phone size={10}/> {phone1}</p>{phone2 && <p>{phone2}</p>}<p className="truncate">{email}</p><p className="whitespace-pre-wrap">{address}</p></div></section>
+              <section><SectionTitle title="Contact" /><div className="space-y-2 text-[9px] font-bold"><p className="flex items-center gap-2"><Phone size={10}/> {phone1}</p>{phone2 && <p>{phone2}</p>}<p className="truncate">{email}</p><p className="whitespace-pre-wrap leading-relaxed">{address}</p></div></section>
               <section><SectionTitle title="Personal Info" /><PersonalInfoList /></section>
               {skillsList.length > 0 && <section><SectionTitle title="Skills" /><div className="flex flex-wrap gap-1">{skillsList.map((s, i) => <span key={i} className="bg-zinc-200 px-2 py-1 rounded text-[8px] font-black uppercase">{s}</span>)}</div></section>}
               {langList.length > 0 && <section><SectionTitle title="Languages" /><div className="space-y-1 text-[9px] font-bold">{langList.map((l, i) => <p key={i}>• {l}</p>)}</div></section>}
@@ -161,12 +161,14 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
               <img src={profileImg} className="absolute -bottom-4 right-10 w-24 h-24 rounded-[1.5rem] border-4 border-white object-cover shadow-2xl" />
             </div>
             <div className="grid grid-cols-12 gap-8 flex-1 overflow-hidden">
-              <div className="col-span-4 space-y-6 shrink-0"><div className="p-6 rounded-[1.5rem] bg-zinc-50 border border-zinc-100 space-y-5">
-                <section className="text-center"><p className="text-[9px] font-black uppercase mb-2" style={{ color: theme }}>Contact Info</p><p className="text-[8px] text-zinc-500 font-bold whitespace-pre-wrap">{address}</p><p className="text-[8px] text-zinc-500 font-bold mt-2">{phone1}</p></section>
-                <PersonalInfoList />
-                {skillsList.length > 0 && <section><p className="text-[9px] font-black uppercase text-center mb-2" style={{ color: theme }}>Skills</p><div className="flex flex-wrap justify-center gap-1">{skillsList.map((s, i) => <span key={i} className="bg-zinc-200 px-2 py-0.5 rounded text-[8px] font-bold">{s}</span>)}</div></section>}
-                {langList.length > 0 && <section className="text-center"><p className="text-[9px] font-black uppercase mb-1" style={{ color: theme }}>Languages</p><p className="text-[8px] text-zinc-500 font-bold">{langList.join(' • ')}</p></section>}
-              </div></div>
+              <div className="col-span-4 space-y-6 shrink-0">
+                <div className="p-7 rounded-[1.5rem] bg-zinc-50 border border-zinc-100 space-y-6">
+                  <section className="text-left"><p className="text-[9px] font-black uppercase mb-2" style={{ color: theme }}>Contact Info</p><div className="text-[8px] text-zinc-500 font-bold space-y-1.5 leading-relaxed"><p className="whitespace-pre-wrap">{address}</p><p>{phone1}</p></div></section>
+                  <section><p className="text-[9px] font-black uppercase mb-2" style={{ color: theme }}>Identity</p><PersonalInfoList /></section>
+                  {skillsList.length > 0 && <section className="text-left"><p className="text-[9px] font-black uppercase mb-2" style={{ color: theme }}>Skills</p><div className="flex flex-wrap justify-start gap-1.5">{skillsList.map((s, i) => <span key={i} className="bg-zinc-200 px-2 py-0.5 rounded text-[8px] font-bold">{s}</span>)}</div></section>}
+                  {langList.length > 0 && <section className="text-left"><p className="text-[9px] font-black uppercase mb-1" style={{ color: theme }}>Languages</p><p className="text-[8px] text-zinc-500 font-bold">{langList.join(' • ')}</p></section>}
+                </div>
+              </div>
               <div className="col-span-8 flex flex-col">{summary && <p className="text-[9px] text-zinc-500 italic mb-6 whitespace-pre-wrap">"{summary}"</p>}<ContentBody /><DateSignature show={showDS} /></div>
             </div>
           </div>
@@ -186,7 +188,7 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
         );
       case 5: // Minimalist
         return (
-          <div className="flex flex-col h-full p-10 overflow-hidden">
+          <div className="flex flex-col h-full p-10 overflow-hidden text-zinc-800">
             <div className="flex justify-between items-start border-b-[4px] pb-6 mb-8 shrink-0" style={{ borderColor: theme }}>
               <div className="max-w-[75%]"><h1 className="text-2xl font-black uppercase mb-2 tracking-tight">{fullName}</h1><p className="text-[9px] font-bold text-zinc-500 leading-relaxed">{phone1} • {email} • {address.replace(/\n/g, ', ')}</p></div>
               <img src={profileImg} className="w-16 h-16 object-cover rounded-full" />
@@ -210,7 +212,7 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
             <div className="flex-1 flex gap-8 overflow-hidden"><div className="flex-1 overflow-hidden"><ContentBody /></div>
             <div className="w-44 bg-zinc-50 p-6 rounded-[2rem] h-fit space-y-6 shrink-0 border border-zinc-100">
             <section><SectionTitle title="About Me" /><PersonalInfoList /></section>
-            <section><SectionTitle title="Contact" /><p className="text-[8px] font-bold text-zinc-500 whitespace-pre-wrap">{address}</p></section>
+            <section><SectionTitle title="Contact" /><p className="text-[8px] font-bold text-zinc-500 whitespace-pre-wrap leading-relaxed">{address}</p></section>
             {skillsList.length > 0 && <section><SectionTitle title="Skills" /><div className="flex flex-col gap-1 text-[8px] font-bold text-zinc-600">{skillsList.map((s, i) => <p key={i}>• {s}</p>)}</div></section>}
             {langList.length > 0 && <section><SectionTitle title="Languages" /><p className="text-[8px] font-bold text-zinc-500">{langList.join(', ')}</p></section>}
             </div></div><DateSignature show={showDS} />
@@ -218,32 +220,36 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
         );
       case 7: // Sidebar Elegant
         return (
-          <div className="flex h-full gap-8 p-10 overflow-hidden">
+          <div className="flex h-full gap-8 p-10 overflow-hidden text-zinc-800">
             <div className="flex-1 flex flex-col overflow-hidden"><h1 className="text-3xl font-black uppercase italic mb-6 tracking-tighter" style={{ color: theme }}>{fullName}</h1>{summary && <p className="text-zinc-500 text-[9px] mb-6 border-l-4 pl-4 leading-relaxed whitespace-pre-wrap" style={{ borderColor: theme }}>{summary}</p>}<ContentBody /><DateSignature show={showDS} /></div>
             <div className="w-[30%] shrink-0 border-l pl-8 space-y-6 text-zinc-600">
                 <img src={profileImg} className="w-full h-40 object-cover rounded-3xl mb-4 shadow-lg" />
-                <section><SectionTitle title="Connect" /><div className="text-[8px] font-bold space-y-2"><p className="whitespace-pre-wrap">{address}</p><p>{phone1}</p><p>{email}</p></div></section>
+                <section><SectionTitle title="Connect" /><div className="text-[8px] font-bold space-y-2"><p className="whitespace-pre-wrap leading-relaxed">{address}</p><p>{phone1}</p><p>{email}</p></div></section>
                 <section><SectionTitle title="Personal" /><PersonalInfoList /></section>
                 {skillsList.length > 0 && <section><SectionTitle title="Top Skills" /><div className="flex flex-col gap-1.5">{skillsList.map((s, i) => <p key={i} className="text-[8px] font-black uppercase tracking-tighter">» {s}</p>)}</div></section>}
                 {langList.length > 0 && <section><SectionTitle title="Languages" /><p className="text-[8px] font-black uppercase">{langList.join(' | ')}</p></section>}
             </div>
           </div>
         );
-      case 8: // Premium Gold (Case 8 - මෙතන තමයි error එක තිබ්බේ)
+      case 8: // Premium Gold
         return (
-          <div className="flex flex-col h-full p-10 items-center overflow-hidden">
+          <div className="flex flex-col h-full p-10 items-center overflow-hidden text-zinc-800">
             <div className="text-center border-b-2 pb-6 mb-8 w-full shrink-0" style={{ borderColor: theme }}>
               <img src={profileImg} className="w-20 h-20 rounded-full mx-auto mb-4 object-cover border-2 p-1" style={{ borderColor: theme }} />
               <h1 className="text-2xl font-black uppercase tracking-[0.2em] leading-none mb-3">{fullName}</h1>
-              <p className="text-zinc-400 font-bold text-[8px] uppercase">{phone1} | {email} | {address.replace(/\n/g, ' ')}</p>
+              {/* Address included in Premium Gold header details */}
+              <p className="text-zinc-400 font-bold text-[8px] uppercase leading-relaxed">
+                {phone1} | {email} <br/> {address.replace(/\n/g, ' ')}
+              </p>
             </div>
-            <div className="w-full grid grid-cols-12 gap-10 flex-1 overflow-hidden">
-              <div className="col-span-4 space-y-6 shrink-0"><section><SectionTitle title="Details" /><PersonalInfoList /></section>
-              {skillsList.length > 0 && <section><SectionTitle title="Expertise" /><div className="space-y-1">{skillsList.map((s, i) => <p key={i} className="text-[8px] font-bold text-zinc-500 uppercase tracking-tight"># {s}</p>)}</div></section>}
-              {langList.length > 0 && <section><SectionTitle title="Languages" /><p className="text-[8px] font-bold text-zinc-500 uppercase tracking-tight">{langList.join(', ')}</p></section>}
+            <div className="w-full grid grid-cols-12 gap-10 flex-1 overflow-hidden text-left">
+              <div className="col-span-4 space-y-6 shrink-0 border-r border-zinc-100 pr-4">
+                <section><SectionTitle title="Details" /><PersonalInfoList /></section>
+                {skillsList.length > 0 && <section><SectionTitle title="Expertise" /><div className="space-y-1">{skillsList.map((s, i) => <p key={i} className="text-[8px] font-bold text-zinc-500 uppercase tracking-tight"># {s}</p>)}</div></section>}
+                {langList.length > 0 && <section><SectionTitle title="Languages" /><p className="text-[8px] font-bold text-zinc-500 uppercase tracking-tight">{langList.join(', ')}</p></section>}
               </div>
               <div className="col-span-8 flex flex-col overflow-hidden">
-                {summary && <p className="text-[9px] text-zinc-500 italic mb-8 text-center leading-relaxed whitespace-pre-wrap px-6">"{summary}"</p>}
+                {summary && <p className="text-[9px] text-zinc-500 italic mb-8 text-left leading-relaxed whitespace-pre-wrap">"{summary}"</p>}
                 <ContentBody /> 
               </div>
             </div><DateSignature show={showDS} />
