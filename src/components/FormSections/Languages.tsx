@@ -6,6 +6,9 @@ export function Languages() {
   const { cvData, addLanguage, removeLanguage } = useCV();
   const [newLanguage, setNewLanguage] = useState('');
 
+  // Safety check: cvData.languages නැතිනම් empty array එකක් ගන්නවා
+  const currentLanguages = cvData?.languages || [];
+
   const handleAddLanguage = () => {
     if (newLanguage.trim()) {
       addLanguage(newLanguage);
@@ -22,7 +25,6 @@ export function Languages() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      {/* Input Section - Responsive layout */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="flex-1">
           <input
@@ -45,15 +47,14 @@ export function Languages() {
         </button>
       </div>
 
-      {/* Languages Tags Section */}
       <div className="bg-gray-50/50 p-4 rounded-2xl border border-dashed border-gray-200 min-h-[100px]">
         <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3 ml-1">
           Your Languages
         </label>
         
-        {cvData.languages.length > 0 ? (
+        {currentLanguages.length > 0 ? (
           <div className="flex flex-wrap gap-2 md:gap-3">
-            {cvData.languages.map((language, index) => (
+            {currentLanguages.map((language, index) => (
               <div
                 key={index}
                 className="flex items-center gap-2 px-4 py-2 bg-white border border-blue-100 rounded-full shadow-sm animate-in zoom-in duration-300"
