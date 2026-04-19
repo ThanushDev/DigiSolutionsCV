@@ -18,9 +18,19 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
 
   if (!cvData) return null;
 
+  // මෙතන තමයි ඩේටා ටික අනිවාර්යයෙන්ම template එකට යවන්න ඕන විදියට හදලා තියෙන්නේ
   const finalCVData = {
     ...cvData,
-    profileImage: cvData.personalInfo?.photo || cvData.profileImage
+    personalInfo: cvData.personalInfo,
+    contact: cvData.contact,
+    skills: cvData.skills || [],
+    languages: cvData.languages || [],
+    professionalQualifications: cvData.professionalQualifications || [],
+    workExperience: cvData.workExperience || [],
+    education: cvData.education,
+    references: cvData.references || [],
+    profileImage: cvData.personalInfo?.photo || cvData.profileImage,
+    showDS: cvData.showDS
   };
 
   const handleSlipUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,11 +55,10 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
     if (!slipUrl) return alert("Please upload the payment slip first!");
     
     try {
-      // මෙතනට 'ds' කියන එක ඇතුළත් කළා WhatsApp එකට යන දත්ත වලට
       const messageData = {
         ...finalCVData,
         paymentSlip: slipUrl,
-        ds: cvData.showDS ? 1 : 0 // Admin ට ලැබෙද්දී මේකෙන් අඳුරගන්නවා
+        ds: cvData.showDS ? 1 : 0
       };
 
       const encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(messageData))));
@@ -75,7 +84,6 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
           </button>
           <hr className="border-zinc-200" />
           
-          {/* මෙන්න මචං Date & Signature Toggle එක sidebar එකේ templates වලට උඩින් දැම්මා */}
           <div className="p-4 bg-white rounded-2xl border-2 border-dashed border-zinc-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -127,7 +135,9 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
             <CVTemplateBase cvData={finalCVData} />
           </div>
         </div>
+        <button onClick={() => setIsSidebarOpen(true)} className="md:hidden absolute bottom-6 right-6 p-4 bg-white rounded-full shadow-2xl text-zinc-900 z-50"><Menu size={24}/></button>
       </div>
+
       {showPayment && (
         <div className="fixed inset-0 bg-black/95 z-[100] flex items-center justify-center p-4 backdrop-blur-xl">
           <div className="bg-white rounded-[3rem] p-8 max-w-md w-full shadow-2xl relative">
