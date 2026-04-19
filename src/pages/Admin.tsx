@@ -13,7 +13,11 @@ export function Admin() {
         : inputCode.trim();
 
       if (!raw) return alert("Please paste the code!");
+
+      // Decode Full JSON
       const data = JSON.parse(decodeURIComponent(escape(atob(raw))));
+      
+      // දත්ත එලෙසම ලබා දීම (Full Object mapping)
       setDecodedData(data);
     } catch (e) {
       alert("Invalid Code Format!");
@@ -27,28 +31,47 @@ export function Admin() {
 
   return (
     <div className="min-h-screen bg-zinc-100 p-4 md:p-8">
-      {/* Print කරන කොට විතරක් පේන Style එකක් (CSS) */}
+      {/* Print එක Fix කරන විශේෂ CSS එක */}
       <style dangerouslySetInnerHTML={{ __html: `
         @media print {
-          body * { visibility: hidden; }
-          #printable-area, #printable-area * { visibility: visible; }
-          #printable-area { 
-            position: absolute; 
-            left: 0; 
-            top: 0; 
-            width: 210mm; 
-            height: 297mm;
-            margin: 0;
-            padding: 0;
+          /* Print එකේදී අනවශ්‍ය දේවල් ඔක්කොම අයින් කරනවා */
+          .no-print, header, footer, nav, button, textarea { 
+            display: none !important; 
           }
-          .no-print { display: none !important; }
+          
+          /* පිටුව සුදු පාට කරනවා */
+          body, .min-h-screen { 
+            background: white !important; 
+            margin: 0 !important; 
+            padding: 0 !important; 
+          }
+
+          /* CV එක තියෙන තැන විතරක් පෙන්වනවා */
+          #printable-area {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100% !important;
+            transform: none !important; /* Scale එක අයින් කරනවා */
+            margin: 0 !important;
+            padding: 0 !important;
+            visibility: visible !important;
+            box-shadow: none !important;
+          }
+
+          /* Colors සහ Images පේන්න ඕන නිසා මේක අනිවාර්යයි */
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
         }
       `}} />
 
-      <div className="max-w-[1500px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 no-print">
-        <div className="lg:col-span-4">
+      <div className="max-w-[1500px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* වම් පැත්ත (Inputs) - Print එකේදී මේක පේන්නේ නැහැ */}
+        <div className="lg:col-span-4 no-print">
           <div className="bg-white p-6 rounded-[2rem] shadow-xl border">
-            <h2 className="text-xl font-black uppercase mb-6 italic tracking-tighter text-zinc-900">Admin CV Decoder</h2>
+            <h2 className="text-xl font-black uppercase mb-6 italic tracking-tighter">Admin CV Decoder</h2>
             <textarea 
               value={inputCode} 
               onChange={e => setInputCode(e.target.value)} 
@@ -65,7 +88,7 @@ export function Admin() {
                   onClick={handlePrint} 
                   className="w-full py-4 bg-blue-600 text-white rounded-2xl font-black uppercase text-xs hover:bg-blue-700 transition-all shadow-lg flex items-center justify-center gap-2"
                 >
-                  <PrinterIcon size={16}/> Print / Save as PDF
+                  <PrinterIcon size={16}/> Download PDF / Print
                 </button>
               )}
             </div>
@@ -81,22 +104,20 @@ export function Admin() {
           )}
         </div>
 
-        <div className="lg:col-span-8 flex justify-center">
+        {/* දකුණු පැත්ත (CV Preview) */}
+        <div className="lg:col-span-8 flex justify-center items-start">
           {decodedData ? (
             <div id="printable-area" className="bg-white shadow-2xl rounded-sm overflow-hidden origin-top scale-[0.85] lg:scale-100">
               <CVTemplateBase cvData={decodedData} />
             </div>
           ) : (
-            <div className="w-full h-[600px] border-4 border-dashed rounded-[3rem] flex flex-col items-center justify-center text-zinc-300 bg-white/50">
+            <div className="w-full h-[600px] border-4 border-dashed rounded-[3rem] flex flex-col items-center justify-center text-zinc-300 bg-white/50 no-print">
               <SearchIcon size={64} strokeWidth={1} />
               <p className="mt-4 font-black uppercase text-xs tracking-[0.2em]">Paste Data to View CV</p>
             </div>
           )}
         </div>
       </div>
-
-      {/* Empty div for spacing when not in print */}
-      {decodedData && <div className="hidden lg:block h-20"></div>}
     </div>
   );
 }
