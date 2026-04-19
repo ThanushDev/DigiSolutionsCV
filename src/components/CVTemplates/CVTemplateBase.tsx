@@ -77,7 +77,6 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
     );
   };
 
-  // --- Reusable Blocks (No large spaces, exact order logic) ---
   const SkillsBlock = ({ titleColor = theme, isDark = false }) => {
     if (!skillsList.length) return null;
     return (
@@ -150,14 +149,19 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
         <h3 className="text-[10px] font-black uppercase mb-1 border-b pb-0.5" style={{ color: titleColor, borderColor: titleColor }}>References</h3>
         <div className="grid grid-cols-2 gap-2 text-[8px] leading-tight">
           {refList.map((r: any, i: number) => (
-            r.name ? <div key={i}><b>{r.name}</b><br/>{r.designation && <>{r.designation}<br/>}</>{r.organization && <>{r.organization}<br/>}</>{r.phone}</div> : null
+            r.name ? (
+              <div key={i}>
+                <b>{r.name}</b><br/>
+                {r.designation && <>{r.designation}<br/></>}
+                {r.organization && <>{r.organization}<br/></>}
+                {r.phone}
+              </div>
+            ) : null
           ))}
         </div>
       </section>
     );
   };
-
-  // --- Layouts ---
 
   const Layout1 = () => (
     <A4Page>
@@ -170,10 +174,7 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
           <LangsBlock />
         </div>
         <div className="flex-1 p-6 flex flex-col">
-          <div className="mb-3">
-            <h1 className="text-2xl font-black uppercase leading-tight" style={{ color: theme }}>{fullName}</h1>
-            {summary && <p className="text-zinc-600 italic mt-1 text-[9px] leading-snug">"{summary}"</p>}
-          </div>
+          <div className="mb-3"><h1 className="text-2xl font-black uppercase leading-tight" style={{ color: theme }}>{fullName}</h1>{summary && <p className="text-zinc-600 italic mt-1 text-[9px] leading-snug">"{summary}"</p>}</div>
           <QualBlock />
           <EducationBlock />
           <WorkExpBlock />
@@ -187,10 +188,7 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
   const Layout2 = () => (
     <A4Page>
       <div className="h-28 flex items-center justify-between px-8 text-white shrink-0" style={{ backgroundColor: theme }}>
-        <div>
-          <h1 className="text-2xl font-black uppercase leading-none">{fullName}</h1>
-          <p className="text-[9px] opacity-80 uppercase tracking-widest mt-1">Professional Resume</p>
-        </div>
+        <div><h1 className="text-2xl font-black uppercase leading-none">{fullName}</h1><p className="text-[9px] opacity-80 uppercase tracking-widest mt-1">Professional Resume</p></div>
         <img src={profileImg} className="w-20 h-20 object-cover rounded-lg border-2 border-white/20 shadow-md" />
       </div>
       <div className="flex-1 flex overflow-hidden">
@@ -270,10 +268,7 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
           {summary && <div className="text-zinc-600 italic border-l-2 pl-3 mb-3 text-[9px] leading-snug" style={{ borderColor: theme }}>{summary}</div>}
           <div className="grid grid-cols-2 gap-x-6 gap-y-3">
             <section><h2 className="text-[10px] font-black uppercase border-b pb-0.5 mb-1" style={{ color: theme, borderColor: theme }}>Personal Info</h2><PersonalInfoList /></section>
-            <div className="space-y-3">
-              <SkillsBlock />
-              <LangsBlock />
-            </div>
+            <div className="space-y-3"><SkillsBlock /><LangsBlock /></div>
             <div className="col-span-2"><QualBlock /></div>
             <div className="col-span-2"><EducationBlock /></div>
             <div className="col-span-2"><WorkExpBlock /></div>
@@ -326,8 +321,7 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
           <img src={profileImg} className="w-full h-32 object-cover rounded shadow-sm" />
           <section><h3 className="font-black uppercase text-[9px] mb-1" style={{ color: theme }}>Contact</h3><div className="text-[8px] space-y-0.5 text-zinc-600"><p>{phone1}</p><p className="truncate">{email}</p><p>{address}</p></div></section>
           <section><h3 className="font-black uppercase text-[9px] mb-1" style={{ color: theme }}>Personal</h3><PersonalInfoList /></section>
-          <SkillsBlock titleColor={theme} />
-          <LangsBlock titleColor={theme} />
+          <SkillsBlock titleColor={theme} /><LangsBlock titleColor={theme} />
         </div>
       </div>
     </A4Page>
@@ -346,9 +340,7 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
           {summary && <p className="text-center italic px-8 text-zinc-600 text-[9px] leading-snug">"{summary}"</p>}
           <div className="grid grid-cols-2 gap-4">
             <section><h2 className="font-black uppercase bg-zinc-50 px-2 py-1 mb-1 border-l-4" style={{ borderColor: theme }}>Personal Info</h2><div className="px-2"><PersonalInfoList /></div></section>
-            <div>
-              <div className="mb-2"><h2 className="font-black uppercase bg-zinc-50 px-2 py-1 mb-1 border-l-4" style={{ borderColor: theme }}>Skills & Languages</h2><div className="px-2"><SkillsBlock /><LangsBlock /></div></div>
-            </div>
+            <div><h2 className="font-black uppercase bg-zinc-50 px-2 py-1 mb-1 border-l-4" style={{ borderColor: theme }}>Skills</h2><div className="px-2"><SkillsBlock /><LangsBlock /></div></div>
           </div>
           <div className="px-2"><QualBlock /></div>
           <div className="px-2"><EducationBlock /></div>
