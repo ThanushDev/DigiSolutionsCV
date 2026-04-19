@@ -160,7 +160,7 @@ export function CVPreview({ onBack }: { onBack: () => void }) {
             <h3 className="text-2xl font-black uppercase mb-6 text-center tracking-tight">Payment Details</h3>
             
             <div className="bg-zinc-950 text-white rounded-[2rem] p-7 mb-6 relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-blue-600 px-6 py-2 rounded-bl-2xl font-black text-xs tracking-widest">RS. 500</div>
+              <div className="absolute top-0 right-0 bg-blue-600 px-6 py-2 rounded-bl-2xl font-black text-xs tracking-widest">RS. 300</div>
               <div className="space-y-4">
                 <div><p className="text-[9px] uppercase font-black text-zinc-500">Bank (BOC)</p><p className="text-2xl text-blue-400 font-black tracking-wider">91691764</p></div>
                 <div><p className="text-[9px] uppercase font-black text-zinc-500">Name</p><p className="text-sm font-bold uppercase tracking-wide">PTN Pathiranage</p></div>
