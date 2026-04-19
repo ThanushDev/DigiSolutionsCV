@@ -35,14 +35,11 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
   const civilStatus = pInfo.civilStatus || '';
 
   const phone1 = contactInfo.phone1 || '';
-  const phone2 = contactInfo.phone2 || '';
   const email = contactInfo.email || '';
   const address = contactInfo.address || '';
 
   const skillsList = cvData.skills?.map(s => s.name).filter(Boolean) || [];
-  const langList = cvData.languages?.map(l => l.name).filter(Boolean) || [];
   const qualList = cvData.professionalQualifications?.map(q => q.qualification).filter(Boolean) || [];
-  const workList = cvData.workExperience || [];
   const refList = cvData.references || [];
 
   const A4Page = ({ children }: { children: React.ReactNode }) => (
@@ -67,7 +64,6 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
     return (
       <div className="mb-3">
         <p className="font-bold text-[11px] uppercase">• G.C.E. {level} - {data.year}</p>
-        <p className="pl-4 text-[10px] text-zinc-500 italic">Index: {data.indexNumber}</p>
         <div className="grid grid-cols-2 gap-x-10 gap-y-1 pl-4 text-[11px]">
           {data.subjects.map((s: Subject, i: number) => (
             <div key={i} className="flex justify-between border-b border-zinc-100">
@@ -88,11 +84,11 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
           <section><h3 className="text-[12px] font-black uppercase mb-2" style={{ color: theme }}>Personal Info</h3><PersonalInfoList /></section>
           <section><h3 className="text-[12px] font-black uppercase mb-2" style={{ color: theme }}>Skills</h3><div className="flex flex-wrap gap-2">{skillsList.map((s, i) => <span key={i} className="bg-white border px-2 py-1 rounded text-[9px] font-bold uppercase">{s}</span>)}</div></section>
         </div>
-        <div className="flex-1 p-10 flex flex-col gap-6">
+        <div className="flex-1 p-10 flex flex-col">
           <div><h1 className="text-4xl font-black uppercase" style={{ color: theme }}>{fullName}</h1>{summary && <p className="text-zinc-500 italic mt-2 text-sm">"{summary}"</p>}</div>
-          <section><h3 className="text-[12px] font-black uppercase border-b mb-2 pb-0.5" style={{ color: theme }}>Qualifications</h3><ul className="space-y-2 pl-2 text-[11px] font-medium text-zinc-700">{qualList.map((q, i) => <li key={i} className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: theme }}></span>{q}</li>)}</ul></section>
-          <section><h3 className="text-[12px] font-black uppercase border-b mb-2 pb-0.5" style={{ color: theme }}>Education</h3><EduTable level="Advanced Level" data={cvData.education?.aLevel} /><EduTable level="Ordinary Level" data={cvData.education?.oLevel} /></section>
-          <section><h3 className="text-[12px] font-black uppercase border-b mb-2 pb-0.5" style={{ color: theme }}>References</h3><div className="grid grid-cols-2 gap-8">{refList.map((r: any, i: number) => (<div key={i} className="text-[10px]"><b>{r.name}</b><br/>{r.designation}<br/>{r.phone}</div>))}</div></section>
+          <section className="mt-6"><h3 className="text-[12px] font-black uppercase border-b mb-2 pb-0.5" style={{ color: theme }}>Qualifications</h3><ul className="space-y-2 pl-2 text-[11px] font-medium text-zinc-700">{qualList.map((q, i) => <li key={i} className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: theme }}></span>{q}</li>)}</ul></section>
+          <section className="mt-6"><h3 className="text-[12px] font-black uppercase border-b mb-2 pb-0.5" style={{ color: theme }}>Education</h3><EduTable level="Advanced Level" data={cvData.education?.aLevel} /><EduTable level="Ordinary Level" data={cvData.education?.oLevel} /></section>
+          <section className="mt-6"><h3 className="text-[12px] font-black uppercase border-b mb-2 pb-0.5" style={{ color: theme }}>References</h3><div className="grid grid-cols-2 gap-8">{refList.map((r: any, i: number) => (<div key={i} className="text-[10px]"><b>{r.name}</b><br/>{r.designation}<br/>{r.phone}</div>))}</div></section>
           <DateSignature show={cvData.showDS} />
         </div>
       </div>
