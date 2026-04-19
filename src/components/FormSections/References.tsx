@@ -1,9 +1,9 @@
 import React from 'react';
 import { useCV } from '../../context/CVContext';
-import { UserCheck } from 'lucide-react';
+import { UserCheck, FileCheck } from 'lucide-react';
 
 export function References() {
-  const { cvData, updateReference } = useCV();
+  const { cvData, updateReference, setShowDS } = useCV();
 
   const renderReferenceForm = (index: 0 | 1, title: string) => {
     const ref = cvData.references[index];
@@ -17,61 +17,21 @@ export function References() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {/* Full Name */}
           <div className="md:col-span-2 space-y-1.5">
-            <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">
-              Full Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              value={ref.name}
-              onChange={(e) => updateReference(index, { name: e.target.value })}
-              placeholder="e.g., Mr. K. Perera"
-              className="w-full px-4 py-3 md:py-2.5 text-base md:text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm bg-white"
-            />
+            <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">Full Name <span className="text-red-500">*</span></label>
+            <input type="text" value={ref.name} onChange={(e) => updateReference(index, { name: e.target.value })} placeholder="e.g., Mr. K. Perera" className="w-full px-4 py-3 md:py-2.5 text-base md:text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm bg-white" />
           </div>
-
-          {/* Designation */}
           <div className="space-y-1.5">
-            <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">
-              Designation
-            </label>
-            <input
-              type="text"
-              value={ref.designation}
-              onChange={(e) => updateReference(index, { designation: e.target.value })}
-              placeholder="e.g., Senior Manager"
-              className="w-full px-4 py-3 md:py-2.5 text-base md:text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm bg-white"
-            />
+            <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">Designation</label>
+            <input type="text" value={ref.designation} onChange={(e) => updateReference(index, { designation: e.target.value })} placeholder="e.g., Senior Manager" className="w-full px-4 py-3 md:py-2.5 text-base md:text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm bg-white" />
           </div>
-
-          {/* Organization */}
           <div className="space-y-1.5">
-            <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">
-              Organization
-            </label>
-            <input
-              type="text"
-              value={ref.organization}
-              onChange={(e) => updateReference(index, { organization: e.target.value })}
-              placeholder="e.g., XYZ Holdings (Pvt) Ltd"
-              className="w-full px-4 py-3 md:py-2.5 text-base md:text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm bg-white"
-            />
+            <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">Organization</label>
+            <input type="text" value={ref.organization} onChange={(e) => updateReference(index, { organization: e.target.value })} placeholder="e.g., XYZ Holdings (Pvt) Ltd" className="w-full px-4 py-3 md:py-2.5 text-base md:text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm bg-white" />
           </div>
-
-          {/* Phone Number */}
           <div className="md:col-span-2 space-y-1.5">
-            <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">
-              Phone Number <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="tel"
-              inputMode="tel"
-              value={ref.phone}
-              onChange={(e) => updateReference(index, { phone: e.target.value })}
-              placeholder="e.g., 077 987 6543"
-              className="w-full px-4 py-3 md:py-2.5 text-base md:text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm bg-white"
-            />
+            <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">Phone Number <span className="text-red-500">*</span></label>
+            <input type="tel" inputMode="tel" value={ref.phone} onChange={(e) => updateReference(index, { phone: e.target.value })} placeholder="e.g., 077 987 6543" className="w-full px-4 py-3 md:py-2.5 text-base md:text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm bg-white" />
           </div>
         </div>
       </div>
@@ -81,13 +41,27 @@ export function References() {
   return (
     <div className="space-y-8 pb-4">
       <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl">
-        <p className="text-xs md:text-sm text-blue-700 font-medium">
-          Please provide details of two non-related references who can vouch for your professional capabilities.
-        </p>
+        <p className="text-xs md:text-sm text-blue-700 font-medium">Please provide details of two non-related references who can vouch for your professional capabilities.</p>
       </div>
       
       {renderReferenceForm(0, 'Reference 01')}
       {renderReferenceForm(1, 'Reference 02')}
+
+      {/* Date & Signature Toggle */}
+      <div className="mt-8 p-6 bg-white rounded-[2rem] border-2 border-dashed border-zinc-200 hover:border-blue-400 transition-all">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-blue-50 rounded-2xl text-blue-600"><FileCheck size={24} /></div>
+            <div>
+              <h4 className="font-black text-sm uppercase">Add Date & Signature</h4>
+              <p className="text-[10px] text-zinc-500 font-medium italic">Placeholders for manual signing at bottom</p>
+            </div>
+          </div>
+          <button onClick={() => setShowDS(!cvData.showDS)} className={`w-14 h-8 rounded-full transition-all flex items-center px-1 ${cvData.showDS ? 'bg-blue-600 justify-end' : 'bg-zinc-200 justify-start'}`}>
+            <div className="w-6 h-6 bg-white rounded-full shadow-md" />
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
