@@ -9,6 +9,9 @@ export function Skills() {
   const [aiLoading, setAiLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
 
+  // Safety check: cvData.skills නැතිනම් empty array එකක් ගන්නවා
+  const currentSkills = cvData?.skills || [];
+
   const handleManualAdd = () => {
     if (inputValue.trim()) {
       addSkill(inputValue.trim());
@@ -19,7 +22,9 @@ export function Skills() {
   const fetchAiSuggestions = async () => {
     setAiLoading(true);
     try {
-      const prompt = `Give me 8 professional skills for a ${cvData.personalInfo.description || "Job Seeker"}. Return only as a comma separated list. No intro.`;
+      // Safety check for description
+      const desc = cvData?.personalInfo?.description || "Job Seeker";
+      const prompt = `Give me 8 professional skills for a ${desc}. Return only as a comma separated list. No intro.`;
       const result = await askAI(prompt);
       if (result) {
         const skillsArray = result.split(',').map(s => s.trim().replace(/\./g, ''));
@@ -34,7 +39,6 @@ export function Skills() {
 
   return (
     <div className="space-y-6 animate-in fade-in">
-      {/* Mobile responsive input row */}
       <div className="flex flex-col sm:flex-row gap-2">
         <input 
           value={inputValue}
@@ -66,7 +70,7 @@ export function Skills() {
       )}
 
       <div className="flex flex-wrap gap-2">
-        {cvData.skills.map((skill, index) => (
+        {currentSkills.map((skill, index) => (
           <div key={index} className="flex items-center gap-2 px-4 py-2 bg-white border border-zinc-200 rounded-xl shadow-sm animate-in zoom-in duration-300">
             <span className="text-sm font-semibold text-zinc-700">{skill}</span>
             <button onClick={() => removeSkill(index)} className="text-zinc-400 hover:text-red-500"><XIcon size={14}/></button>
