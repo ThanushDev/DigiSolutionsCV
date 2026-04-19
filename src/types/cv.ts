@@ -35,6 +35,7 @@ export interface CVData {
     nationality: string;
     religion: string;
     civilStatus: string;
+    photo?: string; // පරණ features වල තිබුණ එක
   };
   contact: {
     email: string;
@@ -54,7 +55,8 @@ export interface CVData {
   selectedTemplate: number;
   customColor: string;
   brightness: number;
-  showDS: boolean; // Added
+  showDS: boolean; // නව Feature එක
+  paymentSlip?: string; // Admin පැනල් එකට ඕන වෙන එක
 }
 
 export const defaultCVData: CVData = {
@@ -80,7 +82,7 @@ export const defaultCVData: CVData = {
   selectedTemplate: 1,
   customColor: '#1e3a8a',
   brightness: 100,
-  showDS: false // Added
+  showDS: false
 };
 
 export const templateThemes = [
