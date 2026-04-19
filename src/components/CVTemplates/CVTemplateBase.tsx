@@ -209,7 +209,7 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
               <img src={profileImg} className="w-20 h-28 object-cover rounded-2xl shadow-xl" />
               <div className="flex-1 pt-2"><h1 className="text-2xl font-black uppercase border-b-2 pb-2 mb-3 leading-none" style={{ borderColor: theme, color: theme }}>{fullName}</h1><p className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider">{phone1} | {email}</p></div>
             </div>
-            <div className="flex-1 flex gap-8 overflow-hidden"><div className="flex-1 overflow-hidden"><ContentBody /></div>
+            <div className="flex-1 flex gap-8 overflow-hidden"><div className="flex-1 flex flex-col overflow-hidden"><ContentBody /></div>
             <div className="w-44 bg-zinc-50 p-6 rounded-[2rem] h-fit space-y-6 shrink-0 border border-zinc-100">
             <section><SectionTitle title="About Me" /><PersonalInfoList /></section>
             <section><SectionTitle title="Contact" /><p className="text-[8px] font-bold text-zinc-500 whitespace-pre-wrap leading-relaxed">{address}</p></section>
@@ -237,7 +237,6 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
             <div className="text-center border-b-2 pb-6 mb-8 w-full shrink-0" style={{ borderColor: theme }}>
               <img src={profileImg} className="w-20 h-20 rounded-full mx-auto mb-4 object-cover border-2 p-1" style={{ borderColor: theme }} />
               <h1 className="text-2xl font-black uppercase tracking-[0.2em] leading-none mb-3">{fullName}</h1>
-              {/* Address included in Premium Gold header details */}
               <p className="text-zinc-400 font-bold text-[8px] uppercase leading-relaxed">
                 {phone1} | {email} <br/> {address.replace(/\n/g, ' ')}
               </p>
