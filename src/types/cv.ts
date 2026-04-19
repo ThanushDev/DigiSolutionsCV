@@ -54,26 +54,16 @@ export interface CVData {
   selectedTemplate: number;
   customColor: string;
   brightness: number;
+  showDS: boolean; // Added
 }
 
-// මේක නැති වුණ නිසා තමයි උඹේ Build එක Fail වුණේ. දැන් මේක හරියටම තියෙනවා.
 export const defaultCVData: CVData = {
   profileImage: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png',
   personalInfo: {
-    fullName: '',
-    objective: '',
-    dob: '',
-    nic: '',
-    gender: '',
-    nationality: '',
-    religion: '',
-    civilStatus: ''
+    fullName: '', objective: '', dob: '', nic: '', gender: '', nationality: '', religion: '', civilStatus: ''
   },
   contact: {
-    email: '',
-    phone1: '',
-    phone2: '',
-    address: ''
+    email: '', phone1: '', phone2: '', address: ''
   },
   skills: [],
   languages: [],
@@ -89,7 +79,8 @@ export const defaultCVData: CVData = {
   ],
   selectedTemplate: 1,
   customColor: '#1e3a8a',
-  brightness: 100
+  brightness: 100,
+  showDS: false // Added
 };
 
 export const templateThemes = [
