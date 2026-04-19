@@ -3,10 +3,11 @@ import { useCV } from '../../context/CVContext';
 import { PlusIcon, XIcon } from 'lucide-react';
 
 export function Languages() {
-  const { cvData, addLanguage, removeLanguage } = useCV();
+  const context = useCV();
   const [newLanguage, setNewLanguage] = useState('');
 
-  // Safety check: cvData.languages නැතිනම් empty array එකක් ගන්නවා
+  if (!context) return null;
+  const { cvData, addLanguage, removeLanguage } = context;
   const currentLanguages = cvData?.languages || [];
 
   const handleAddLanguage = () => {
@@ -59,7 +60,10 @@ export function Languages() {
                 key={index}
                 className="flex items-center gap-2 px-4 py-2 bg-white border border-blue-100 rounded-full shadow-sm animate-in zoom-in duration-300"
               >
-                <span className="text-gray-700 font-medium text-sm">{language}</span>
+                <span className="text-gray-700 font-medium text-sm">
+                  {/* මචං මෙතනත් object safety එක දැම්මා */}
+                  {typeof language === 'object' ? (language as any).name : language}
+                </span>
                 <button
                   onClick={() => removeLanguage(index)}
                   className="p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
