@@ -1,18 +1,19 @@
 import React from 'react';
-import { CVData, Subject } from '../../types/cv';
 import { Mail, Phone, MapPin } from 'lucide-react';
+import { CVData, Subject } from '../../types/cv';
 
 const DateSignature = ({ show }: { show: boolean }) => {
   if (!show) return null;
   return (
-    <div className="mt-auto pt-8 flex justify-between items-end w-full pb-4 px-4">
+    /* PDF Fix: mt-auto වෙනුවට fixed margin එකක් සහ flex-shrink-0 භාවිතය */
+    <div className="mt-12 flex justify-between items-end w-full pb-6 px-6 flex-shrink-0">
       <div className="text-center">
-        <div className="w-32 border-b border-zinc-400 border-dotted mb-1"></div>
-        <p className="text-[8px] font-black uppercase text-zinc-400">Date</p>
+        <div className="w-32 border-b-2 border-zinc-400 border-dotted mb-2"></div>
+        <p className="text-[10px] font-black uppercase text-zinc-500 tracking-widest">Date</p>
       </div>
       <div className="text-center">
-        <div className="w-32 border-b border-zinc-400 border-dotted mb-1"></div>
-        <p className="text-[8px] font-black uppercase text-zinc-400">Signature</p>
+        <div className="w-32 border-b-2 border-zinc-400 border-dotted mb-2"></div>
+        <p className="text-[10px] font-black uppercase text-zinc-500 tracking-widest">Signature</p>
       </div>
     </div>
   );
@@ -21,7 +22,6 @@ const DateSignature = ({ show }: { show: boolean }) => {
 export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: number }) {
   const theme = cvData.customColor || '#1e3a8a';
 
-  // --- DATA MAPPING ---
   const pInfo = cvData.personalInfo || {};
   const contact = cvData.contact || {};
   
@@ -38,7 +38,6 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
   const email = contact.email || "";
   const address = contact.address || "";
 
-  // ERROR FIX: Ensuring skills and languages are strings, even if they come as objects
   const skillsList = (cvData.skills || []).map(s => typeof s === 'object' ? (s as any).name : s).filter(Boolean);
   const langList = (cvData.languages || []).map(l => typeof l === 'object' ? (l as any).name : l).filter(Boolean);
   
@@ -136,7 +135,7 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
               {skillsList.length > 0 && <section><SectionTitle title="Skills" /><div className="flex flex-wrap gap-1">{skillsList.map((s, i) => <span key={i} className="bg-zinc-200 px-2 py-1 rounded text-[8px] font-black uppercase">{s}</span>)}</div></section>}
               {langList.length > 0 && <section><SectionTitle title="Languages" /><div className="space-y-1 text-[9px] font-bold">{langList.map((l, i) => <p key={i}>• {l}</p>)}</div></section>}
             </div>
-            <div className="flex-1 p-10 flex flex-col overflow-hidden"><div className="mb-6"><h1 className="text-3xl font-black uppercase leading-none mb-3" style={{ color: theme }}>{fullName}</h1>{summary && <p className="text-zinc-500 italic text-[10px] leading-relaxed whitespace-pre-wrap">"{summary}"</p>}</div><ContentBody /><DateSignature show={showDS} /></div>
+            <div className="flex-1 p-10 flex flex-col overflow-hidden"><div className="mb-6"><h1 className="text-3xl font-black uppercase leading-none mb-3" style={{ color: theme }}>{fullName}</h1>{summary && <p className="text-zinc-500 italic text-[10px] leading-relaxed whitespace-pre-wrap">"{summary}"</p>}</div><ContentBody /><DateSignature show={!!showDS} /></div>
           </div>
         );
       case 2: // Modern Clean
@@ -151,7 +150,7 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
               {skillsList.length > 0 && <section><SectionTitle title="Skills" /><div className="flex flex-wrap gap-1">{skillsList.map((s, i) => <span key={i} className="bg-zinc-100 px-2 py-1 rounded text-[8px] font-bold uppercase">{s}</span>)}</div></section>}
               {langList.length > 0 && <section><SectionTitle title="Languages" /><p className="text-[9px] font-bold text-zinc-500">{langList.join(', ')}</p></section>}
               </div>
-              <div className="flex-1 flex flex-col">{summary && <p className="italic text-zinc-600 text-[9px] mb-6 border-l-4 pl-4 whitespace-pre-wrap" style={{ borderColor: theme }}>{summary}</p>}<ContentBody /><DateSignature show={showDS} /></div>
+              <div className="flex-1 flex flex-col">{summary && <p className="italic text-zinc-600 text-[9px] mb-6 border-l-4 pl-4 whitespace-pre-wrap" style={{ borderColor: theme }}>{summary}</p>}<ContentBody /><DateSignature show={!!showDS} /></div>
             </div>
           </div>
         );
@@ -171,7 +170,7 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
                   {langList.length > 0 && <section className="text-left"><p className="text-[9px] font-black uppercase mb-1" style={{ color: theme }}>Languages</p><p className="text-[8px] text-zinc-500 font-bold">{langList.join(' • ')}</p></section>}
                 </div>
               </div>
-              <div className="col-span-8 flex flex-col">{summary && <p className="text-[9px] text-zinc-500 italic mb-6 whitespace-pre-wrap">"{summary}"</p>}<ContentBody /><DateSignature show={showDS} /></div>
+              <div className="col-span-8 flex flex-col">{summary && <p className="text-[9px] text-zinc-500 italic mb-6 whitespace-pre-wrap">"{summary}"</p>}<ContentBody /><DateSignature show={!!showDS} /></div>
             </div>
           </div>
         );
@@ -185,7 +184,7 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
               {skillsList.length > 0 && <section><h3 className="border-b border-zinc-700 pb-1 mb-3 text-[9px] font-black uppercase text-zinc-400">Expertise</h3><div className="flex flex-wrap gap-1">{skillsList.map((s, i) => <span key={i} className="bg-zinc-800 px-2 py-0.5 rounded text-[8px] uppercase">{s}</span>)}</div></section>}
               {langList.length > 0 && <section><h3 className="border-b border-zinc-700 pb-1 mb-3 text-[9px] font-black uppercase text-zinc-400">Languages</h3><div className="text-[8px] font-bold opacity-70">{langList.join(', ')}</div></section>}
             </div>
-            <div className="flex-1 p-10 flex flex-col overflow-hidden bg-white text-zinc-800"><h1 className="text-3xl font-black uppercase tracking-tighter mb-4">{fullName}</h1>{summary && <p className="text-zinc-500 text-[9px] mb-6 border-l-2 pl-4 whitespace-pre-wrap">{summary}</p>}<ContentBody /><DateSignature show={showDS} /></div>
+            <div className="flex-1 p-10 flex flex-col overflow-hidden bg-white text-zinc-800"><h1 className="text-3xl font-black uppercase tracking-tighter mb-4">{fullName}</h1>{summary && <p className="text-zinc-500 text-[9px] mb-6 border-l-2 pl-4 whitespace-pre-wrap">{summary}</p>}<ContentBody /><DateSignature show={!!showDS} /></div>
           </div>
         );
       case 5: // Minimalist
@@ -200,7 +199,7 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
               {skillsList.length > 0 && <section><SectionTitle title="Skills" /><div className="flex flex-wrap gap-1">{skillsList.map((s, i) => <span key={i} className="bg-zinc-100 px-2 py-0.5 rounded text-[8px] font-black uppercase">{s}</span>)}</div></section>}
               {langList.length > 0 && <section><SectionTitle title="Languages" /><p className="text-[9px] font-bold text-zinc-500 uppercase">{langList.join(', ')}</p></section>}
               </div>
-              <div className="flex-1 flex flex-col">{summary && <p className="text-[9px] text-zinc-600 italic mb-6 leading-relaxed whitespace-pre-wrap">{summary}</p>}<ContentBody /><DateSignature show={showDS} /></div>
+              <div className="flex-1 flex flex-col">{summary && <p className="text-[9px] text-zinc-600 italic mb-6 leading-relaxed whitespace-pre-wrap">{summary}</p>}<ContentBody /><DateSignature show={!!showDS} /></div>
             </div>
           </div>
         );
@@ -217,13 +216,13 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
             <section><SectionTitle title="Contact" /><p className="text-[8px] font-bold text-zinc-500 whitespace-pre-wrap leading-relaxed">{address}</p></section>
             {skillsList.length > 0 && <section><SectionTitle title="Skills" /><div className="flex flex-col gap-1 text-[8px] font-bold text-zinc-600">{skillsList.map((s, i) => <p key={i}>• {s}</p>)}</div></section>}
             {langList.length > 0 && <section><SectionTitle title="Languages" /><p className="text-[8px] font-bold text-zinc-500">{langList.join(', ')}</p></section>}
-            </div></div><DateSignature show={showDS} />
+            </div></div><DateSignature show={!!showDS} />
           </div></div>
         );
       case 7: // Sidebar Elegant
         return (
           <div className="flex h-full gap-8 p-10 overflow-hidden text-zinc-800">
-            <div className="flex-1 flex flex-col overflow-hidden"><h1 className="text-3xl font-black uppercase italic mb-6 tracking-tighter" style={{ color: theme }}>{fullName}</h1>{summary && <p className="text-zinc-500 text-[9px] mb-6 border-l-4 pl-4 leading-relaxed whitespace-pre-wrap" style={{ borderColor: theme }}>{summary}</p>}<ContentBody /><DateSignature show={showDS} /></div>
+            <div className="flex-1 flex flex-col overflow-hidden"><h1 className="text-3xl font-black uppercase italic mb-6 tracking-tighter" style={{ color: theme }}>{fullName}</h1>{summary && <p className="text-zinc-500 text-[9px] mb-6 border-l-4 pl-4 leading-relaxed whitespace-pre-wrap" style={{ borderColor: theme }}>{summary}</p>}<ContentBody /><DateSignature show={!!showDS} /></div>
             <div className="w-[30%] shrink-0 border-l pl-8 space-y-6 text-zinc-600">
                 <img src={profileImg} className="w-full h-40 object-cover rounded-3xl mb-4 shadow-lg" />
                 <section><SectionTitle title="Connect" /><div className="text-[8px] font-bold space-y-2"><p className="whitespace-pre-wrap leading-relaxed">{address}</p><p>{phone1}</p><p>{email}</p></div></section>
@@ -253,7 +252,7 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
                 {summary && <p className="text-[9px] text-zinc-500 italic mb-8 text-left leading-relaxed whitespace-pre-wrap">"{summary}"</p>}
                 <ContentBody /> 
               </div>
-            </div><DateSignature show={showDS} />
+            </div><DateSignature show={!!showDS} />
           </div>
         );
       default: return null;
