@@ -33,7 +33,6 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
   const religion = pInfo.religion || "";
   const civilStatus = pInfo.civilStatus || "";
 
-  // Contact Details
   const phone1 = contact.phone1 || "";
   const phone2 = contact.phone2 || "";
   const email = contact.email || "";
@@ -51,7 +50,7 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
     <h3 className="text-[10px] font-black uppercase mb-2 border-b-2 pb-0.5" style={{ color, borderColor: color }}>{title}</h3>
   );
 
-  const PersonalInfoBox = ({ isDark = false }) => (
+  const PersonalInfoList = ({ isDark = false }) => (
     <div className={`space-y-1 text-[9px] font-bold uppercase ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
       {nic && <div className="grid grid-cols-[80px_1fr]"><span>NIC Number:</span> <span>{nic}</span></div>}
       {gender && <div className="grid grid-cols-[80px_1fr]"><span>Gender:</span> <span>{gender}</span></div>}
@@ -61,7 +60,7 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
     </div>
   );
 
-  const MainBodyContent = () => (
+  const ContentBody = () => (
     <div className="flex-1 space-y-6">
       {qualList.length > 0 && (
         <section>
@@ -123,38 +122,38 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
     </div>
   );
 
-  const renderLayout = () => {
+  const renderCurrentTemplate = () => {
     switch (cvData.selectedTemplate) {
-      case 1:
+      case 1: // Classic Blue
         return (
           <div className="flex h-full">
-            <div className="w-[32%] bg-zinc-50 border-r h-full p-8 flex flex-col gap-6 shrink-0 overflow-hidden">
+            <div className="w-[32%] bg-zinc-50 border-r h-full p-8 flex flex-col gap-6 shrink-0 overflow-hidden text-zinc-600">
               <img src={profileImg} className="w-32 h-32 rounded-full border-4 mx-auto object-cover" style={{ borderColor: theme }} />
-              <section><SectionTitle title="Contact" /><div className="space-y-2 text-[9px] font-bold text-zinc-600"><p className="flex items-center gap-2"><Phone size={10}/> {phone1}</p>{phone2 && <p className="flex items-center gap-2"><Phone size={10}/> {phone2}</p>}<p className="flex items-center gap-2 truncate"><Mail size={10}/> {email}</p><p className="flex items-start gap-2 whitespace-pre-wrap"><MapPin size={10} className="shrink-0 mt-0.5"/> {address}</p></div></section>
-              <section><SectionTitle title="Personal Info" /><PersonalInfoBox /></section>
+              <section><SectionTitle title="Contact" /><div className="space-y-2 text-[9px] font-bold"><p className="flex items-center gap-2"><Phone size={10}/> {phone1}</p>{phone2 && <p>{phone2}</p>}<p className="truncate">{email}</p><p className="whitespace-pre-wrap">{address}</p></div></section>
+              <section><SectionTitle title="Personal Info" /><PersonalInfoList /></section>
               {skillsList.length > 0 && <section><SectionTitle title="Skills" /><div className="flex flex-wrap gap-1">{skillsList.map((s, i) => <span key={i} className="bg-zinc-200 px-2 py-1 rounded text-[8px] font-black uppercase">{s}</span>)}</div></section>}
-              {langList.length > 0 && <section><SectionTitle title="Languages" /><div className="space-y-1 text-[9px] font-bold text-zinc-600">{langList.map((l, i) => <p key={i}>• {l}</p>)}</div></section>}
+              {langList.length > 0 && <section><SectionTitle title="Languages" /><div className="space-y-1 text-[9px] font-bold">{langList.map((l, i) => <p key={i}>• {l}</p>)}</div></section>}
             </div>
-            <div className="flex-1 p-10 flex flex-col overflow-hidden"><div className="mb-6"><h1 className="text-3xl font-black uppercase leading-none mb-3" style={{ color: theme }}>{fullName}</h1>{summary && <p className="text-zinc-500 italic text-[10px] leading-relaxed whitespace-pre-wrap">"{summary}"</p>}</div><MainBodyContent /><DateSignature show={showDS} /></div>
+            <div className="flex-1 p-10 flex flex-col overflow-hidden"><div className="mb-6"><h1 className="text-3xl font-black uppercase leading-none mb-3" style={{ color: theme }}>{fullName}</h1>{summary && <p className="text-zinc-500 italic text-[10px] leading-relaxed whitespace-pre-wrap">"{summary}"</p>}</div><ContentBody /><DateSignature show={showDS} /></div>
           </div>
         );
-      case 2:
+      case 2: // Modern Clean
         return (
           <div className="flex flex-col h-full overflow-hidden">
             <div className="h-28 flex items-center justify-between px-10 text-white shrink-0" style={{ backgroundColor: theme }}>
               <div className="max-w-[70%]"><h1 className="text-2xl font-black uppercase tracking-tight">{fullName}</h1><p className="text-[9px] opacity-80 uppercase tracking-widest mt-1">{email} | {phone1}</p></div>
-              <img src={profileImg} className="w-20 h-20 object-cover rounded-xl border-2 border-white/30 shadow-lg" />
+              <img src={profileImg} className="w-20 h-20 object-cover rounded-xl border-2 border-white/30" />
             </div>
             <div className="flex flex-1 p-10 gap-10 overflow-hidden">
-              <div className="w-[28%] space-y-6 shrink-0"><section><SectionTitle title="Contact" /><div className="text-[9px] font-bold text-zinc-500 space-y-2"><p className="whitespace-pre-wrap">{address}</p><p>{phone1}</p>{phone2 && <p>{phone2}</p>}</div></section><section><SectionTitle title="Personal" /><PersonalInfoBox /></section>
+              <div className="w-[28%] space-y-6 shrink-0"><section><SectionTitle title="Contact" /><div className="text-[9px] font-bold text-zinc-500 space-y-2"><p className="whitespace-pre-wrap">{address}</p><p>{phone1}</p></div></section><section><SectionTitle title="Personal" /><PersonalInfoList /></section>
               {skillsList.length > 0 && <section><SectionTitle title="Skills" /><div className="flex flex-wrap gap-1">{skillsList.map((s, i) => <span key={i} className="bg-zinc-100 px-2 py-1 rounded text-[8px] font-bold uppercase">{s}</span>)}</div></section>}
               {langList.length > 0 && <section><SectionTitle title="Languages" /><p className="text-[9px] font-bold text-zinc-500">{langList.join(', ')}</p></section>}
               </div>
-              <div className="flex-1 flex flex-col">{summary && <p className="italic text-zinc-600 text-[9px] mb-6 border-l-4 pl-4 whitespace-pre-wrap" style={{ borderColor: theme }}>{summary}</p>}<MainBodyContent /><DateSignature show={showDS} /></div>
+              <div className="flex-1 flex flex-col">{summary && <p className="italic text-zinc-600 text-[9px] mb-6 border-l-4 pl-4 whitespace-pre-wrap" style={{ borderColor: theme }}>{summary}</p>}<ContentBody /><DateSignature show={showDS} /></div>
             </div>
           </div>
         );
-      case 3:
+      case 3: // Yellow Ribbon Bold
         return (
           <div className="flex flex-col h-full p-10 overflow-hidden">
             <div className="relative h-24 bg-zinc-900 rounded-[2rem] flex items-center px-10 mb-10 shrink-0">
@@ -162,80 +161,91 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
               <img src={profileImg} className="absolute -bottom-4 right-10 w-24 h-24 rounded-[1.5rem] border-4 border-white object-cover shadow-2xl" />
             </div>
             <div className="grid grid-cols-12 gap-8 flex-1 overflow-hidden">
-              <div className="col-span-4 space-y-6 shrink-0"><div className="p-6 rounded-[1.5rem] bg-zinc-50 border border-zinc-100 space-y-5"><section className="text-center"><p className="text-[9px] font-black uppercase mb-2" style={{ color: theme }}>Contact Info</p><p className="text-[8px] text-zinc-500 font-bold whitespace-pre-wrap leading-relaxed">{address}</p><p className="text-[8px] text-zinc-500 font-bold mt-2">{phone1}</p></section><PersonalInfoBox />{langList.length > 0 && <section className="text-center"><p className="text-[9px] font-black uppercase mb-1" style={{ color: theme }}>Languages</p><p className="text-[8px] text-zinc-500 font-bold">{langList.join(' • ')}</p></section>}</div></div>
-              <div className="col-span-8 flex flex-col">{summary && <p className="text-[9px] text-zinc-500 italic mb-6 whitespace-pre-wrap leading-relaxed">"{summary}"</p>}<MainBodyContent /><DateSignature show={showDS} /></div>
+              <div className="col-span-4 space-y-6 shrink-0"><div className="p-6 rounded-[1.5rem] bg-zinc-50 border border-zinc-100 space-y-5">
+                <section className="text-center"><p className="text-[9px] font-black uppercase mb-2" style={{ color: theme }}>Contact Info</p><p className="text-[8px] text-zinc-500 font-bold whitespace-pre-wrap">{address}</p><p className="text-[8px] text-zinc-500 font-bold mt-2">{phone1}</p></section>
+                <PersonalInfoList />
+                {skillsList.length > 0 && <section><p className="text-[9px] font-black uppercase text-center mb-2" style={{ color: theme }}>Skills</p><div className="flex flex-wrap justify-center gap-1">{skillsList.map((s, i) => <span key={i} className="bg-zinc-200 px-2 py-0.5 rounded text-[8px] font-bold">{s}</span>)}</div></section>}
+                {langList.length > 0 && <section className="text-center"><p className="text-[9px] font-black uppercase mb-1" style={{ color: theme }}>Languages</p><p className="text-[8px] text-zinc-500 font-bold">{langList.join(' • ')}</p></section>}
+              </div></div>
+              <div className="col-span-8 flex flex-col">{summary && <p className="text-[9px] text-zinc-500 italic mb-6 whitespace-pre-wrap">"{summary}"</p>}<ContentBody /><DateSignature show={showDS} /></div>
             </div>
           </div>
         );
-      case 4:
+      case 4: // Executive Dark
         return (
-          <div className="flex h-full overflow-hidden">
-            <div className="w-[32%] bg-zinc-900 text-white p-8 flex flex-col gap-6 shrink-0 overflow-hidden">
-              <img src={profileImg} className="w-28 h-28 rounded-xl border-2 border-zinc-700 object-cover mx-auto mb-2" />
-              <section><h3 className="border-b border-zinc-700 pb-1 mb-3 text-[9px] font-black uppercase text-zinc-400">Contact</h3><div className="text-[8px] space-y-3 font-bold opacity-80 leading-relaxed"><p className="whitespace-pre-wrap">{address}</p><p>{phone1}</p><p className="truncate">{email}</p></div></section>
-              <section><h3 className="border-b border-zinc-700 pb-1 mb-3 text-[9px] font-black uppercase text-zinc-400">Personal</h3><PersonalInfoBox isDark={true} /></section>
-              {skillsList.length > 0 && <section><h3 className="border-b border-zinc-700 pb-1 mb-3 text-[9px] font-black uppercase text-zinc-400">Skills</h3><div className="flex flex-wrap gap-1">{skillsList.map((s, i) => <span key={i} className="bg-zinc-800 px-2 py-0.5 rounded text-[8px] uppercase">{s}</span>)}</div></section>}
+          <div className="flex h-full overflow-hidden text-zinc-300">
+            <div className="w-[32%] bg-zinc-900 p-8 flex flex-col gap-6 shrink-0 overflow-hidden">
+              <img src={profileImg} className="w-28 h-28 rounded-xl border-2 border-zinc-700 object-cover mx-auto" />
+              <section><h3 className="border-b border-zinc-700 pb-1 mb-3 text-[9px] font-black uppercase text-zinc-400">Contact</h3><div className="text-[8px] space-y-3 font-bold opacity-80 whitespace-pre-wrap">{address}<br/>{phone1}<br/>{email}</div></section>
+              <section><h3 className="border-b border-zinc-700 pb-1 mb-3 text-[9px] font-black uppercase text-zinc-400">Personal</h3><PersonalInfoList isDark={true} /></section>
+              {skillsList.length > 0 && <section><h3 className="border-b border-zinc-700 pb-1 mb-3 text-[9px] font-black uppercase text-zinc-400">Expertise</h3><div className="flex flex-wrap gap-1">{skillsList.map((s, i) => <span key={i} className="bg-zinc-800 px-2 py-0.5 rounded text-[8px] uppercase">{s}</span>)}</div></section>}
+              {langList.length > 0 && <section><h3 className="border-b border-zinc-700 pb-1 mb-3 text-[9px] font-black uppercase text-zinc-400">Languages</h3><div className="text-[8px] font-bold opacity-70">{langList.join(', ')}</div></section>}
             </div>
-            <div className="flex-1 p-10 flex flex-col overflow-hidden"><h1 className="text-3xl font-black uppercase tracking-tighter mb-4">{fullName}</h1>{summary && <p className="text-zinc-500 text-[9px] mb-6 leading-relaxed border-l-2 pl-4 whitespace-pre-wrap">{summary}</p>}<MainBodyContent /><DateSignature show={showDS} /></div>
+            <div className="flex-1 p-10 flex flex-col overflow-hidden bg-white text-zinc-800"><h1 className="text-3xl font-black uppercase tracking-tighter mb-4">{fullName}</h1>{summary && <p className="text-zinc-500 text-[9px] mb-6 border-l-2 pl-4 whitespace-pre-wrap">{summary}</p>}<ContentBody /><DateSignature show={showDS} /></div>
           </div>
         );
-      case 5:
+      case 5: // Minimalist
         return (
           <div className="flex flex-col h-full p-10 overflow-hidden">
             <div className="flex justify-between items-start border-b-[4px] pb-6 mb-8 shrink-0" style={{ borderColor: theme }}>
               <div className="max-w-[75%]"><h1 className="text-2xl font-black uppercase mb-2 tracking-tight">{fullName}</h1><p className="text-[9px] font-bold text-zinc-500 leading-relaxed">{phone1} • {email} • {address.replace(/\n/g, ', ')}</p></div>
-              <img src={profileImg} className="w-16 h-16 object-cover rounded-full shadow-md" />
+              <img src={profileImg} className="w-16 h-16 object-cover rounded-full" />
             </div>
             <div className="flex-1 flex gap-8 overflow-hidden">
-              <div className="w-[28%] shrink-0 space-y-6"><section><SectionTitle title="Personal Details" /><PersonalInfoBox /></section>
-              {skillsList.length > 0 && <section><SectionTitle title="Competencies" /><div className="flex flex-wrap gap-1">{skillsList.map((s, i) => <span key={i} className="bg-zinc-100 px-2 py-0.5 rounded text-[8px] font-black uppercase">{s}</span>)}</div></section>}
-              {langList.length > 0 && <section><SectionTitle title="Languages" /><p className="text-[9px] font-bold text-zinc-500">{langList.join(', ')}</p></section>}
+              <div className="w-[28%] shrink-0 space-y-6"><section><SectionTitle title="Profile Details" /><PersonalInfoList /></section>
+              {skillsList.length > 0 && <section><SectionTitle title="Skills" /><div className="flex flex-wrap gap-1">{skillsList.map((s, i) => <span key={i} className="bg-zinc-100 px-2 py-0.5 rounded text-[8px] font-black uppercase">{s}</span>)}</div></section>}
+              {langList.length > 0 && <section><SectionTitle title="Languages" /><p className="text-[9px] font-bold text-zinc-500 uppercase">{langList.join(', ')}</p></section>}
               </div>
-              <div className="flex-1 flex flex-col">{summary && <p className="text-[9px] text-zinc-600 italic mb-6 leading-relaxed whitespace-pre-wrap">{summary}</p>}<MainBodyContent /><DateSignature show={showDS} /></div>
+              <div className="flex-1 flex flex-col">{summary && <p className="text-[9px] text-zinc-600 italic mb-6 leading-relaxed whitespace-pre-wrap">{summary}</p>}<ContentBody /><DateSignature show={showDS} /></div>
             </div>
           </div>
         );
-      case 6:
+      case 6: // Creative Box
         return (
           <div className="p-4 h-full overflow-hidden"><div className="border border-zinc-200 h-full p-8 flex flex-col rounded-[2.5rem]">
             <div className="flex gap-6 mb-8 shrink-0">
               <img src={profileImg} className="w-20 h-28 object-cover rounded-2xl shadow-xl" />
               <div className="flex-1 pt-2"><h1 className="text-2xl font-black uppercase border-b-2 pb-2 mb-3 leading-none" style={{ borderColor: theme, color: theme }}>{fullName}</h1><p className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider">{phone1} | {email}</p></div>
             </div>
-            <div className="flex-1 flex gap-8 overflow-hidden"><div className="flex-1 overflow-hidden"><CommonContent /></div>
+            <div className="flex-1 flex gap-8 overflow-hidden"><div className="flex-1 overflow-hidden"><ContentBody /></div>
             <div className="w-44 bg-zinc-50 p-6 rounded-[2rem] h-fit space-y-6 shrink-0 border border-zinc-100">
-            <section><SectionTitle title="Profile" /><PersonalInfoBox /></section>
-            <section><SectionTitle title="Contact" /><p className="text-[8px] font-bold text-zinc-500 whitespace-pre-wrap leading-relaxed">{address}</p></section>
+            <section><SectionTitle title="About Me" /><PersonalInfoList /></section>
+            <section><SectionTitle title="Contact" /><p className="text-[8px] font-bold text-zinc-500 whitespace-pre-wrap">{address}</p></section>
             {skillsList.length > 0 && <section><SectionTitle title="Skills" /><div className="flex flex-col gap-1 text-[8px] font-bold text-zinc-600">{skillsList.map((s, i) => <p key={i}>• {s}</p>)}</div></section>}
+            {langList.length > 0 && <section><SectionTitle title="Languages" /><p className="text-[8px] font-bold text-zinc-500">{langList.join(', ')}</p></section>}
             </div></div><DateSignature show={showDS} />
           </div></div>
         );
-      case 7:
+      case 7: // Sidebar Elegant
         return (
           <div className="flex h-full gap-8 p-10 overflow-hidden">
-            <div className="flex-1 flex flex-col overflow-hidden"><h1 className="text-3xl font-black uppercase italic mb-6 tracking-tighter" style={{ color: theme }}>{fullName}</h1>{summary && <p className="text-zinc-500 text-[9px] mb-6 border-l-4 pl-4 leading-relaxed whitespace-pre-wrap" style={{ borderColor: theme }}>{summary}</p>}<MainBodyContent /><DateSignature show={showDS} /></div>
-            <div className="w-[30%] shrink-0 border-l pl-8 space-y-6">
+            <div className="flex-1 flex flex-col overflow-hidden"><h1 className="text-3xl font-black uppercase italic mb-6 tracking-tighter" style={{ color: theme }}>{fullName}</h1>{summary && <p className="text-zinc-500 text-[9px] mb-6 border-l-4 pl-4 leading-relaxed whitespace-pre-wrap" style={{ borderColor: theme }}>{summary}</p>}<ContentBody /><DateSignature show={showDS} /></div>
+            <div className="w-[30%] shrink-0 border-l pl-8 space-y-6 text-zinc-600">
                 <img src={profileImg} className="w-full h-40 object-cover rounded-3xl mb-4 shadow-lg" />
-                <section><SectionTitle title="Connect" /><div className="text-[8px] font-bold text-zinc-500 space-y-2"><p className="whitespace-pre-wrap">{address}</p><p>{phone1}</p><p className="truncate">{email}</p></div></section>
-                <section><SectionTitle title="Personal" /><PersonalInfoBox /></section>
-                {skillsList.length > 0 && <section><SectionTitle title="Top Skills" /><div className="flex flex-col gap-1.5">{skillsList.map((s, i) => <p key={i} className="text-[8px] font-black text-zinc-600 uppercase tracking-tighter">» {s}</p>)}</div></section>}
+                <section><SectionTitle title="Connect" /><div className="text-[8px] font-bold space-y-2"><p className="whitespace-pre-wrap">{address}</p><p>{phone1}</p><p>{email}</p></div></section>
+                <section><SectionTitle title="Personal" /><PersonalInfoList /></section>
+                {skillsList.length > 0 && <section><SectionTitle title="Top Skills" /><div className="flex flex-col gap-1.5">{skillsList.map((s, i) => <p key={i} className="text-[8px] font-black uppercase tracking-tighter">» {s}</p>)}</div></section>}
+                {langList.length > 0 && <section><SectionTitle title="Languages" /><p className="text-[8px] font-black uppercase">{langList.join(' | ')}</p></section>}
             </div>
           </div>
         );
-      case 8:
+      case 8: // Premium Gold (Case 8 - මෙතන තමයි error එක තිබ්බේ)
         return (
           <div className="flex flex-col h-full p-10 items-center overflow-hidden">
             <div className="text-center border-b-2 pb-6 mb-8 w-full shrink-0" style={{ borderColor: theme }}>
-              <img src={profileImg} className="w-20 h-20 rounded-full mx-auto mb-4 object-cover border-2 p-1 shadow-inner" style={{ borderColor: theme }} />
+              <img src={profileImg} className="w-20 h-20 rounded-full mx-auto mb-4 object-cover border-2 p-1" style={{ borderColor: theme }} />
               <h1 className="text-2xl font-black uppercase tracking-[0.2em] leading-none mb-3">{fullName}</h1>
               <p className="text-zinc-400 font-bold text-[8px] uppercase">{phone1} | {email} | {address.replace(/\n/g, ' ')}</p>
             </div>
             <div className="w-full grid grid-cols-12 gap-10 flex-1 overflow-hidden">
-              <div className="col-span-4 space-y-6 shrink-0"><section><SectionTitle title="Identity" /><PersonalInfoBox /></section>
+              <div className="col-span-4 space-y-6 shrink-0"><section><SectionTitle title="Details" /><PersonalInfoList /></section>
               {skillsList.length > 0 && <section><SectionTitle title="Expertise" /><div className="space-y-1">{skillsList.map((s, i) => <p key={i} className="text-[8px] font-bold text-zinc-500 uppercase tracking-tight"># {s}</p>)}</div></section>}
               {langList.length > 0 && <section><SectionTitle title="Languages" /><p className="text-[8px] font-bold text-zinc-500 uppercase tracking-tight">{langList.join(', ')}</p></section>}
               </div>
-              <div className="col-span-8 flex flex-col">{summary && <p className="text-[9px] text-zinc-500 italic mb-8 text-center leading-relaxed whitespace-pre-wrap px-6">"{summary}"</p>}<MainBodyContent /></div>
+              <div className="col-span-8 flex flex-col overflow-hidden">
+                {summary && <p className="text-[9px] text-zinc-500 italic mb-8 text-center leading-relaxed whitespace-pre-wrap px-6">"{summary}"</p>}
+                <ContentBody /> 
+              </div>
             </div><DateSignature show={showDS} />
           </div>
         );
@@ -245,7 +255,7 @@ export function CVTemplateBase({ cvData, scale = 1 }: { cvData: CVData; scale?: 
 
   return (
     <div className="bg-white" style={{ width: '210mm', height: '297mm', transform: `scale(${scale})`, transformOrigin: 'top center' }}>
-      {renderLayout()}
+      {renderCurrentTemplate()}
     </div>
   );
 }
