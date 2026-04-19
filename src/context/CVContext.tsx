@@ -15,23 +15,18 @@ interface CVContextType {
   updateWorkExperience: (id: string, data: Partial<CVData['workExperience'][0]>) => void;
   removeWorkExperience: (id: string) => void;
   updateEducation: (level: 'oLevel' | 'aLevel', data: any) => void;
-  
-  // --- මෙන්න මේ ටික අලුතින් එකතු කළා ---
   addSubject: (level: 'oLevel' | 'aLevel') => void;
   updateSubject: (level: 'oLevel' | 'aLevel', index: number, data: any) => void;
   removeSubject: (level: 'oLevel' | 'aLevel', index: number) => void;
-  // ---------------------------------
-
   updateProfessionalQualification: (index: number, newText: string) => void;
   removeProfessionalQualification: (index: number) => void;
   addProfessionalQualification: (q: string) => void;
   updateReference: (index: 0 | 1, data: any) => void;
-  
-  setSelectedTemplate: (id: string) => void;
+  setSelectedTemplate: (id: number) => void;
   updateThemeColor: (color: string) => void;
   setBrightness: (value: number) => void;
-  
-  resetCV: () => void; 
+  setShowDS: (val: boolean) => void; // Added
+  resetCV: () => void;
   currentStep: number;
   setCurrentStep: (step: number) => void;
 }
@@ -49,102 +44,49 @@ export function CVProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(cvData));
   }, [cvData]);
 
-  const resetCV = () => {
-    setCVData(defaultCVData);
-    localStorage.removeItem(STORAGE_KEY);
-  };
-
+  const resetCV = () => { setCVData(defaultCVData); localStorage.removeItem(STORAGE_KEY); };
   const updatePersonalInfo = (data: any) => setCVData(prev => ({ ...prev, personalInfo: { ...prev.personalInfo, ...data } }));
   const updateContact = (data: any) => setCVData(prev => ({ ...prev, contact: { ...prev.contact, ...data } }));
-  const addSkill = (skill: string) => setCVData(prev => ({ ...prev, skills: [...prev.skills, skill] }));
+  const addSkill = (skill: string) => setCVData(prev => ({ ...prev, skills: [...prev.skills, { id: Date.now().toString(), name: skill }] }));
   const removeSkill = (index: number) => setCVData(prev => ({ ...prev, skills: prev.skills.filter((_, i) => i !== index) }));
-  
-  const addWorkExperience = () => setCVData(prev => ({
-    ...prev,
-    workExperience: [...prev.workExperience, { id: Date.now().toString(), title: '', company: '', duration: '', description: '' }]
-  }));
-  
-  const updateWorkExperience = (id: string, data: any) => setCVData(prev => ({
-    ...prev,
-    workExperience: prev.workExperience.map(exp => exp.id === id ? { ...exp, ...data } : exp)
-  }));
-
-  const removeWorkExperience = (id: string) => setCVData(prev => ({
-    ...prev,
-    workExperience: prev.workExperience.filter(exp => exp.id !== id)
-  }));
-
-  const updateEducation = (level: 'oLevel' | 'aLevel', data: any) => setCVData(prev => ({
-    ...prev,
-    education: { ...prev.education, [level]: { ...prev.education[level], ...data } }
-  }));
-
-  // --- අලුතින් එකතු කළ Education Logic එක ---
-  const addSubject = (level: 'oLevel' | 'aLevel') => setCVData(prev => ({
-    ...prev,
-    education: {
-      ...prev.education,
-      [level]: {
-        ...prev.education[level],
-        subjects: [...prev.education[level].subjects, { name: '', grade: '' }]
-      }
-    }
-  }));
-
+  const addWorkExperience = () => setCVData(prev => ({ ...prev, workExperience: [...prev.workExperience, { id: Date.now().toString(), title: '', company: '', duration: '', description: '' }] }));
+  const updateWorkExperience = (id: string, data: any) => setCVData(prev => ({ ...prev, workExperience: prev.workExperience.map(exp => exp.id === id ? { ...exp, ...data } : exp) }));
+  const removeWorkExperience = (id: string) => setCVData(prev => ({ ...prev, workExperience: prev.workExperience.filter(exp => exp.id !== id) }));
+  const updateEducation = (level: 'oLevel' | 'aLevel', data: any) => setCVData(prev => ({ ...prev, education: { ...prev.education, [level]: { ...prev.education[level], ...data } } }));
+  const addSubject = (level: 'oLevel' | 'aLevel') => setCVData(prev => ({ ...prev, education: { ...prev.education, [level]: { ...prev.education[level], subjects: [...prev.education[level].subjects, { name: '', grade: '' }] } } }));
   const updateSubject = (level: 'oLevel' | 'aLevel', index: number, data: any) => setCVData(prev => {
     const newSubjects = [...prev.education[level].subjects];
     newSubjects[index] = { ...newSubjects[index], ...data };
-    return {
-      ...prev,
-      education: {
-        ...prev.education,
-        [level]: { ...prev.education[level], subjects: newSubjects }
-      }
-    };
+    return { ...prev, education: { ...prev.education, [level]: { ...prev.education[level], subjects: newSubjects } } };
   });
-
-  const removeSubject = (level: 'oLevel' | 'aLevel', index: number) => setCVData(prev => ({
-    ...prev,
-    education: {
-      ...prev.education,
-      [level]: {
-        ...prev.education[level],
-        subjects: prev.education[level].subjects.filter((_, i) => i !== index)
-      }
-    }
-  }));
-  // ----------------------------------------
-
-  const addProfessionalQualification = (q: string) => setCVData(prev => ({ ...prev, professionalQualifications: [...prev.professionalQualifications, q] }));
+  const removeSubject = (level: 'oLevel' | 'aLevel', index: number) => setCVData(prev => ({ ...prev, education: { ...prev.education, [level]: { ...prev.education[level], subjects: prev.education[level].subjects.filter((_, i) => i !== index) } } }));
+  const addProfessionalQualification = (q: string) => setCVData(prev => ({ ...prev, professionalQualifications: [...prev.professionalQualifications, { id: Date.now().toString(), qualification: q }] }));
   const updateProfessionalQualification = (index: number, newText: string) => setCVData(prev => {
     const updated = [...prev.professionalQualifications];
-    updated[index] = newText;
+    updated[index] = { ...updated[index], qualification: newText };
     return { ...prev, professionalQualifications: updated };
   });
   const removeProfessionalQualification = (index: number) => setCVData(prev => ({ ...prev, professionalQualifications: prev.professionalQualifications.filter((_, i) => i !== index) }));
-
   const updateReference = (index: 0 | 1, data: any) => setCVData(prev => {
     const newRefs = [...prev.references];
     newRefs[index] = { ...newRefs[index], ...data };
     return { ...prev, references: newRefs as any };
   });
-
-  const setSelectedTemplate = (id: string) => setCVData(prev => ({ ...prev, selectedTemplate: id }));
+  const setSelectedTemplate = (id: number) => setCVData(prev => ({ ...prev, selectedTemplate: id }));
   const updateThemeColor = (color: string) => setCVData(prev => ({ ...prev, customColor: color }));
   const setBrightness = (value: number) => setCVData(prev => ({ ...prev, brightness: value }));
+  const setShowDS = (val: boolean) => setCVData(prev => ({ ...prev, showDS: val })); // Added
 
   return (
     <CVContext.Provider value={{ 
       cvData, updatePersonalInfo, updateContact, addSkill, removeSkill, 
       addWorkExperience, updateWorkExperience, removeWorkExperience,
-      updateEducation, 
-      addSubject, updateSubject, removeSubject, // Provider එකට දාන්න අමතක වූ කොටස
+      updateEducation, addSubject, updateSubject, removeSubject,
       updateProfessionalQualification, removeProfessionalQualification,
       addProfessionalQualification, updateReference, 
-      setSelectedTemplate, updateThemeColor, setBrightness,
-      resetCV,
-      currentStep, setCurrentStep,
-      addLanguage: (l) => setCVData(p => ({ ...p, languages: [...p.languages, l] })),
+      setSelectedTemplate, updateThemeColor, setBrightness, setShowDS,
+      resetCV, currentStep, setCurrentStep,
+      addLanguage: (l) => setCVData(p => ({ ...p, languages: [...p.languages, { id: Date.now().toString(), name: l }] })),
       removeLanguage: (i) => setCVData(p => ({ ...p, languages: p.languages.filter((_, idx) => idx !== i) }))
     }}>
       {children}
