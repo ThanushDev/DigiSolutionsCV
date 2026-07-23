@@ -64,9 +64,9 @@ export function CVProvider({ children }: { children: React.ReactNode }) {
   const removeSkill = (index: number) => setCVData(prev => ({ ...prev, skills: prev.skills.filter((_, i) => i !== index) }));
   const addLanguage = (l: string) => setCVData(p => ({ ...p, languages: [...p.languages, { id: Date.now().toString(), name: l }] }));
   const removeLanguage = (i: number) => setCVData(p => ({ ...p, languages: p.languages.filter((_, idx) => idx !== i) }));
-  const addWorkExperience = () => setCVData(prev => ({ ...prev, workExperience: [...prev.workExperience, { id: Date.now().toString(), title: '', company: '', duration: '', description: '', startYear: '', endYear: '' }] }));
-  const updateWorkExperience = (id: string, data: any) => setCVData(prev => ({ ...prev, workExperience: prev.workExperience.map(exp => exp.id === id ? { ...exp, ...data } : exp) }));
-  const removeWorkExperience = (id: string) => setCVData(prev => ({ ...prev, workExperience: prev.workExperience.filter(exp => exp.id !== id) }));
+  const addWorkExperience = () => setCVData(prev => ({ ...prev, workExperience: [...(prev.workExperience || []), { id: Date.now().toString(), title: '', company: '', duration: '', description: '', startYear: '', endYear: '' }] }));
+  const updateWorkExperience = (id: string, data: any) => setCVData(prev => ({ ...prev, workExperience: (prev.workExperience || []).map(exp => exp.id === id ? { ...exp, ...data } : exp) }));
+  const removeWorkExperience = (id: string) => setCVData(prev => ({ ...prev, workExperience: (prev.workExperience || []).filter(exp => exp.id !== id) }));
   const updateEducation = (level: 'oLevel' | 'aLevel', data: any) => setCVData(prev => ({ ...prev, education: { ...prev.education, [level]: { ...prev.education[level], ...data } } }));
   const addSubject = (level: 'oLevel' | 'aLevel') => setCVData(prev => ({ ...prev, education: { ...prev.education, [level]: { ...prev.education[level], subjects: [...prev.education[level].subjects, { name: '', grade: '' }] } } }));
   const updateSubject = (level: 'oLevel' | 'aLevel', index: number, data: any) => setCVData(prev => {
@@ -92,15 +92,15 @@ export function CVProvider({ children }: { children: React.ReactNode }) {
   const setBrightness = (value: number) => setCVData(prev => ({ ...prev, brightness: value }));
   const setShowDS = (val: boolean) => setCVData(prev => ({ ...prev, showDS: val }));
   const setPhotoShape = (shape: 'round' | 'square') => setCVData(prev => ({ ...prev, photoShape: shape }));
-  const addProject = () => setCVData(prev => ({ ...prev, projects: [...prev.projects, { id: Date.now().toString(), title: '', description: '', technologies: '', link: '' }] }));
-  const updateProject = (id: string, data: any) => setCVData(prev => ({ ...prev, projects: prev.projects.map(p => p.id === id ? { ...p, ...data } : p) }));
-  const removeProject = (id: string) => setCVData(prev => ({ ...prev, projects: prev.projects.filter(p => p.id !== id) }));
-  const addAchievement = () => setCVData(prev => ({ ...prev, achievements: [...prev.achievements, { id: Date.now().toString(), title: '', description: '', date: '' }] }));
-  const updateAchievement = (id: string, data: any) => setCVData(prev => ({ ...prev, achievements: prev.achievements.map(a => a.id === id ? { ...a, ...data } : a) }));
-  const removeAchievement = (id: string) => setCVData(prev => ({ ...prev, achievements: prev.achievements.filter(a => a.id !== id) }));
-  const addExtracurricular = () => setCVData(prev => ({ ...prev, extracurriculars: [...prev.extracurriculars, { id: Date.now().toString(), title: '', description: '', role: '' }] }));
-  const updateExtracurricular = (id: string, data: any) => setCVData(prev => ({ ...prev, extracurriculars: prev.extracurriculars.map(e => e.id === id ? { ...e, ...data } : e) }));
-  const removeExtracurricular = (id: string) => setCVData(prev => ({ ...prev, extracurriculars: prev.extracurriculars.filter(e => e.id !== id) }));
+  const addProject = () => setCVData(prev => ({ ...prev, projects: [...(prev.projects || []), { id: Date.now().toString(), title: '', description: '', technologies: '', link: '' }] }));
+  const updateProject = (id: string, data: any) => setCVData(prev => ({ ...prev, projects: (prev.projects || []).map(p => p.id === id ? { ...p, ...data } : p) }));
+  const removeProject = (id: string) => setCVData(prev => ({ ...prev, projects: (prev.projects || []).filter(p => p.id !== id) }));
+  const addAchievement = () => setCVData(prev => ({ ...prev, achievements: [...(prev.achievements || []), { id: Date.now().toString(), title: '', description: '', date: '' }] }));
+  const updateAchievement = (id: string, data: any) => setCVData(prev => ({ ...prev, achievements: (prev.achievements || []).map(a => a.id === id ? { ...a, ...data } : a) }));
+  const removeAchievement = (id: string) => setCVData(prev => ({ ...prev, achievements: (prev.achievements || []).filter(a => a.id !== id) }));
+  const addExtracurricular = () => setCVData(prev => ({ ...prev, extracurriculars: [...(prev.extracurriculars || []), { id: Date.now().toString(), title: '', description: '', role: '' }] }));
+  const updateExtracurricular = (id: string, data: any) => setCVData(prev => ({ ...prev, extracurriculars: (prev.extracurriculars || []).map(e => e.id === id ? { ...e, ...data } : e) }));
+  const removeExtracurricular = (id: string) => setCVData(prev => ({ ...prev, extracurriculars: (prev.extracurriculars || []).filter(e => e.id !== id) }));
 
   const setSectionPageBreak = (sectionId: string, value: boolean) =>
     setCVData(prev => ({ ...prev, sectionPageBreaks: { ...prev.sectionPageBreaks, [sectionId]: value } }));
