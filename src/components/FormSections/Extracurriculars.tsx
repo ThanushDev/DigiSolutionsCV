@@ -11,13 +11,13 @@ export function Extracurriculars() {
         <PlusIcon size={16}/> Add Extracurricular Activity
       </button>
 
-      {cvData.extracurriculars.length === 0 && (
+      {(cvData.extracurriculars || []).length === 0 && (
         <div className="text-center py-10 border-2 border-dashed border-zinc-100 rounded-[2.5rem]">
           <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest">No activities added yet</p>
         </div>
       )}
 
-      {cvData.extracurriculars.map((ext) => (
+      {(cvData.extracurriculars || []).map((ext) => (
         <div key={ext.id} className="p-6 bg-white border border-zinc-100 rounded-[2.5rem] shadow-xl shadow-zinc-200/50 space-y-4 relative animate-in slide-in-from-bottom-4">
           <button onClick={() => removeExtracurricular(ext.id)} className="absolute top-4 right-4 p-2 text-zinc-300 hover:text-red-500 transition-colors">
             <XIcon size={20}/>

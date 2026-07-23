@@ -11,13 +11,13 @@ export function Achievements() {
         <PlusIcon size={16}/> Add Achievement / Award
       </button>
 
-      {cvData.achievements.length === 0 && (
+      {(cvData.achievements || []).length === 0 && (
         <div className="text-center py-10 border-2 border-dashed border-zinc-100 rounded-[2.5rem]">
           <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest">No achievements added yet</p>
         </div>
       )}
 
-      {cvData.achievements.map((ach) => (
+      {(cvData.achievements || []).map((ach) => (
         <div key={ach.id} className="p-6 bg-white border border-zinc-100 rounded-[2.5rem] shadow-xl shadow-zinc-200/50 space-y-4 relative animate-in slide-in-from-bottom-4">
           <button onClick={() => removeAchievement(ach.id)} className="absolute top-4 right-4 p-2 text-zinc-300 hover:text-red-500 transition-colors">
             <XIcon size={20}/>

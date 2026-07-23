@@ -11,13 +11,13 @@ export function Projects() {
         <PlusIcon size={16}/> Add Project
       </button>
 
-      {cvData.projects.length === 0 && (
+      {(cvData.projects || []).length === 0 && (
         <div className="text-center py-10 border-2 border-dashed border-zinc-100 rounded-[2.5rem]">
           <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest">No projects added yet</p>
         </div>
       )}
 
-      {cvData.projects.map((proj) => (
+      {(cvData.projects || []).map((proj) => (
         <div key={proj.id} className="p-6 bg-white border border-zinc-100 rounded-[2.5rem] shadow-xl shadow-zinc-200/50 space-y-4 relative animate-in slide-in-from-bottom-4">
           <button onClick={() => removeProject(proj.id)} className="absolute top-4 right-4 p-2 text-zinc-300 hover:text-red-500 transition-colors">
             <XIcon size={20}/>
