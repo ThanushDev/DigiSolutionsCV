@@ -25,10 +25,12 @@ jobs:
           node-version: 22
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci || npm install
+
+      - name: Fix Vite Permissions
+        run: chmod +x node_modules/.bin/*
 
       - name: Build
-        # මෙතනදී තමයි අලුත් Hugging Face Key එක Build එකට එකතු කරන්නේ
         run: npm run build
         env:
           VITE_GROQ_API_KEY: ${{ secrets.VITE_GROQ_API_KEY }}
