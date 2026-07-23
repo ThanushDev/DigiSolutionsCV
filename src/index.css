@@ -1,0 +1,135 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.cv-template {
+  font-size: 12px;
+  line-height: 1.4;
+}
+.cv-template h1 {
+  font-size: 24px;
+}
+.cv-template h2 {
+  font-size: 14px;
+}
+.cv-template h3 {
+  font-size: 12px;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* Page break / pagination styles */
+.break-inside-avoid-page {
+  break-inside: avoid;
+  page-break-inside: avoid;
+  page-break-before: auto;
+}
+
+/* Ensure sections never split across pages */
+section, .section-wrapper {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .cv-template {
+    width: 210mm !important;
+    min-height: 297mm !important;
+    margin: 0;
+    padding: 0;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+  .print-color {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .print-no-break {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .print-avoid-break {
+    page-break-inside: avoid;
+  }
+  /* Prevent sections from splitting at page breaks */
+  .break-inside-avoid-page {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+  /* Manual page break before a section */
+  .section-page-break {
+    break-before: page !important;
+    page-break-before: always !important;
+  }
+  /* Manual page break before a section */
+  .section-page-break {
+    break-before: page !important;
+    page-break-before: always !important;
+  }
+  /* Ensure sidebar background colors print on every page */
+  [class*="bg-"] {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  /* Ensure colored sidebars repeat on each printed page */
+  .sidebar-repeating {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    z-index: 1000;
+  }
+}
+
+/* Scrollbar hide utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
